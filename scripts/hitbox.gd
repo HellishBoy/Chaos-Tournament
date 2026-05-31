@@ -10,6 +10,7 @@
 ##   - The CollisionShape2D's "disabled" property (on/off per frame)
 
 extends Area2D
+class_name Hitbox
 
 # Set this from player.gd before attacking so the hitbox
 # knows how much damage to deal
