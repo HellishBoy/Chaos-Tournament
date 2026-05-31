@@ -8,6 +8,7 @@ class_name HUD
 @onready var durability_bar: ProgressBar = $WeaponPanel/VBoxContainer/DurabilityBar
 @onready var ammo_label: Label = $WeaponPanel/VBoxContainer/AmmoLabel
 @onready var quantity_label: Label = $WeaponPanel/VBoxContainer/QuantityLabel
+@onready var durability_label: Label = $WeaponPanel/VBoxContainer/DurabilityLabel
 
 var _player: Player = null
 
@@ -38,10 +39,16 @@ func refresh() -> void:
 	# Durability
 	if weapon.durability == "none" or weapon.durability == "infinite" or weapon.durability_current == -1:
 		durability_bar.visible = false
+		durability_label.visible = false
 	else:
+		var max_dur: int = _get_durability_max(weapon.durability)
+		weapon.durability_current = min(weapon.durability_current, max_dur)
 		durability_bar.visible = true
-		durability_bar.max_value = _get_durability_max(weapon.durability)
+		durability_label.visible = true
+		durability_bar.max_value = max_dur
 		durability_bar.value = weapon.durability_current
+		durability_bar.show_percentage = false
+		durability_label.text = "%d / %d" % [weapon.durability_current, max_dur]
 
 	# Ammo
 	if weapon.ammo == -1:

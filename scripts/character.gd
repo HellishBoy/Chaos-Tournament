@@ -311,3 +311,22 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 		weapon.damage_main,
 		weapon.main_knockback
 	)
+	
+	# Decrement ammo
+	if weapon.ammo > 0:
+		weapon.ammo -= 1
+		var hud := get_tree().get_first_node_in_group("hud") as HUD
+		if hud:
+			hud.refresh()
+		if weapon.ammo == 0:
+			break_weapon()
+
+# ── Weapon break ──────────────────────────────────────────────────────
+
+func break_weapon() -> void:
+	current_weapon = null
+	_update_weapon_visuals()
+	_cancel_into_idle()
+	var hud := get_tree().get_first_node_in_group("hud") as HUD
+	if hud:
+		hud.refresh()

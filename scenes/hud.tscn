@@ -24,3 +24,6 @@ layout_mode = 2
 
 [node name="QuantityLabel" type="Label" parent="WeaponPanel/VBoxContainer" unique_id=1944845531]
 layout_mode = 2
+
+[node name="DurabilityLabel" type="Label" parent="WeaponPanel/VBoxContainer" unique_id=1772420275]
+layout_mode = 2

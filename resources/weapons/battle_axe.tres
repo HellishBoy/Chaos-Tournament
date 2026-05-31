@@ -18,6 +18,6 @@ damage_alt = 20
 main_knockback = "medium"
 alt_knockback = "high"
 durability = "high"
-durability_current = 7
+durability_current = 12
 weapon_sprite_left = ExtResource("2_pipuf")
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"
