@@ -15,5 +15,7 @@ main_attack_speed = 0.45
 alt_attack_speed = 0.35
 main_knockback = "medium"
 alt_knockback = "high"
+durability = "high"
+durability_current = 8
 weapon_sprite_left = ExtResource("2_pipuf")
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"

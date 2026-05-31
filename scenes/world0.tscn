@@ -12,6 +12,7 @@
 [ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://resources/weapons/battle_axe.tres" id="10_xuajt"]
 [ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://resources/weapons/lollipop.tres" id="11_v1ea5"]
 [ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://scenes/enemy.tscn" id="12_ofpmy"]
+[ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://scenes/hud.tscn" id="13_3g1a3"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rp871"]
 texture = ExtResource("1_xq1sn")
@@ -122,3 +123,5 @@ weapon_data = ExtResource("10_xuajt")
 position = Vector2(512, 616)
 collision_mask = 7
 weapon_data = ExtResource("11_v1ea5")
+
+[node name="Hud" parent="." unique_id=1799122153 instance=ExtResource("13_3g1a3")]

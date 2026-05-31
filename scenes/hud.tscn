@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://cq74u8e6dep8k"]
+
+[node name="Hud" type="CanvasLayer" unique_id=1799122153]
+
+[node name="WeaponPanel" type="PanelContainer" parent="." unique_id=1714559249]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -82.0
+offset_right = 40.0
+grow_vertical = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="WeaponPanel" unique_id=1586040062]
+layout_mode = 2
+
+[node name="WeaponName" type="Label" parent="WeaponPanel/VBoxContainer" unique_id=549229453]
+layout_mode = 2
+
+[node name="DurabilityBar" type="TextureProgressBar" parent="WeaponPanel/VBoxContainer" unique_id=116650543]
+layout_mode = 2
+
+[node name="AmmoLabel" type="Label" parent="WeaponPanel/VBoxContainer" unique_id=698020784]
+layout_mode = 2
+
+[node name="QuantityLabel" type="Label" parent="WeaponPanel/VBoxContainer" unique_id=1944845531]
+layout_mode = 2
