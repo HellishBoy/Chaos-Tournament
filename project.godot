@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Chaos Tournament"
-run/main_scene="uid://b73evdagoq6xy"
+run/main_scene="uid://djmsra37pfabk"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
