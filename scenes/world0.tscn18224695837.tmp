@@ -6,14 +6,13 @@
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://scenes/weapon_pickup.tscn" id="4_w4n78"]
 [ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://resources/weapons/baseball_bat.tres" id="5_i5dp1"]
 [ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://resources/weapons/nail_gun.tres" id="6_gb7qy"]
-[ext_resource type="Resource" uid="uid://w2sashhtg4jm" path="res://resources/weapons/metal_pipe.tres" id="7_ca0gf"]
+[ext_resource type="Resource" uid="uid://w2sashhtg4jm" path="res://resources/weapons/broken_pipe.tres" id="7_ca0gf"]
 [ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://resources/weapons/dual_pistols.tres" id="8_nieb3"]
 [ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://resources/weapons/sword.tres" id="9_mn6ps"]
 [ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://resources/weapons/battle_axe.tres" id="10_xuajt"]
 [ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://resources/weapons/lollipop.tres" id="11_v1ea5"]
 [ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://scenes/enemy.tscn" id="12_ofpmy"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://scenes/hud.tscn" id="13_3g1a3"]
-[ext_resource type="Script" uid="uid://ctrptflhtsjqv" path="res://scripts/hud.gd" id="14_w4n78"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rp871"]
 texture = ExtResource("1_xq1sn")
@@ -91,8 +90,8 @@ position = Vector2(512, 384)
 
 [node name="Enemy" parent="Enemies" unique_id=1826535128 instance=ExtResource("12_ofpmy")]
 position = Vector2(395, 480)
-detection_range = null
 can_toss_weapons = null
+detection_range = null
 idle_wander_speed = null
 initial_facing = null
 combo_window = null
@@ -135,4 +134,3 @@ collision_mask = 7
 weapon_data = ExtResource("11_v1ea5")
 
 [node name="Hud" parent="." unique_id=1799122153 groups=["hud"] instance=ExtResource("13_3g1a3")]
-script = ExtResource("14_w4n78")

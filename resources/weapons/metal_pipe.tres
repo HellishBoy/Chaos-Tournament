@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://w2sashhtg4jm"]
 
-[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://scripts/weapon_data.gd" id="1_xfck2"]
-[ext_resource type="Texture2D" uid="uid://cex37gfbw86gu" path="res://assets/weapons/melee_1h-broken_pipe.png" id="2_xfck2"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://scripts/weapon_data.gd" id="1_cd3j6"]
+[ext_resource type="Texture2D" uid="uid://cex37gfbw86gu" path="res://assets/weapons/melee_1h-broken_pipe.png" id="2_ko34i"]
 
 [resource]
-script = ExtResource("1_xfck2")
-weapon_name = "Baseball Bat"
+script = ExtResource("1_cd3j6")
+weapon_name = "Metal Pipe"
 weapon_category = "melee_1h"
 idle_animation = "idle_melee_1h"
 walk_animation = "walk_melee_1h"
@@ -15,5 +15,6 @@ alt_attack_speed = 0.7
 main_knockback = "low"
 alt_knockback = "medium"
 durability = "low"
-weapon_sprite_right = ExtResource("2_xfck2")
+durability_current = 3
+weapon_sprite_right = ExtResource("2_ko34i")
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"

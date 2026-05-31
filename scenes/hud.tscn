@@ -16,11 +16,14 @@ layout_mode = 2
 [node name="WeaponName" type="Label" parent="WeaponPanel/VBoxContainer" unique_id=549229453]
 layout_mode = 2
 
-[node name="DurabilityBar" type="TextureProgressBar" parent="WeaponPanel/VBoxContainer" unique_id=116650543]
+[node name="DurabilityBar" type="ProgressBar" parent="WeaponPanel/VBoxContainer" unique_id=565286154]
 layout_mode = 2
 
 [node name="AmmoLabel" type="Label" parent="WeaponPanel/VBoxContainer" unique_id=698020784]
 layout_mode = 2
 
 [node name="QuantityLabel" type="Label" parent="WeaponPanel/VBoxContainer" unique_id=1944845531]
+layout_mode = 2
+
+[node name="DurabilityLabel" type="Label" parent="WeaponPanel/VBoxContainer" unique_id=1772420275]
 layout_mode = 2

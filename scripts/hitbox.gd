@@ -40,3 +40,14 @@ func _on_area_entered(area: Area2D) -> void:
 			# Push away from attacker
 			direction = (parent.global_position - attacker.global_position).normalized()
 		knockback.apply(knockback_tier, direction)
+		
+	# Decrement durability
+	if attacker != null and attacker is Character:
+		var weapon: WeaponData = attacker.get_active_weapon()
+		if weapon.durability_current > 0:
+			weapon.durability_current -= 1
+			var hud := get_tree().get_first_node_in_group("hud") as HUD
+			if hud:
+				hud.refresh()
+			if weapon.durability_current == 0:
+				attacker.call_deferred("break_weapon")

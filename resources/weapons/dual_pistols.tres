@@ -6,6 +6,7 @@
 
 [resource]
 script = ExtResource("1_etjqn")
+weapon_name = "Dual Pistols"
 idle_animation = "idle_ranged_dual"
 walk_animation = "walk_ranged_dual"
 main_attack_animations = Array[String](["attack_ranged_dual_fire_heavy_R", "attack_ranged_dual_fire_heavy_L"])
@@ -14,6 +15,7 @@ peek_distance_aim = 40.0
 main_attack_speed = 3.0
 alt_attack_speed = 0.88
 main_knockback = "low"
+ammo = 15
 bullet_scene = ExtResource("1_4fj4a")
 bullet_speed = 1000.0
 bullet_range = 80.0

@@ -2,17 +2,22 @@
 # Displays current weapon durability, ammo, and quantity.
 # Call setup(player) once after both HUD and Player are ready.
 extends CanvasLayer
+class_name HUD
 
 @onready var weapon_name_label: Label = $WeaponPanel/VBoxContainer/WeaponName
-@onready var durability_bar: TextureProgressBar = $WeaponPanel/VBoxContainer/DurabilityBar
+@onready var durability_bar: ProgressBar = $WeaponPanel/VBoxContainer/DurabilityBar
 @onready var ammo_label: Label = $WeaponPanel/VBoxContainer/AmmoLabel
 @onready var quantity_label: Label = $WeaponPanel/VBoxContainer/QuantityLabel
+@onready var durability_label: Label = $WeaponPanel/VBoxContainer/DurabilityLabel
 
 var _player: Player = null
 
 func _ready() -> void:
-	# Find player automatically
-	var player := get_tree().get_first_node_in_group("player")
+	call_deferred("_find_player")
+
+func _find_player() -> void:
+	var player := get_tree().get_first_node_in_group("player") as Player
+	print("HUD found player: ", player)
 	if player:
 		setup(player)
 
@@ -24,17 +29,26 @@ func refresh() -> void:
 	if _player == null:
 		return
 	var weapon := _player.get_active_weapon()
+	print("weapon: ", weapon.weapon_name)
+	print("durability: ", weapon.durability)
+	print("durability_current: ", weapon.durability_current)
 
 	# Weapon name
 	weapon_name_label.text = weapon.weapon_name
 
 	# Durability
-	if weapon.durability == "none" or weapon.durability == "infinite":
+	if weapon.durability == "none" or weapon.durability == "infinite" or weapon.durability_current == -1:
 		durability_bar.visible = false
+		durability_label.visible = false
 	else:
+		var max_dur: int = _get_durability_max(weapon.durability)
+		weapon.durability_current = min(weapon.durability_current, max_dur)
 		durability_bar.visible = true
-		durability_bar.max_value = _get_durability_max(weapon.durability)
+		durability_label.visible = true
+		durability_bar.max_value = max_dur
 		durability_bar.value = weapon.durability_current
+		durability_bar.show_percentage = false
+		durability_label.text = "%d / %d" % [weapon.durability_current, max_dur]
 
 	# Ammo
 	if weapon.ammo == -1:
@@ -49,6 +63,8 @@ func refresh() -> void:
 	else:
 		quantity_label.visible = true
 		quantity_label.text = "x%d" % weapon.quantity
+		
+		
 
 func _get_durability_max(tier: String) -> int:
 	match tier:
