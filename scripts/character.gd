@@ -79,7 +79,16 @@ func try_pickup(pickup_node: Node) -> void:
 	var data: WeaponData = pickup_node.weapon_data
 	pickup_node.queue_free()
 	current_weapon = data
+	# Only initialize durability if not already set
+	if data.durability_current == -1:
+		match data.durability:
+			"low":    data.durability_current = 3
+			"medium": data.durability_current = 5
+			"high":   data.durability_current = 8
 	_update_weapon_visuals()
+	var hud := get_tree().get_first_node_in_group("hud") as HUD
+	if hud:
+		hud.refresh()
 
 # ── Toss ─────────────────────────────────────────────────────────
 
@@ -99,6 +108,10 @@ func _do_toss() -> void:
 	pickup.position = global_position + toss_dir * 10.0
 	get_parent().add_child(pickup)
 	pickup.setup_toss(global_position, toss_dir)
+		# Refresh HUD after toss
+	var hud := get_tree().get_first_node_in_group("hud") as HUD
+	if hud:
+		hud.refresh()
 
 # ── Weapon Visuals ───────────────────────────────────────────────
 

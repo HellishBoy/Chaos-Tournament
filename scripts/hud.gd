@@ -2,17 +2,21 @@
 # Displays current weapon durability, ammo, and quantity.
 # Call setup(player) once after both HUD and Player are ready.
 extends CanvasLayer
+class_name HUD
 
 @onready var weapon_name_label: Label = $WeaponPanel/VBoxContainer/WeaponName
-@onready var durability_bar: TextureProgressBar = $WeaponPanel/VBoxContainer/DurabilityBar
+@onready var durability_bar: ProgressBar = $WeaponPanel/VBoxContainer/DurabilityBar
 @onready var ammo_label: Label = $WeaponPanel/VBoxContainer/AmmoLabel
 @onready var quantity_label: Label = $WeaponPanel/VBoxContainer/QuantityLabel
 
 var _player: Player = null
 
 func _ready() -> void:
-	# Find player automatically
-	var player := get_tree().get_first_node_in_group("player")
+	call_deferred("_find_player")
+
+func _find_player() -> void:
+	var player := get_tree().get_first_node_in_group("player") as Player
+	print("HUD found player: ", player)
 	if player:
 		setup(player)
 
@@ -24,12 +28,15 @@ func refresh() -> void:
 	if _player == null:
 		return
 	var weapon := _player.get_active_weapon()
+	print("weapon: ", weapon.weapon_name)
+	print("durability: ", weapon.durability)
+	print("durability_current: ", weapon.durability_current)
 
 	# Weapon name
 	weapon_name_label.text = weapon.weapon_name
 
 	# Durability
-	if weapon.durability == "none" or weapon.durability == "infinite":
+	if weapon.durability == "none" or weapon.durability == "infinite" or weapon.durability_current == -1:
 		durability_bar.visible = false
 	else:
 		durability_bar.visible = true
@@ -49,6 +56,8 @@ func refresh() -> void:
 	else:
 		quantity_label.visible = true
 		quantity_label.text = "x%d" % weapon.quantity
+		
+		
 
 func _get_durability_max(tier: String) -> int:
 	match tier:

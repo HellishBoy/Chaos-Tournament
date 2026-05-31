@@ -14,5 +14,6 @@ alt_attack_animations = Array[String](["attack_melee_1h_thrust"])
 main_knockback = "low"
 alt_knockback = "low"
 durability = "low"
+durability_current = 3
 weapon_sprite_right = ExtResource("2_pfj7o")
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"
