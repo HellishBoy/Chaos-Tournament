@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://cm8ewcb3xswx5"]
+
+[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://scenes/bullets & projectiles/bullet_prot.tscn" id="1_axg57"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://scripts/weapon_data.gd" id="1_l3xga"]
+[ext_resource type="Texture2D" uid="uid://cxu4eumkk4e7q" path="res://assets/weapons/ranged_1h-nail_gun.png" id="2_bm5xl"]
+
+[resource]
+script = ExtResource("1_l3xga")
+weapon_name = "Nail Gun"
+weapon_category = "ranged_1h"
+idle_animation = "idle_ranged_1h"
+walk_animation = "walk_ranged_1h"
+main_attack_animations = Array[String](["attack_ranged_1h_fire_heavy"])
+alt_attack_animations = Array[String](["attack_melee_fists_a", "attack_melee_fists_b"])
+peek_distance_aim = 40.0
+movement_penalty = 0.7
+main_attack_speed = 3.0
+alt_attack_speed = 0.88
+main_knockback = "low"
+bullet_scene = ExtResource("1_axg57")
+bullet_speed = 1000.0
+bullet_range = 60.0
+weapon_sprite_right = ExtResource("2_bm5xl")
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"

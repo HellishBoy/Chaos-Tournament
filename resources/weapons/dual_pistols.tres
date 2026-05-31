@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://yynomacn34w0"]
+
+[ext_resource type="PackedScene" uid="uid://bja6mpi5lgudj" path="res://scenes/bullets & projectiles/bullet_copper.tscn" id="1_4fj4a"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://scripts/weapon_data.gd" id="1_etjqn"]
+[ext_resource type="Texture2D" uid="uid://c5fgw54l4xnn2" path="res://assets/weapons/ranged_1h-pistol.png" id="2_bvwi2"]
+
+[resource]
+script = ExtResource("1_etjqn")
+idle_animation = "idle_ranged_dual"
+walk_animation = "walk_ranged_dual"
+main_attack_animations = Array[String](["attack_ranged_dual_fire_heavy_R", "attack_ranged_dual_fire_heavy_L"])
+alt_attack_animations = Array[String](["attack_melee_fists_a", "attack_melee_fists_b"])
+peek_distance_aim = 40.0
+main_attack_speed = 3.0
+alt_attack_speed = 0.88
+main_knockback = "low"
+bullet_scene = ExtResource("1_4fj4a")
+bullet_speed = 1000.0
+bullet_range = 80.0
+weapon_sprite_left = ExtResource("2_bvwi2")
+weapon_sprite_right = ExtResource("2_bvwi2")
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"

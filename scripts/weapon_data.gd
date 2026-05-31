@@ -1,0 +1,63 @@
+extends Resource
+class_name WeaponData
+
+@export_group("Identity")
+@export var weapon_name: String = "Fists"
+@export_enum("none", "melee_1h", "melee_2h", "melee_dual",
+			 "ranged_1h", "ranged_2h", "ranged_dual",
+			 "projectile", "grenade") var weapon_category: String = "none"
+
+@export_group("Animations")
+@export var idle_animation: String = ""
+@export var walk_animation: String = ""
+@export var main_attack_animations: Array[String] = []
+@export var alt_attack_animations: Array[String] = []
+
+@export_group("Camera")
+@export var peek_distance_aim: float = 0.0
+@export var peek_distance_lockon: float = 0.0
+
+@export_group("Movement")
+@export var movement_penalty: float = 0.6
+
+@export_group("Combat")
+@export var main_attack_speed: float = 1.0
+@export var alt_attack_speed: float = 1.0
+@export var damage_main: int = 10
+@export var damage_alt: int = 5
+@export_enum("none", "low", "medium", "high") var main_knockback: String = "none"
+@export_enum("none", "low", "medium", "high") var alt_knockback: String = "none"
+# false = push away from attacker, true = push in attacker's facing direction
+@export var knockback_main_facing: bool = false
+@export var knockback_alt_facing: bool = false
+
+@export_group("Durability")
+@export_enum("none", "low", "medium", "high", "infinite") var durability: String = "infinite"
+@export var durability_current: int = -1  # -1 = not applicable
+
+@export_group("Ammo")
+@export var ammo: int = -1      # -1 = not applicable
+@export var quantity: int = -1  # -1 = not applicable
+
+@export_group("Toss")
+@export var can_toss: bool = true
+
+@export_group("Charge")
+@export var main_attack_charge: bool = false
+@export var alt_attack_charge: bool = false
+
+@export_group("Bullet | Projectile")
+@export var bullet_scene: PackedScene
+@export var bullet_speed: float = 300.0
+@export var bullet_range: float = -1.0  # -1 = infinite
+@export var bullet_pierce: int = 0      # 0 = no pierce, -1 = infinite
+
+@export_group("Special Effects")
+@export var special_effect: String = ""
+@export var effect_duration: float = 0.0
+@export var effect_damage: int = 0
+
+@export_group("Sprites")
+@export var weapon_sprite_ground: Texture2D
+@export var weapon_sprite_left: Texture2D
+@export var weapon_sprite_right: Texture2D
