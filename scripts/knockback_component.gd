@@ -8,6 +8,13 @@ const TIERS = {
 	"high":   { "speed_reduction": 1.0, "recovery_time": 0.8 },
 }
 
+const TIER_SPEEDS: Dictionary = {
+	"none":   0.0,
+	"low":    80.0,
+	"medium": 160.0,
+	"high":   200.0,
+}
+
 var _tier: String = "none"
 var _direction: Vector2 = Vector2.ZERO
 var _recovery_time: float = 0.0
