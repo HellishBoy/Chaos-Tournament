@@ -19,6 +19,19 @@ class_name Enemy
 
 # ── State ────────────────────────────────────────────────────────
 
+enum FacingDirection {
+	UP,
+	UP_RIGHT,
+	RIGHT,
+	DOWN_RIGHT,
+	DOWN,
+	DOWN_LEFT,
+	LEFT,
+	UP_LEFT,
+}
+
+@export var initial_facing: FacingDirection = FacingDirection.DOWN
+
 var target: Node2D = null
 var targets_in_range: Array = []
 
@@ -36,7 +49,14 @@ func _ready() -> void:
 	super()
 	detection_area.body_entered.connect(_on_target_entered)
 	detection_area.body_exited.connect(_on_target_exited)
-
+	# Resize detection shape to match exported value
+	var shape: CircleShape2D = $DetectionArea/CollisionShape2D.shape as CircleShape2D
+	if shape != null:
+		shape.radius = detection_range
+	var dir := _facing_to_vector(initial_facing)
+	last_direction = dir
+	rotation = dir.angle()
+			
 # ── Health Callbacks ─────────────────────────────────────────────
 
 func _on_damaged(_amount: int, _remaining: int) -> void:
@@ -114,6 +134,7 @@ func _physics_process(delta: float) -> void:
 			_apply_movement(Vector2.ZERO)
 			if not _is_attacking():
 				_snap_to_idle()
+				anim_lower.stop()
 
 		AIState.CHASE:
 			if not _is_attacking():
@@ -140,3 +161,17 @@ func _physics_process(delta: float) -> void:
 				rotation = dir.angle()
 			if not _is_attacking() and not is_tossing:
 				_play_main_attack()
+				
+# ── Facing on start ──────────────────────────────────────────────
+
+func _facing_to_vector(facing: FacingDirection) -> Vector2:
+	match facing:
+		FacingDirection.UP:         return Vector2(0, -1)
+		FacingDirection.UP_RIGHT:   return Vector2(1, -1).normalized()
+		FacingDirection.RIGHT:      return Vector2(1, 0)
+		FacingDirection.DOWN_RIGHT: return Vector2(1, 1).normalized()
+		FacingDirection.DOWN:       return Vector2(0, 1)
+		FacingDirection.DOWN_LEFT:  return Vector2(-1, 1).normalized()
+		FacingDirection.LEFT:       return Vector2(-1, 0)
+		FacingDirection.UP_LEFT:    return Vector2(-1, -1).normalized()
+	return Vector2(0, 1)
