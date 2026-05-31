@@ -91,10 +91,9 @@ position = Vector2(512, 384)
 
 [node name="Enemy" parent="Enemies" unique_id=1826535128 instance=ExtResource("12_ofpmy")]
 position = Vector2(395, 480)
-detection_range = null
 can_toss_weapons = null
+detection_range = null
 idle_wander_speed = null
-initial_facing = null
 combo_window = null
 
 [node name="Weapons" type="Node2D" parent="." unique_id=1522979745]
