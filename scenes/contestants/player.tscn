@@ -4,7 +4,6 @@
 [ext_resource type="Resource" uid="uid://cxoiv5ap1cj22" path="res://resources/weapons/fists.tres" id="2_qlg0r"]
 [ext_resource type="Resource" uid="uid://bbb2h613c5vq3" path="res://resources/stats/player_stats.tres" id="2_y4r1p"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://scenes/weapon_pickup.tscn" id="3_fjrip"]
-[ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://scenes/health_bar.tscn" id="5_5jlae"]
 [ext_resource type="Script" uid="uid://c1aaiueu5rvpq" path="res://scripts/camera_2d.gd" id="5_qlg0r"]
 [ext_resource type="Texture2D" uid="uid://djew2yyvks34y" path="res://assets/player/dodge_windfx.png" id="5_tuyoq"]
 [ext_resource type="Texture2D" uid="uid://2t57yhwngo7m" path="res://assets/player/skin-default.png" id="5_y4r1p"]
@@ -76,7 +75,6 @@ script = ExtResource("1_g2els")
 stats = ExtResource("2_y4r1p")
 fists = ExtResource("2_qlg0r")
 weapon_pickup_scene = ExtResource("3_fjrip")
-health_bar_scene = ExtResource("5_5jlae")
 
 [node name="Body" type="Node2D" parent="." unique_id=180073333]
 
