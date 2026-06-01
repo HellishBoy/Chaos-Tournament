@@ -33,7 +33,7 @@ func setup(player: Player) -> void:
 	_update_player_health(player.health.current_hp, player.health.max_hp)
 	refresh()
 
-func _on_player_damaged(amount: int, remaining: int) -> void:
+func _on_player_damaged(_amount: int, remaining: int) -> void:
 	_update_player_health(remaining, _player_max_hp)
 	
 func _on_player_died() -> void:
