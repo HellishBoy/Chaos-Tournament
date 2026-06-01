@@ -61,13 +61,13 @@ func _ready() -> void:
 
 func _on_damaged(_amount: int, _remaining: int) -> void:
 	var tween := create_tween()
-	tween.tween_property($Body, "modulate", Color.RED, 0.05)
+	tween.tween_property($Body, "modulate", Color(8.0, 8.0, 8.0, 1.0), 0.05)
 	tween.tween_property($Body, "modulate", Color.WHITE, 0.1)
 
 func _on_died() -> void:
 	var tween := create_tween()
-	tween.tween_property($Body, "modulate", Color.WHITE, 0.1)
-	tween.tween_interval(0.1)
+	tween.tween_property($Body, "modulate", Color(8.0, 8.0, 8.0, 1.0), 0.5)
+	tween.tween_interval(0.5)
 	tween.tween_callback(func(): queue_free())
 
 # ── Detection ────────────────────────────────────────────────────
