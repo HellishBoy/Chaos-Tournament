@@ -17,3 +17,4 @@ class_name CharacterStats
 @export_group("Knockback")
 # 0.0 = gets pushed full amount, 1.0 = immune to knockback
 @export_range(0.0, 1.0) var knockback_resistance: float = 0.0
+@export var knockback_immune: bool = false

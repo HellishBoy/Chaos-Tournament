@@ -10,6 +10,7 @@ class_name Character
 @export var current_weapon: WeaponData
 @export var fists: WeaponData
 @export var weapon_pickup_scene: PackedScene
+@export var health_bar_scene: PackedScene
 
 @export_group("Combat")
 @export var combo_window: float = 0.4
@@ -65,6 +66,11 @@ func _ready() -> void:
 	health.died.connect(_on_died)
 
 	_update_weapon_visuals()
+	
+	if health_bar_scene != null:
+		var bar := health_bar_scene.instantiate() as HealthBar
+		add_child(bar)
+		bar.setup(health, self)
 
 # ── Active Weapon ────────────────────────────────────────────────
 
@@ -276,7 +282,7 @@ func _is_attacking() -> bool:
 # Applies velocity with knockback factored in and calls move_and_slide.
 # Pass in the desired movement vector (already scaled by speed/penalty).
 func _apply_movement(desired_velocity: Vector2) -> void:
-	if knockback_component.is_active():
+	if knockback_component.is_active() and not stats.knockback_immune:
 		var tier := knockback_component.get_tier()
 		var dir := knockback_component.get_direction()
 		var push_speed: float = KnockbackComponent.TIER_SPEEDS.get(tier, 0.0)

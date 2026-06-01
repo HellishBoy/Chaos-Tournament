@@ -4,4 +4,5 @@
 
 [resource]
 script = ExtResource("1_7kogv")
+knockback_immune = true
 metadata/_custom_type_script = "uid://cuf0jjkwlmjfm"

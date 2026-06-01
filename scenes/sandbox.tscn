@@ -1,8 +1,8 @@
 [gd_scene format=4 uid="uid://djmsra37pfabk"]
 
 [ext_resource type="Texture2D" uid="uid://da2hol5y5g2wr" path="res://assets/environments/Tileset.png" id="1_xq1sn"]
-[ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://scenes/dummy.tscn" id="2_ofpmy"]
-[ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://scenes/player.tscn" id="3_3g1a3"]
+[ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://scenes/contestants/dummy.tscn" id="2_ofpmy"]
+[ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://scenes/contestants/player.tscn" id="3_3g1a3"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://scenes/weapon_pickup.tscn" id="4_w4n78"]
 [ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://resources/weapons/baseball_bat.tres" id="5_i5dp1"]
 [ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://resources/weapons/nail_gun.tres" id="6_gb7qy"]
@@ -11,7 +11,7 @@
 [ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://resources/weapons/sword.tres" id="9_mn6ps"]
 [ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://resources/weapons/battle_axe.tres" id="10_xuajt"]
 [ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://resources/weapons/lollipop.tres" id="11_v1ea5"]
-[ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://scenes/enemy.tscn" id="12_ofpmy"]
+[ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://scenes/contestants/enemy.tscn" id="12_ofpmy"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://scenes/hud.tscn" id="13_3g1a3"]
 [ext_resource type="Script" uid="uid://ctrptflhtsjqv" path="res://scripts/hud.gd" id="14_w4n78"]
 
@@ -69,9 +69,11 @@ y_sort_enabled = true
 
 [node name="Dummy" parent="Contestants" unique_id=228317739 instance=ExtResource("2_ofpmy")]
 position = Vector2(256, 448)
+knockback_immune = false
 
 [node name="Dummy5" parent="Contestants" unique_id=1915085432 instance=ExtResource("2_ofpmy")]
 position = Vector2(320, 424)
+knockback_immune = false
 
 [node name="Dummy7" parent="Contestants" unique_id=251600600 instance=ExtResource("2_ofpmy")]
 position = Vector2(320, 384)

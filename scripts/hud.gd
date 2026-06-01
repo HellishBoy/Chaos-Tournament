@@ -4,13 +4,17 @@
 extends CanvasLayer
 class_name HUD
 
+const PLAYER_BAR_WIDTH: float = 200.0
+
 @onready var weapon_name_label: Label = $WeaponPanel/VBoxContainer/WeaponName
 @onready var durability_bar: ProgressBar = $WeaponPanel/VBoxContainer/DurabilityBar
 @onready var ammo_label: Label = $WeaponPanel/VBoxContainer/AmmoLabel
 @onready var quantity_label: Label = $WeaponPanel/VBoxContainer/QuantityLabel
 @onready var durability_label: Label = $WeaponPanel/VBoxContainer/DurabilityLabel
+@onready var player_health_fill: ColorRect = $PlayerHealthBar/Fill
 
 var _player: Player = null
+var _player_max_hp: int = 0
 
 func _ready() -> void:
 	call_deferred("_find_player")
@@ -23,7 +27,21 @@ func _find_player() -> void:
 
 func setup(player: Player) -> void:
 	_player = player
+	_player_max_hp = player.health.max_hp
+	player.health.damaged.connect(_on_player_damaged)
+	player.health.died.connect(_on_player_died)
+	_update_player_health(player.health.current_hp, player.health.max_hp)
 	refresh()
+
+func _on_player_damaged(amount: int, remaining: int) -> void:
+	_update_player_health(remaining, _player_max_hp)
+	
+func _on_player_died() -> void:
+	player_health_fill.size.x = 0.0
+
+func _update_player_health(current: int, max_hp: int) -> void:
+	var percent: float = float(current) / float(max_hp)
+	player_health_fill.size.x = PLAYER_BAR_WIDTH * percent
 
 func refresh() -> void:
 	if _player == null:
