@@ -27,3 +27,29 @@ layout_mode = 2
 
 [node name="DurabilityLabel" type="Label" parent="WeaponPanel/VBoxContainer" unique_id=1772420275]
 layout_mode = 2
+
+[node name="PlayerHealthBar" type="Control" parent="." unique_id=502174006]
+layout_mode = 3
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -30.0
+offset_right = 100.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Background" type="ColorRect" parent="PlayerHealthBar" unique_id=459557922]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 16.0
+color = Color(0.6247642, 0.6247642, 0.6247642, 1)
+
+[node name="Fill" type="ColorRect" parent="PlayerHealthBar" unique_id=372161227]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 16.0
+color = Color(0.48452926, 0.9063318, 0.48452926, 1)

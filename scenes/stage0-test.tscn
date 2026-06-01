@@ -1,9 +1,9 @@
 [gd_scene format=4 uid="uid://b73evdagoq6xy"]
 
 [ext_resource type="Texture2D" uid="uid://da2hol5y5g2wr" path="res://assets/environments/Tileset.png" id="1_x5ji0"]
-[ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://scenes/dummy.tscn" id="2_2ofao"]
-[ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://scenes/enemy.tscn" id="3_c5yrb"]
-[ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://scenes/player.tscn" id="4_o60d1"]
+[ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://scenes/contestants/dummy.tscn" id="2_2ofao"]
+[ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://scenes/contestants/enemy.tscn" id="3_c5yrb"]
+[ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://scenes/contestants/player.tscn" id="4_o60d1"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://scenes/weapon_pickup.tscn" id="5_6w3fh"]
 [ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://resources/weapons/baseball_bat.tres" id="6_j7oa6"]
 [ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://resources/weapons/nail_gun.tres" id="7_ey1ke"]

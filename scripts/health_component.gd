@@ -10,8 +10,17 @@ class_name HealthComponent
 
 @export var max_hp: int = 100
 @export var current_hp: int = 100
+@export var immortal: bool = false
 # How long the entity is invincible after taking a hit (in seconds)
 @export var invincibility_duration: float = 0.2
+
+enum HealthBarVisibility {
+	ALWAYS_SHOW,
+	ALWAYS_HIDE,
+	HIDE_ON_FULL_HEALTH,
+}
+
+@export var health_bar_visibility: HealthBarVisibility = HealthBarVisibility.ALWAYS_SHOW
 
 signal damaged(amount: int, remaining: int)
 signal died
@@ -32,6 +41,8 @@ func _process(delta: float) -> void:
 			emit_signal("invincibility_ended")
 
 func take_damage(amount: int) -> void:
+	if immortal:
+		return
 	if current_hp <= 0:
 		return  # already dead
 	if _invincible:
