@@ -66,11 +66,6 @@ tile_set = SubResource("TileSet_scryw")
 
 [node name="Player" parent="." unique_id=390347379 instance=ExtResource("3_3g1a3")]
 position = Vector2(384, 672)
-lock_on_toggle_mode = null
-dodge_speed = null
-dodge_distance = null
-dodge_cooldown = null
-combo_window = null
 
 [node name="Enemies" type="Node2D" parent="." unique_id=1275869653]
 
@@ -91,10 +86,7 @@ position = Vector2(512, 384)
 
 [node name="Enemy" parent="Enemies" unique_id=1826535128 instance=ExtResource("12_ofpmy")]
 position = Vector2(395, 480)
-can_toss_weapons = null
-detection_range = null
-idle_wander_speed = null
-combo_window = null
+detection_range = 200.0
 
 [node name="Weapons" type="Node2D" parent="." unique_id=1522979745]
 
