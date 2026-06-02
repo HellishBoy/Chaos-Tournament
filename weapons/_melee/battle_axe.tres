@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://blc3h72syephy"]
+
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/weapon_data.gd" id="1_3aq22"]
+[ext_resource type="Texture2D" uid="uid://b51h05dfxk38h" path="res://weapons/_melee/melee_2h-battle_axe.png" id="2_pipuf"]
+
+[resource]
+script = ExtResource("1_3aq22")
+weapon_name = "Battle Axe"
+idle_animation = "idle_melee_2h_1"
+walk_animation = "walk_melee_2h_1"
+main_attack_animations = Array[String](["attack_melee_2h_1_cleave_a", "attack_melee_2h_1_cleave_b"])
+alt_attack_animations = Array[String](["attack_melee_2h_1_sweep"])
+movement_penalty = 0.5
+main_attack_speed = 0.45
+alt_attack_speed = 0.35
+damage_main = 30
+damage_alt = 40
+main_knockback = "medium"
+alt_knockback = "high"
+durability = "high"
+durability_current = 12
+weapon_sprite_left = ExtResource("2_pipuf")
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"
