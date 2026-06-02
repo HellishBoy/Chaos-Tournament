@@ -8,7 +8,7 @@
 [ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/_melee/baseball_bat.tres" id="6_ddyrp"]
 [ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/_ranged/nail_gun.tres" id="7_3gl0y"]
 [ext_resource type="Resource" uid="uid://w2sashhtg4jm" path="res://weapons/_melee/metal_pipe.tres" id="8_sfqfu"]
-[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/_ranged/dual_pistols.tres" id="9_vxggg"]
+[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/_ranged/dual_mac_10.tres" id="9_vxggg"]
 [ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/_melee/sword.tres" id="10_vj82c"]
 [ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/_melee/battle_axe.tres" id="11_mn62q"]
 [ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://weapons/_melee/lollipop.tres" id="12_46msr"]
