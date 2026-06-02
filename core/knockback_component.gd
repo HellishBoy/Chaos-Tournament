@@ -47,11 +47,10 @@ func _process(delta: float) -> void:
 func get_speed_multiplier() -> float:
 	if not _active:
 		return 1.0
-	# t goes from 1.0 to 0.0 as timer counts down
-	# we want speed to start high and ease out to zero
-	var t: float = clamp(_timer / _recovery_time, 0.0, 1.0)
-	var reduction: float = TIERS.get(_tier, TIERS["none"])["speed_reduction"]
-	return reduction * t  # starts at full push, eases to zero
+	# t goes from 0.0 to 1.0 as timer counts down
+	# speed starts at 0.0 and recovers back to 1.0
+	var t: float = clamp(1.0 - (_timer / _recovery_time), 0.3, 1.0)
+	return t * t  # ease in — starts frozen, gradually restores
 
 func get_tier() -> String:
 	return _tier

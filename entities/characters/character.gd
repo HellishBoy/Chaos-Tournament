@@ -10,7 +10,12 @@ class_name Character
 @export var current_weapon: WeaponData
 @export var fists: WeaponData
 @export var weapon_pickup_scene: PackedScene
+
+@export_group("Health Bar")
 @export var health_bar_scene: PackedScene
+@export var health_bar_width: float = 20.0
+@export var health_bar_height: float = 2.0
+@export var health_bar_offset: Vector2 = Vector2(0, -16)
 
 @export_group("Combat")
 @export var combo_window: float = 0.4
@@ -67,9 +72,15 @@ func _ready() -> void:
 
 	_update_weapon_visuals()
 	
+	call_deferred("_setup_health_bar")
+
+func _setup_health_bar() -> void:
 	if health_bar_scene != null:
 		var bar := health_bar_scene.instantiate() as HealthBar
-		add_child(bar)
+		get_parent().add_child(bar)
+		bar.vertical_offset = health_bar_offset
+		bar.bar_width = health_bar_width
+		bar.bar_height = health_bar_height
 		bar.setup(health, self)
 
 # ── Active Weapon ────────────────────────────────────────────────

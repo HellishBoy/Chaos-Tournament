@@ -64,7 +64,7 @@ animations = [{
 radius = 6.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tuyoq"]
-radius = 112.0
+radius = 100.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fjrip"]
 radius = 6.0
@@ -164,7 +164,6 @@ libraries/ = ExtResource("8_3v2ag")
 shape = SubResource("CircleShape2D_qhqgy")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1247681980]
-visible = false
 collision_layer = 0
 collision_mask = 4
 
@@ -193,7 +192,7 @@ shape = SubResource("CircleShape2D_fjrip")
 
 [node name="HealthComponent" type="Node2D" parent="." unique_id=89315981]
 script = ExtResource("7_fjrip")
-health_bar_visibility = 1
+health_bar_visibility = 2
 
 [node name="KnockbackComponent" type="Node2D" parent="." unique_id=687752596]
 script = ExtResource("9_ur7pv")

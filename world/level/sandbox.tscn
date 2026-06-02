@@ -5,10 +5,11 @@
 [ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="3_vpxsc"]
 [ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="4_kaxk6"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/weapon_pickup.tscn" id="5_i0rwh"]
+[ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="5_n21tw"]
 [ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/_melee/baseball_bat.tres" id="6_sonbt"]
 [ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/_ranged/nail_gun.tres" id="7_vyjpb"]
 [ext_resource type="Resource" uid="uid://w2sashhtg4jm" path="res://weapons/_melee/metal_pipe.tres" id="8_t1yx8"]
-[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/_ranged/dual_pistols.tres" id="9_mwvx2"]
+[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/_ranged/dual_mac_10.tres" id="9_mwvx2"]
 [ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/_melee/sword.tres" id="10_7k6hd"]
 [ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/_melee/battle_axe.tres" id="11_xu4gc"]
 [ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://weapons/_melee/lollipop.tres" id="12_ggyvn"]
@@ -86,10 +87,13 @@ position = Vector2(512, 384)
 
 [node name="Enemy" parent="Contestants" unique_id=1826535128 instance=ExtResource("3_vpxsc")]
 position = Vector2(385, 113)
-detection_range = 200.0
 
 [node name="Player" parent="Contestants" unique_id=390347379 instance=ExtResource("4_kaxk6")]
 position = Vector2(384, 672)
+health_bar_scene = ExtResource("5_n21tw")
+
+[node name="Dummy2" parent="Contestants" unique_id=1633439208 instance=ExtResource("2_n21tw")]
+position = Vector2(624, 304)
 
 [node name="Weapons" type="Node2D" parent="." unique_id=1522979745]
 
@@ -130,3 +134,5 @@ weapon_data = ExtResource("12_ggyvn")
 
 [node name="Hud" parent="." unique_id=1799122153 groups=["hud"] instance=ExtResource("13_463im")]
 script = ExtResource("14_1jype")
+player_bar_border_thickness = 2.0
+vignette_threshold = 0.3

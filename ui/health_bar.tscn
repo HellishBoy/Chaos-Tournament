@@ -4,6 +4,12 @@
 
 [node name="HealthBar" type="Node2D" unique_id=73261380]
 script = ExtResource("1_rwxrv")
+bar_width = 20.0
+bar_height = 2.0
+
+[node name="Border" type="ColorRect" parent="." unique_id=1549511103]
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="Background" type="ColorRect" parent="." unique_id=1024364863]
 offset_left = -16.0
