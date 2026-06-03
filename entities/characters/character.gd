@@ -70,6 +70,8 @@ func _ready() -> void:
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
 
+	knockback_component.immune = stats.knockback_immune
+	
 	_update_weapon_visuals()
 	
 	call_deferred("_setup_health_bar")

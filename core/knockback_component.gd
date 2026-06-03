@@ -20,6 +20,7 @@ var _direction: Vector2 = Vector2.ZERO
 var _recovery_time: float = 0.0
 var _timer: float = 0.0
 var _active: bool = false
+var immune: bool = false
 
 signal knockback_started(tier: String, direction: Vector2)
 signal knockback_ended
@@ -47,10 +48,15 @@ func _process(delta: float) -> void:
 func get_speed_multiplier() -> float:
 	if not _active:
 		return 1.0
-	# t goes from 0.0 to 1.0 as timer counts down
-	# speed starts at 0.0 and recovers back to 1.0
 	var t: float = clamp(1.0 - (_timer / _recovery_time), 0.3, 1.0)
-	return t * t  # ease in — starts frozen, gradually restores
+	var reduction: float = TIERS.get(_tier, TIERS["none"])["speed_reduction"]
+	if immune:
+		# Ease in — starts slow, gradually restores
+		return t * t
+	else:
+		# Ease out — starts at full push, gradually reduces
+		var t_out: float = clamp(_timer / _recovery_time, 0.3, 1.0)
+		return reduction * t_out
 
 func get_tier() -> String:
 	return _tier

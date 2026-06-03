@@ -53,7 +53,7 @@ func _process(delta: float) -> void:
 		# base_intensity increases from 0.2 to 0.7
 		var base_intensity: float = lerp(0.5, 0.2, t)
 		# pulse_intensity increases from 0.1 to 0.3
-		var pulse_intensity: float = lerp(0.25, 0.1, t)
+		var pulse_intensity: float = lerp(0.15, 0.1, t)
 		# shader inner edge decreases from 0.4 to 0.1 (creeps toward center)
 		var inner_edge: float = lerp(0.35, 0.4, t)
 		
