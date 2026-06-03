@@ -87,6 +87,8 @@ position = Vector2(512, 384)
 
 [node name="Enemy" parent="Contestants" unique_id=1826535128 instance=ExtResource("3_vpxsc")]
 position = Vector2(385, 113)
+main_attack_cooldown = 1.5
+weapon_pickup_scene = ExtResource("5_i0rwh")
 
 [node name="Player" parent="Contestants" unique_id=390347379 instance=ExtResource("4_kaxk6")]
 position = Vector2(384, 672)
