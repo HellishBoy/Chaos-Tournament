@@ -4,6 +4,7 @@
 [ext_resource type="Resource" uid="uid://b4i311rbgiym7" path="res://entities/characters/enemies/enemy_stats.tres" id="2_ipns3"]
 [ext_resource type="Texture2D" uid="uid://ro2k6f5fjamo" path="res://entities/characters/skins/skin-robot.png" id="2_nenq2"]
 [ext_resource type="Resource" uid="uid://cxoiv5ap1cj22" path="res://weapons/_melee/fists.tres" id="3_wtq4b"]
+[ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/weapon_pickup.tscn" id="4_u5q8g"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="4_vk8x8"]
 [ext_resource type="Script" uid="uid://dt84g0ubdrtye" path="res://core/hitbox.gd" id="6_s1ycm"]
 [ext_resource type="AnimationLibrary" uid="uid://dj7tuc120561t" path="res://entities/characters/animations/.tres" id="7_8qclf"]
@@ -75,6 +76,7 @@ detection_range = 100.0
 attack_range = 20.0
 stats = ExtResource("2_ipns3")
 fists = ExtResource("3_wtq4b")
+weapon_pickup_scene = ExtResource("4_u5q8g")
 health_bar_scene = ExtResource("4_vk8x8")
 
 [node name="Body" type="Node2D" parent="." unique_id=180073333]
