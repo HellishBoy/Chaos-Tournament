@@ -68,34 +68,35 @@ tile_set = SubResource("TileSet_scryw")
 [node name="Contestants" type="Node2D" parent="." unique_id=1275869653]
 y_sort_enabled = true
 
-[node name="Dummy" parent="Contestants" unique_id=228317739 instance=ExtResource("2_n21tw")]
-position = Vector2(256, 448)
-knockback_immune = false
-
-[node name="Dummy5" parent="Contestants" unique_id=1915085432 instance=ExtResource("2_n21tw")]
-position = Vector2(320, 424)
-knockback_immune = false
-
-[node name="Dummy7" parent="Contestants" unique_id=251600600 instance=ExtResource("2_n21tw")]
-position = Vector2(320, 384)
-
-[node name="Dummy8" parent="Contestants" unique_id=499833935 instance=ExtResource("2_n21tw")]
-position = Vector2(384, 384)
-
-[node name="Dummy10" parent="Contestants" unique_id=543155689 instance=ExtResource("2_n21tw")]
-position = Vector2(512, 384)
-
 [node name="Enemy" parent="Contestants" unique_id=1826535128 instance=ExtResource("3_vpxsc")]
 position = Vector2(385, 113)
 main_attack_cooldown = 1.5
-weapon_pickup_scene = ExtResource("5_i0rwh")
 
 [node name="Player" parent="Contestants" unique_id=390347379 instance=ExtResource("4_kaxk6")]
 position = Vector2(384, 672)
 health_bar_scene = ExtResource("5_n21tw")
 
-[node name="Dummy2" parent="Contestants" unique_id=1633439208 instance=ExtResource("2_n21tw")]
+[node name="Props" type="Node2D" parent="Contestants" unique_id=526174102]
+
+[node name="Dummy2" parent="Contestants/Props" unique_id=1633439208 instance=ExtResource("2_n21tw")]
 position = Vector2(624, 304)
+
+[node name="Dummy" parent="Contestants/Props" unique_id=228317739 instance=ExtResource("2_n21tw")]
+position = Vector2(256, 448)
+knockback_immune = false
+
+[node name="Dummy5" parent="Contestants/Props" unique_id=1915085432 instance=ExtResource("2_n21tw")]
+position = Vector2(320, 424)
+knockback_immune = false
+
+[node name="Dummy7" parent="Contestants/Props" unique_id=251600600 instance=ExtResource("2_n21tw")]
+position = Vector2(320, 384)
+
+[node name="Dummy8" parent="Contestants/Props" unique_id=499833935 instance=ExtResource("2_n21tw")]
+position = Vector2(384, 384)
+
+[node name="Dummy10" parent="Contestants/Props" unique_id=543155689 instance=ExtResource("2_n21tw")]
+position = Vector2(512, 384)
 
 [node name="Weapons" type="Node2D" parent="." unique_id=1522979745]
 
@@ -135,6 +136,7 @@ collision_mask = 7
 weapon_data = ExtResource("12_ggyvn")
 
 [node name="Hud" parent="." unique_id=1799122153 groups=["hud"] instance=ExtResource("13_463im")]
+visible = false
 script = ExtResource("14_1jype")
 player_bar_border_thickness = 2.0
 vignette_threshold = 0.3

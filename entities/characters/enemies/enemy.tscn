@@ -108,6 +108,7 @@ flip_v = true
 region_rect = Rect2(76, 222, 80, 7)
 
 [node name="Muzzle_L" type="Marker2D" parent="Body/Hands/HandLeft" unique_id=1324439912]
+show_behind_parent = true
 position = Vector2(14, 5)
 
 [node name="HitboxLeft" type="Area2D" parent="Body/Hands/HandLeft" unique_id=462773800]
@@ -130,6 +131,7 @@ show_behind_parent = true
 position = Vector2(10, 0)
 
 [node name="Muzzle_R" type="Marker2D" parent="Body/Hands/HandRight" unique_id=499555375]
+show_behind_parent = true
 position = Vector2(14, -5)
 
 [node name="HitboxRight" type="Area2D" parent="Body/Hands/HandRight" unique_id=1457903818]
