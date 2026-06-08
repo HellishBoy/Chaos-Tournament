@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="2_l6qqo"]
 [ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="3_o1jmv"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="4_xwoua"]
+[ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://entities/prop/dummy/dummy.tscn" id="5_f61mh"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/weapon_pickup.tscn" id="6_5bebc"]
 [ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/_melee/baseball_bat.tres" id="7_ailfp"]
 [ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/_ranged/nail_gun.tres" id="8_qrip1"]
@@ -81,6 +82,12 @@ health_bar_scene = ExtResource("4_xwoua")
 
 [node name="Props" type="Node2D" parent="Contestants" unique_id=526174102]
 
+[node name="Dummy" parent="Contestants/Props" unique_id=228317739 instance=ExtResource("5_f61mh")]
+position = Vector2(80, 128)
+
+[node name="Dummy2" parent="Contestants/Props" unique_id=263292854 instance=ExtResource("5_f61mh")]
+position = Vector2(608, 136)
+
 [node name="Weapons" type="Node2D" parent="." unique_id=1522979745]
 
 [node name="WeaponPickup" parent="Weapons" unique_id=667121191 instance=ExtResource("6_5bebc")]
@@ -122,3 +129,14 @@ weapon_data = ExtResource("13_lcsl8")
 script = ExtResource("15_4jjck")
 player_bar_border_thickness = 2.0
 vignette_threshold = 0.3
+
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=2034989603]
+
+[node name="PlayerSpawn" type="Marker2D" parent="SpawnPoints" unique_id=1940162517]
+position = Vector2(336, 400)
+
+[node name="EnemySpawn1" type="Marker2D" parent="SpawnPoints" unique_id=1808211518]
+position = Vector2(312, -32)
+
+[node name="EnemySpawn2" type="Marker2D" parent="SpawnPoints" unique_id=697539913]
+position = Vector2(360, -32)
