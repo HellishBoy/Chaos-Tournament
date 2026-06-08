@@ -68,9 +68,9 @@ radius = 6.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_nenq2"]
 
-[node name="Enemy" type="CharacterBody2D" unique_id=390347379]
+[node name="Enemy" type="CharacterBody2D" unique_id=390347379 groups=["enemy"]]
 collision_layer = 4
-collision_mask = 5
+collision_mask = 7
 script = ExtResource("1_7p1mj")
 can_pick_up_weapons = true
 detection_range = 100.0
