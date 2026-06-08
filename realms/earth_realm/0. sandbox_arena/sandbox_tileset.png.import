@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://da2hol5y5g2wr"
-path="res://.godot/imported/Tileset.png-64b6ac7ba293b04d560c5725a5fd4d99.ctex"
+path="res://.godot/imported/sandbox_tileset.png-4d6eec93767987e275e5405faa654641.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://world/levels/sandbox/Tileset.png"
-dest_files=["res://.godot/imported/Tileset.png-64b6ac7ba293b04d560c5725a5fd4d99.ctex"]
+source_file="res://realms/earth_realm/0. sandbox_arena/sandbox_tileset.png"
+dest_files=["res://.godot/imported/sandbox_tileset.png-4d6eec93767987e275e5405faa654641.ctex"]
 
 [params]
 
