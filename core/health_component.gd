@@ -12,7 +12,7 @@ class_name HealthComponent
 @export var current_hp: int = 100
 @export var immortal: bool = false
 # How long the entity is invincible after taking a hit (in seconds)
-@export var invincibility_duration: float = 0.2
+@export var invincibility_duration: float = 0.0
 
 enum HealthBarVisibility {
 	ALWAYS_SHOW,

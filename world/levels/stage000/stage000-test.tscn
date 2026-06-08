@@ -1,22 +1,22 @@
 [gd_scene format=4 uid="uid://b73evdagoq6xy"]
 
-[ext_resource type="Texture2D" uid="uid://da2hol5y5g2wr" path="res://world/tile_map/Tileset.png" id="1_puc8e"]
-[ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://entities/prop/dummy/dummy.tscn" id="2_4e0my"]
-[ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="3_rdi37"]
-[ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="4_1gyxt"]
-[ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/weapon_pickup.tscn" id="5_181f5"]
-[ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/_melee/baseball_bat.tres" id="6_ddyrp"]
-[ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/_ranged/nail_gun.tres" id="7_3gl0y"]
-[ext_resource type="Resource" uid="uid://w2sashhtg4jm" path="res://weapons/_melee/metal_pipe.tres" id="8_sfqfu"]
-[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/_ranged/dual_mac_10.tres" id="9_vxggg"]
-[ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/_melee/sword.tres" id="10_vj82c"]
-[ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/_melee/battle_axe.tres" id="11_mn62q"]
-[ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://weapons/_melee/lollipop.tres" id="12_46msr"]
-[ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="13_setud"]
-[ext_resource type="Script" uid="uid://ctrptflhtsjqv" path="res://ui/hud.gd" id="14_dniow"]
+[ext_resource type="Texture2D" uid="uid://da2hol5y5g2wr" path="res://world/levels/sandbox/Tileset.png" id="1_3y13y"]
+[ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://entities/prop/dummy/dummy.tscn" id="2_i62lo"]
+[ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="3_hgevc"]
+[ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="4_t3qh5"]
+[ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/weapon_pickup.tscn" id="5_wdldw"]
+[ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/_melee/baseball_bat.tres" id="6_xyya5"]
+[ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/_ranged/nail_gun.tres" id="7_i5w5u"]
+[ext_resource type="Resource" uid="uid://w2sashhtg4jm" path="res://weapons/_melee/metal_pipe.tres" id="8_nydb2"]
+[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/_ranged/dual_mac_10.tres" id="9_wg1ds"]
+[ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/_melee/sword.tres" id="10_0yv7m"]
+[ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/_melee/battle_axe.tres" id="11_pftvv"]
+[ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://weapons/_melee/lollipop.tres" id="12_su56b"]
+[ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="13_cksco"]
+[ext_resource type="Script" uid="uid://ctrptflhtsjqv" path="res://ui/hud.gd" id="14_nishb"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rp871"]
-texture = ExtResource("1_puc8e")
+texture = ExtResource("1_3y13y")
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 1:0/0 = 0
@@ -67,64 +67,64 @@ tile_set = SubResource("TileSet_scryw")
 [node name="Contestants" type="Node2D" parent="." unique_id=1275869653]
 y_sort_enabled = true
 
-[node name="Dummy" parent="Contestants" unique_id=228317739 instance=ExtResource("2_4e0my")]
+[node name="Dummy" parent="Contestants" unique_id=228317739 instance=ExtResource("2_i62lo")]
 position = Vector2(256, 368)
 
-[node name="Dummy5" parent="Contestants" unique_id=1915085432 instance=ExtResource("2_4e0my")]
+[node name="Dummy5" parent="Contestants" unique_id=1915085432 instance=ExtResource("2_i62lo")]
 position = Vector2(179, 408)
 
-[node name="Dummy7" parent="Contestants" unique_id=251600600 instance=ExtResource("2_4e0my")]
+[node name="Dummy7" parent="Contestants" unique_id=251600600 instance=ExtResource("2_i62lo")]
 position = Vector2(211, 368)
 
-[node name="Dummy8" parent="Contestants" unique_id=499833935 instance=ExtResource("2_4e0my")]
+[node name="Dummy8" parent="Contestants" unique_id=499833935 instance=ExtResource("2_i62lo")]
 position = Vector2(457, 361)
 
-[node name="Dummy10" parent="Contestants" unique_id=543155689 instance=ExtResource("2_4e0my")]
+[node name="Dummy10" parent="Contestants" unique_id=543155689 instance=ExtResource("2_i62lo")]
 position = Vector2(505, 392)
 
-[node name="Enemy" parent="Contestants" unique_id=1826535128 instance=ExtResource("3_rdi37")]
+[node name="Enemy" parent="Contestants" unique_id=1826535128 instance=ExtResource("3_hgevc")]
 position = Vector2(384, 114)
 detection_range = 200.0
 
-[node name="Player" parent="Contestants" unique_id=390347379 instance=ExtResource("4_1gyxt")]
+[node name="Player" parent="Contestants" unique_id=390347379 instance=ExtResource("4_t3qh5")]
 position = Vector2(384, 672)
 
 [node name="Weapons" type="Node2D" parent="." unique_id=1522979745]
 
-[node name="WeaponPickup" parent="Weapons" unique_id=667121191 instance=ExtResource("5_181f5")]
+[node name="WeaponPickup" parent="Weapons" unique_id=667121191 instance=ExtResource("5_wdldw")]
 position = Vector2(527, 308)
 collision_mask = 7
-weapon_data = ExtResource("6_ddyrp")
+weapon_data = ExtResource("6_xyya5")
 
-[node name="WeaponPickup2" parent="Weapons" unique_id=1448433545 instance=ExtResource("5_181f5")]
+[node name="WeaponPickup2" parent="Weapons" unique_id=1448433545 instance=ExtResource("5_wdldw")]
 position = Vector2(163, 466)
 collision_mask = 7
-weapon_data = ExtResource("7_3gl0y")
+weapon_data = ExtResource("7_i5w5u")
 
-[node name="WeaponPickup3" parent="Weapons" unique_id=2093546705 instance=ExtResource("5_181f5")]
+[node name="WeaponPickup3" parent="Weapons" unique_id=2093546705 instance=ExtResource("5_wdldw")]
 position = Vector2(227, 262)
 collision_mask = 7
-weapon_data = ExtResource("8_sfqfu")
+weapon_data = ExtResource("8_nydb2")
 
-[node name="WeaponPickup4" parent="Weapons" unique_id=354522950 instance=ExtResource("5_181f5")]
+[node name="WeaponPickup4" parent="Weapons" unique_id=354522950 instance=ExtResource("5_wdldw")]
 position = Vector2(155, 529)
 collision_mask = 7
-weapon_data = ExtResource("9_vxggg")
+weapon_data = ExtResource("9_wg1ds")
 
-[node name="WeaponPickup5" parent="Weapons" unique_id=17200250 instance=ExtResource("5_181f5")]
+[node name="WeaponPickup5" parent="Weapons" unique_id=17200250 instance=ExtResource("5_wdldw")]
 position = Vector2(356, 602)
 collision_mask = 7
-weapon_data = ExtResource("10_vj82c")
+weapon_data = ExtResource("10_0yv7m")
 
-[node name="WeaponPickup6" parent="Weapons" unique_id=1467765869 instance=ExtResource("5_181f5")]
+[node name="WeaponPickup6" parent="Weapons" unique_id=1467765869 instance=ExtResource("5_wdldw")]
 position = Vector2(548, 466)
 collision_mask = 7
-weapon_data = ExtResource("11_mn62q")
+weapon_data = ExtResource("11_pftvv")
 
-[node name="WeaponPickup7" parent="Weapons" unique_id=1709223565 instance=ExtResource("5_181f5")]
+[node name="WeaponPickup7" parent="Weapons" unique_id=1709223565 instance=ExtResource("5_wdldw")]
 position = Vector2(395, 616)
 collision_mask = 7
-weapon_data = ExtResource("12_46msr")
+weapon_data = ExtResource("12_su56b")
 
-[node name="Hud" parent="." unique_id=1799122153 groups=["hud"] instance=ExtResource("13_setud")]
-script = ExtResource("14_dniow")
+[node name="Hud" parent="." unique_id=1799122153 groups=["hud"] instance=ExtResource("13_cksco")]
+script = ExtResource("14_nishb")
