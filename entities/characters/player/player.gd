@@ -46,7 +46,16 @@ func _on_damaged(_amount: int, _remaining: int) -> void:
 	tween.tween_property($Body, "modulate", Color.WHITE, 0.1)
 
 func _on_died() -> void:
-	print("Player died!")
+	# Clear enemy targets
+	for enemy in get_tree().get_nodes_in_group("enemy"):
+		enemy.target = null
+		enemy.ai_state = Enemy.AIState.IDLE
+	# Drop weapon before disappearing
+	if current_weapon != null:
+		call_deferred("_do_toss")
+	set_physics_process(false)
+	set_process(false)
+	visible = false
 
 # ── Input ────────────────────────────────────────────────────────
 
@@ -103,8 +112,8 @@ func _get_nearest_enemy() -> Node2D:
 # ── Dodge ────────────────────────────────────────────────────────
 
 func set_invincible(state: bool) -> void:
-	set_collision_mask_value(3, not state)
-
+	$CollisionShape2D.set_deferred("disabled", state)
+	
 # ── Physics Process ──────────────────────────────────────────────
 
 func _physics_process(delta: float) -> void:

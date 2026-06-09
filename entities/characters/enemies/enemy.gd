@@ -79,7 +79,12 @@ func _on_died() -> void:
 	var tween := create_tween()
 	tween.tween_property($Body, "modulate", Color(8.0, 8.0, 8.0, 1.0), 0.1)
 	tween.tween_interval(0.1)
-	tween.tween_callback(func(): queue_free())
+	tween.tween_callback(func(): _hide_until_respawn())
+	
+func _hide_until_respawn() -> void:
+	visible = false
+	set_physics_process(false)
+	set_process(false)
 	
 func _drop_weapon() -> void:
 	if current_weapon == null:
@@ -92,6 +97,7 @@ func _drop_weapon() -> void:
 		return
 	var data := current_weapon
 	current_weapon = null
+	_update_weapon_visuals()
 	var pickup = weapon_pickup_scene.instantiate()
 	pickup.weapon_data = data
 	pickup._was_tossed = true
