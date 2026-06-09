@@ -137,11 +137,15 @@ func _respawn(character: Node, spawn: Marker2D) -> void:
 # ── Win / Lose ────────────────────────────────────────────────────
 
 func _trigger_win() -> void:
+	print("WIN TRIGGERED")
+	print("win_screen: ", win_screen)
 	if win_screen:
 		win_screen.visible = true
 	get_tree().paused = true
 
 func _trigger_lose() -> void:
+	print("LOSE TRIGGERED")
+	print("lose_screen: ", lose_screen)
 	if lose_screen:
 		lose_screen.visible = true
 	get_tree().paused = true
