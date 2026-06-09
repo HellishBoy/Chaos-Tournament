@@ -112,7 +112,7 @@ func _get_nearest_enemy() -> Node2D:
 # ── Dodge ────────────────────────────────────────────────────────
 
 func set_invincible(state: bool) -> void:
-	$CollisionShape2D.set_deferred("disabled", state)
+	set_collision_mask_value(3, not state)
 	
 # ── Physics Process ──────────────────────────────────────────────
 
