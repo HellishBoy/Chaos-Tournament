@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cq74u8e6dep8k"]
 
 [ext_resource type="Shader" uid="uid://u7ryunyacc8m" path="res://ui/hud.gdshader" id="1_rbyyf"]
+[ext_resource type="Script" uid="uid://bxa2idm813utw" path="res://ui/pause_menu.gd" id="2_276te"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rbyyf"]
 shader = ExtResource("1_rbyyf")
@@ -77,3 +78,101 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="WinScreen" type="Control" parent="." unique_id=1051883425]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Panel" type="Panel" parent="WinScreen" unique_id=1910385058]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 24.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="WinScreen" unique_id=732735413]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="YouWin" type="Label" parent="WinScreen/VBoxContainer" unique_id=1059566837]
+layout_mode = 2
+text = "You Win!"
+horizontal_alignment = 1
+
+[node name="PlayAgainButton" type="Button" parent="WinScreen/VBoxContainer" unique_id=322483147]
+layout_mode = 2
+text = "Play Again"
+
+[node name="StageSelectButton" type="Button" parent="WinScreen/VBoxContainer" unique_id=1784209964]
+layout_mode = 2
+text = "Stage Selection"
+
+[node name="LoseScreen" type="Control" parent="." unique_id=1673116785]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="LoseScreen" unique_id=353993095]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 24.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LoseScreen" unique_id=1717220580]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="YouLose" type="Label" parent="LoseScreen/VBoxContainer" unique_id=472799939]
+layout_mode = 2
+text = "You Lose.."
+horizontal_alignment = 1
+
+[node name="TryAgainButton" type="Button" parent="LoseScreen/VBoxContainer" unique_id=1478959569]
+layout_mode = 2
+text = "Try Again"
+
+[node name="StageSelectButton" type="Button" parent="LoseScreen/VBoxContainer" unique_id=2140178734]
+layout_mode = 2
+text = "Stage Selection"
+
+[node name="PauseMenu" type="Control" parent="." unique_id=1929977265]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("2_276te")
+
+[node name="PanelContainer" type="PanelContainer" parent="PauseMenu" unique_id=1850133150]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 190.5
+offset_top = 52.0
+offset_right = 291.50006
+offset_bottom = 188.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PauseMenu/PanelContainer" unique_id=274885164]
+layout_mode = 2
+
+[node name="ResumeButton" type="Button" parent="PauseMenu/PanelContainer/VBoxContainer" unique_id=1335245757]
+layout_mode = 2
+text = "Resume"
+
+[node name="StageSelectButton" type="Button" parent="PauseMenu/PanelContainer/VBoxContainer" unique_id=718192704]
+layout_mode = 2
+text = "Stage Select"
+
+[node name="MainMenuButton" type="Button" parent="PauseMenu/PanelContainer/VBoxContainer" unique_id=1563585069]
+layout_mode = 2
+text = "Main Menu"
+
+[node name="QuitButton" type="Button" parent="PauseMenu/PanelContainer/VBoxContainer" unique_id=186718146]
+layout_mode = 2
+text = "Quit"

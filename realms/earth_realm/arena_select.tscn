@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://bka34tqxhl13f"]
+
+[ext_resource type="Script" uid="uid://c1hcvijp2yv8o" path="res://realms/earth_realm/arena_select.gd" id="1_8nxn1"]
+
+[node name="Control" type="Control" unique_id=1802168461]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_8nxn1")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1161987969]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 240.0
+offset_top = 120.0
+offset_right = 244.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=987210039]
+layout_mode = 2
+
+[node name="ColumnLeft" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=95885680]
+layout_mode = 2
+
+[node name="ColumnRight" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=90710254]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="." unique_id=569922694]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Back"
