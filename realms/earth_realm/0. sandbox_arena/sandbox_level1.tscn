@@ -86,7 +86,7 @@ health_bar_scene = ExtResource("4_xwoua")
 [node name="Props" type="Node2D" parent="Contestants" unique_id=526174102]
 
 [node name="Dummy" parent="Contestants/Props" unique_id=228317739 instance=ExtResource("5_f61mh")]
-position = Vector2(80, 128)
+position = Vector2(336, -32)
 
 [node name="Dummy2" parent="Contestants/Props" unique_id=263292854 instance=ExtResource("5_f61mh")]
 position = Vector2(608, 136)
@@ -136,29 +136,30 @@ vignette_threshold = 0.3
 [node name="WinScreen" type="Control" parent="Hud" unique_id=1318273846]
 process_mode = 3
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
 
 [node name="Panel" type="Panel" parent="Hud/WinScreen" unique_id=342981210]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 120.0
+offset_bottom = 24.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Hud/WinScreen" unique_id=522041947]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Label" type="Label" parent="Hud/WinScreen/VBoxContainer" unique_id=1536438351]
+[node name="YouWin" type="Label" parent="Hud/WinScreen/VBoxContainer" unique_id=1536438351]
 layout_mode = 2
 text = "You Win!"
+horizontal_alignment = 1
 
-[node name="Button" type="Button" parent="Hud/WinScreen/VBoxContainer" unique_id=2080781703]
+[node name="PlayAgainButton" type="Button" parent="Hud/WinScreen/VBoxContainer" unique_id=2080781703]
 layout_mode = 2
-text = "Continue"
+text = "Play Again"
+
+[node name="LevelSelectButton" type="Button" parent="Hud/WinScreen/VBoxContainer" unique_id=1954675491]
+layout_mode = 2
+text = "Level Selection"
 
 [node name="LoseScreen" type="Control" parent="Hud" unique_id=1094204297]
 process_mode = 3
@@ -171,21 +172,26 @@ grow_vertical = 2
 
 [node name="Panel" type="Panel" parent="Hud/LoseScreen" unique_id=1709472060]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_right = 120.0
+offset_bottom = 24.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Hud/LoseScreen" unique_id=1567180124]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Label" type="Label" parent="Hud/LoseScreen/VBoxContainer" unique_id=1611999483]
+[node name="YouLose" type="Label" parent="Hud/LoseScreen/VBoxContainer" unique_id=1611999483]
 layout_mode = 2
 text = "You Lose.."
+horizontal_alignment = 1
 
-[node name="Button" type="Button" parent="Hud/LoseScreen/VBoxContainer" unique_id=1585208483]
+[node name="TryAgainButton" type="Button" parent="Hud/LoseScreen/VBoxContainer" unique_id=1585208483]
 layout_mode = 2
 text = "Try Again"
+
+[node name="LevelSelectButton" type="Button" parent="Hud/LoseScreen/VBoxContainer" unique_id=243696937]
+layout_mode = 2
+text = "Level Selection"
 
 [node name="SpawnPoints" type="Node2D" parent="." unique_id=2034989603]
 
