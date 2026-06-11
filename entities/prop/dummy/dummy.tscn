@@ -16,9 +16,9 @@ radius = 7.071068
 collision_layer = 4
 collision_mask = 5
 script = ExtResource("1_lhe3x")
-health_bar_scene = ExtResource("4_aaw26")
 knockback_immune = true
 flash_target = NodePath(".")
+health_bar_scene = ExtResource("4_aaw26")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=478707443]
 texture = ExtResource("2_k5f3b")
