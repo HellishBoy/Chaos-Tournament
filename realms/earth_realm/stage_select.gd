@@ -1,21 +1,18 @@
-# level_select.gd
+# stage_select.gd
 # Level selection screen for Sandbox Arena.
-# Shows 10 levels in 2 columns. Level 1 unlocked, rest greyed out for now.
+# Shows 10 stages in 2 columns. Level 1 unlocked, rest greyed out for now.
 extends Control
 
 # ── Level Data ───────────────────────────────────────────────────
 
-const LEVELS = [
-	{ "label": "Level 1", "scene": "res://realms/earth_realm/0. sandbox_arena/sandbox_level1.tscn", "unlocked": true },
-	{ "label": "Level 2", "scene": "", "unlocked": false },
-	{ "label": "Level 3", "scene": "", "unlocked": false },
-	{ "label": "Level 4", "scene": "", "unlocked": false },
-	{ "label": "Level 5", "scene": "", "unlocked": false },
-	{ "label": "Level 6", "scene": "", "unlocked": false },
-	{ "label": "Level 7", "scene": "", "unlocked": false },
-	{ "label": "Level 8", "scene": "", "unlocked": false },
-	{ "label": "Level 9", "scene": "", "unlocked": false },
-	{ "label": "Level 10", "scene": "", "unlocked": false },
+const STAGES = [
+	{ "label": "Stage 1", "scene": "res://realms/earth_realm/0_sandbox_arena/sandbox_stage1.tscn", "unlocked": true },
+	{ "label": "Stage 2", "scene": "", "unlocked": false },
+	{ "label": "Stage 3", "scene": "", "unlocked": false },
+	{ "label": "Stage 4", "scene": "", "unlocked": false },
+	{ "label": "Stage 5", "scene": "", "unlocked": false },
+	{ "label": "Stage 6", "scene": "", "unlocked": false },
+	{ "label": "Stage 7", "scene": "", "unlocked": false }
 ]
 
 # ── Node References ──────────────────────────────────────────────
@@ -31,8 +28,8 @@ func _ready() -> void:
 	back_button.pressed.connect(_on_back_pressed)
 
 func _build_level_buttons() -> void:
-	for i in LEVELS.size():
-		var data: Dictionary = LEVELS[i]
+	for i in STAGES.size():
+		var data: Dictionary = STAGES[i]
 		var btn := Button.new()
 		btn.text = data["label"]
 		btn.custom_minimum_size = Vector2(160, 40)

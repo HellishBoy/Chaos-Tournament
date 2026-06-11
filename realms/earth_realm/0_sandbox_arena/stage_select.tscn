@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://d0xdmtrdr6ajk"]
 
-[ext_resource type="Script" uid="uid://qgfueawtnxxi" path="res://realms/earth_realm/level_select.gd" id="1_p52di"]
+[ext_resource type="Script" uid="uid://qgfueawtnxxi" path="res://realms/earth_realm/stage_select.gd" id="1_33tim"]
 
 [node name="Control" type="Control" unique_id=1810988353]
 layout_mode = 3
 anchors_preset = 0
-script = ExtResource("1_p52di")
+script = ExtResource("1_33tim")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=765370993]
 layout_mode = 1
