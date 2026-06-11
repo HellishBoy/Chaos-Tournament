@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://d0etljarh6v4d"]
+
+[ext_resource type="Script" uid="uid://dx5q1cbxfcjmq" path="res://realms/realm_select.gd" id="1_5vsxp"]
+
+[node name="Control" type="Control" unique_id=1358168005]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_5vsxp")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1435992653]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 240.0
+offset_top = 120.0
+offset_right = 240.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RealmContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1647755054]
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="." unique_id=1754717470]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "Back"

@@ -52,5 +52,4 @@ func _on_level_pressed(scene_path: String) -> void:
 	get_tree().change_scene_to_file(scene_path)
 
 func _on_back_pressed() -> void:
-	# Placeholder — will go to realm select later
-	pass
+	get_tree().change_scene_to_file("res://realms/earth_realm/arena_select.tscn")
