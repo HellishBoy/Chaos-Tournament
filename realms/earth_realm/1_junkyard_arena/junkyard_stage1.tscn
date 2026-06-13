@@ -81,12 +81,23 @@ main_attack_cooldown = 0.8
 position = Vector2(336, 424)
 health_bar_scene = ExtResource("5_ipurl")
 
-[node name="Props" type="Node2D" parent="Contestants" unique_id=526174102]
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=2034989603]
 
-[node name="Dummy" parent="Contestants/Props" unique_id=228317739 instance=ExtResource("6_ah1uk")]
+[node name="PlayerSpawn" type="Marker2D" parent="SpawnPoints" unique_id=1940162517]
+position = Vector2(336, 400)
+
+[node name="EnemySpawn1" type="Marker2D" parent="SpawnPoints" unique_id=1808211518]
+position = Vector2(309, -88)
+
+[node name="EnemySpawn2" type="Marker2D" parent="SpawnPoints" unique_id=697539913]
+position = Vector2(357, -88)
+
+[node name="Props" type="Node2D" parent="." unique_id=526174102]
+
+[node name="Dummy" parent="Props" unique_id=228317739 instance=ExtResource("6_ah1uk")]
 position = Vector2(336, -32)
 
-[node name="Dummy2" parent="Contestants/Props" unique_id=263292854 instance=ExtResource("6_ah1uk")]
+[node name="Dummy2" parent="Props" unique_id=263292854 instance=ExtResource("6_ah1uk")]
 position = Vector2(608, 136)
 
 [node name="Weapons" type="Node2D" parent="." unique_id=1522979745]
@@ -131,21 +142,10 @@ script = ExtResource("16_jqoj8")
 player_bar_border_thickness = 2.0
 vignette_threshold = 0.3
 
-[node name="SpawnPoints" type="Node2D" parent="." unique_id=2034989603]
-
-[node name="PlayerSpawn" type="Marker2D" parent="SpawnPoints" unique_id=1940162517]
-position = Vector2(336, 400)
-
-[node name="EnemySpawn1" type="Marker2D" parent="SpawnPoints" unique_id=1808211518]
-position = Vector2(313, -88)
-
-[node name="EnemySpawn2" type="Marker2D" parent="SpawnPoints" unique_id=697539913]
-position = Vector2(357, -88)
-
 [node name="RoundManager" type="Node" parent="." unique_id=1923771772 node_paths=PackedStringArray("player_spawn", "enemy_spawns", "win_screen", "lose_screen")]
 script = ExtResource("17_suu1f")
 player_lives = 2
-enemy_lives = 1
+enemy_lives = 2
 player_spawn = NodePath("../SpawnPoints/PlayerSpawn")
 enemy_spawns = [NodePath("../SpawnPoints/EnemySpawn1"), NodePath("../SpawnPoints/EnemySpawn2")]
 win_screen = NodePath("../Hud/WinScreen")
