@@ -4,23 +4,29 @@
 
 [node name="Control" type="Control" unique_id=1802168461]
 layout_mode = 3
-anchors_preset = 0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_8nxn1")
 
 [node name="MarginContainer" type="MarginContainer" parent="." unique_id=1161987969]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 240.0
-offset_top = 120.0
-offset_right = 244.0
-offset_bottom = 120.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -2.0
+offset_right = 2.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=987210039]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="ColumnLeft" type="VBoxContainer" parent="MarginContainer/HBoxContainer" unique_id=95885680]
 layout_mode = 2
