@@ -39,6 +39,7 @@ func _ready() -> void:
 	call_deferred("_find_player")
 	_vignette_material = vignette.material as ShaderMaterial
 	_vignette_material.set_shader_parameter("intensity", 1.0)
+	_setup_screens()
 
 func _process(delta: float) -> void:
 	if _vignette_active:
@@ -167,3 +168,21 @@ func _get_durability_max(tier: String) -> int:
 		"medium": return 5
 		"high":   return 8
 	return 1
+	
+func _setup_screens() -> void:
+	$WinScreen/VBoxContainer/PlayAgainButton.pressed.connect(_on_play_again_pressed)
+	$WinScreen/VBoxContainer/StageSelectButton.pressed.connect(_on_stage_select_pressed)
+	$LoseScreen/VBoxContainer/TryAgainButton.pressed.connect(_on_try_again_pressed)
+	$LoseScreen/VBoxContainer/StageSelectButton.pressed.connect(_on_stage_select_pressed)
+
+func _on_play_again_pressed() -> void:
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+func _on_try_again_pressed() -> void:
+	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+func _on_stage_select_pressed() -> void:
+	get_tree().paused = false
+	get_tree().change_scene_to_file(GameState.stage_select_path)
