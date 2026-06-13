@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d0xdmtrdr6ajk"]
 
-[ext_resource type="Script" uid="uid://qgfueawtnxxi" path="res://realms/earth_realm/0_sandbox_arena/stage_select.gd" id="1_33tim"]
+[ext_resource type="Script" uid="uid://qgfueawtnxxi" path="res://realms/earth_realm/1_junkyard_arena/stage_select.gd" id="1_33tim"]
 
 [node name="Control" type="Control" unique_id=1810988353]
 layout_mode = 3

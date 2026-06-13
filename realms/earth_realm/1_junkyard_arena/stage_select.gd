@@ -6,7 +6,7 @@ extends Control
 # ── Level Data ───────────────────────────────────────────────────
 
 const STAGES = [
-	{ "label": "Stage 1", "scene": "res://realms/earth_realm/0_sandbox_arena/sandbox_stage1.tscn", "unlocked": true },
+	{ "label": "Stage 1", "scene": "res://realms/earth_realm/1_junkyard_arena/junkyard_stage1.tscn", "unlocked": true },
 	{ "label": "Stage 2", "scene": "", "unlocked": false },
 	{ "label": "Stage 3", "scene": "", "unlocked": false },
 	{ "label": "Stage 4", "scene": "", "unlocked": false },

@@ -1,6 +1,6 @@
 extends Node2D
 
-const STAGE_SELECT = "res://realms/earth_realm/0_sandbox_arena/stage_select.tscn"
+const STAGE_SELECT = "res://realms/earth_realm/1_junkyard_arena/stage_select.tscn"
 
 func _ready() -> void:
 	$Hud/WinScreen/VBoxContainer/PlayAgainButton.pressed.connect(_on_play_again_pressed)

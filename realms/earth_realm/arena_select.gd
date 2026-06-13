@@ -6,7 +6,7 @@ extends Control
 # ── Arena Data ───────────────────────────────────────────────────
 
 const ARENAS = [
-	{ "label": "Junkyard Arena", "scene": "res://realms/earth_realm/0_sandbox_arena/stage_select.tscn", "stage_select": "res://realms/earth_realm/0_sandbox_arena/stage_select.tscn", "unlocked": true },
+	{ "label": "Junkyard Arena", "scene": "res://realms/earth_realm/1_junkyard_arena/stage_select.tscn", "stage_select": "res://realms/earth_realm/1_junkyard_arena/stage_select.tscn", "unlocked": true },
 	{ "label": "City Arena", "scene": "", "stage_select": "", "unlocked": false },
 	{ "label": "Military Arena", "scene": "", "stage_select": "", "unlocked": false },
 	{ "label": "Forest Arena", "scene": "", "stage_select": "", "unlocked": false },

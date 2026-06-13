@@ -186,7 +186,6 @@ script = ExtResource("5_qlg0r")
 aim_toggle_mode = true
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=546847491]
-visible = false
 collision_layer = 32
 collision_mask = 16
 
