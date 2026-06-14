@@ -69,12 +69,14 @@ tile_set = SubResource("TileSet_scryw")
 [node name="Contestants" type="Node2D" parent="." unique_id=1275869653]
 y_sort_enabled = true
 
-[node name="Enemy" parent="Contestants" unique_id=1826535128 instance=ExtResource("3_us766")]
+[node name="Enemy1" parent="Contestants" unique_id=1826535128 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
 position = Vector2(313, -64)
+spawn_point = NodePath("../../SpawnPoints/EnemySpawn1")
 main_attack_cooldown = 0.8
 
-[node name="Enemy2" parent="Contestants" unique_id=390347379 instance=ExtResource("3_us766")]
+[node name="Enemy2" parent="Contestants" unique_id=390347379 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
 position = Vector2(356, -64)
+spawn_point = NodePath("../../SpawnPoints/EnemySpawn2")
 main_attack_cooldown = 0.8
 
 [node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("4_5ltjn")]
@@ -87,7 +89,7 @@ health_bar_scene = ExtResource("5_ipurl")
 position = Vector2(336, 400)
 
 [node name="EnemySpawn1" type="Marker2D" parent="SpawnPoints" unique_id=1808211518]
-position = Vector2(309, -88)
+position = Vector2(314, -88)
 
 [node name="EnemySpawn2" type="Marker2D" parent="SpawnPoints" unique_id=697539913]
 position = Vector2(357, -88)
@@ -142,11 +144,10 @@ script = ExtResource("16_jqoj8")
 player_bar_border_thickness = 2.0
 vignette_threshold = 0.3
 
-[node name="RoundManager" type="Node" parent="." unique_id=1923771772 node_paths=PackedStringArray("player_spawn", "enemy_spawns", "win_screen", "lose_screen")]
+[node name="RoundManager" type="Node" parent="." unique_id=1923771772 node_paths=PackedStringArray("player_spawn", "win_screen", "lose_screen")]
 script = ExtResource("17_suu1f")
 player_lives = 2
 enemy_lives = 2
 player_spawn = NodePath("../SpawnPoints/PlayerSpawn")
-enemy_spawns = [NodePath("../SpawnPoints/EnemySpawn1"), NodePath("../SpawnPoints/EnemySpawn2")]
 win_screen = NodePath("../Hud/WinScreen")
 lose_screen = NodePath("../Hud/LoseScreen")

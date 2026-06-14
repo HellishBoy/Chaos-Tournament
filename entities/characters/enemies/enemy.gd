@@ -9,6 +9,9 @@ class_name Enemy
 @export var can_toss_weapons: bool = false
 @export var destroy_weapon_on_death: bool = false
 
+@export_group("Spawn")
+@export var spawn_point: Marker2D
+
 @export_group("AI")
 @export var detection_range: float = 200.0
 @export var attack_range: float = 40.0
