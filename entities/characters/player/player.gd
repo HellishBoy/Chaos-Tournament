@@ -1,5 +1,5 @@
 # Player.gd 
-# Hello Claude
+# Hello Again Claude
 # Extends Character — handles input, lock-on, dodge, and camera.
 extends Character
 class_name Player
