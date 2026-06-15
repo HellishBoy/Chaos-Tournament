@@ -1,14 +1,21 @@
 # RoundManager.gd
 # Handles lives, respawning, and win/lose conditions for a level.
 # Place as a child node in each level scene.
-# Each level exposes spawn points and lives counts — RoundManager does the rest.
 extends Node
 class_name RoundManager
 
+# ── Win Conditions ────────────────────────────────────────────────
+
+enum WinCondition {
+	ELIMINATION,    # Deplete all Main enemy lives
+	# SURVIVAL,     # Hold out until timer runs out
+	# CAPTURE_FLAG, # Capture and hold a point
+}
+
 # ── Exports ──────────────────────────────────────────────────────
 
+@export var win_condition: WinCondition = WinCondition.ELIMINATION
 @export var player_lives: int = 3
-@export var enemy_lives: int = 3
 @export var respawn_delay: float = 2.0
 
 @export_group("Spawn Points")
@@ -21,10 +28,11 @@ class_name RoundManager
 # ── State ────────────────────────────────────────────────────────
 
 var _player_lives_remaining: int = 0
-var _enemy_lives: Dictionary = {}  # Enemy node -> lives remaining
+var _enemy_lives: Dictionary = {}   # Enemy node -> lives remaining
+var _main_enemies: Array = []       # Only main enemies — tracked for win condition
+var _minion_enemies: Array = []     # Minions — respawn but never trigger win
 
 var _player: Player = null
-var _enemies: Array = []
 
 # ── Ready ────────────────────────────────────────────────────────
 
@@ -32,24 +40,28 @@ func _ready() -> void:
 	await owner.ready
 
 	_player = get_tree().get_first_node_in_group("player") as Player
-	_enemies = get_tree().get_nodes_in_group("enemy")
+	var all_enemies = get_tree().get_nodes_in_group("enemy")
 
 	assert(_player != null, "RoundManager: No node in group 'player' found.")
 	assert(player_spawn != null, "RoundManager: player_spawn Marker2D not assigned.")
 
-	# Warn if any enemy is missing a spawn point
-	for enemy in _enemies:
+	# Sort enemies into main and minion
+	for enemy in all_enemies:
 		if enemy.spawn_point == null:
 			push_warning("RoundManager: " + enemy.name + " has no spawn_point assigned.")
+		if enemy.is_main_enemy:
+			_main_enemies.append(enemy)
+		else:
+			_minion_enemies.append(enemy)
 
-	# Set lives
+	# Set lives per enemy from their own export
 	_player_lives_remaining = player_lives
-	for enemy in _enemies:
-		_enemy_lives[enemy] = enemy_lives
+	for enemy in all_enemies:
+		_enemy_lives[enemy] = enemy.lives
 
 	# Connect death signals
 	_player.health.died.connect(_on_player_died)
-	for enemy in _enemies:
+	for enemy in all_enemies:
 		enemy.health.died.connect(_on_enemy_died.bind(enemy))
 
 	# Hide screens
@@ -70,17 +82,33 @@ func _on_player_died() -> void:
 func _on_enemy_died(enemy: Node) -> void:
 	_enemy_lives[enemy] -= 1
 	if _enemy_lives[enemy] <= 0:
+		# Enemy is permanently out
 		_enemy_lives.erase(enemy)
-		_enemies.erase(enemy)
-		if _enemies.is_empty():
-			_trigger_win()
+		if enemy.is_main_enemy:
+			_main_enemies.erase(enemy)
+		else:
+			_minion_enemies.erase(enemy)
+		_check_win_condition()
 	else:
-		# Each enemy knows its own spawn point
+		# Enemy still has lives — respawn
 		var spawn: Marker2D = enemy.spawn_point
 		if spawn == null:
-			push_warning("RoundManager: " + enemy.name + " has no spawn_point, respawning at origin.")
+			push_warning("RoundManager: " + enemy.name + " has no spawn_point, can't respawn.")
 			return
 		_respawn_later(enemy, spawn)
+
+# ── Win Condition Check ───────────────────────────────────────────
+
+func _check_win_condition() -> void:
+	match win_condition:
+		WinCondition.ELIMINATION:
+			# Win when all main enemies are permanently out
+			if _main_enemies.is_empty():
+				_trigger_win()
+		# WinCondition.SURVIVAL:
+		#     pass  # Handled by a timer elsewhere
+		# WinCondition.CAPTURE_FLAG:
+		#     pass  # Handled by flag node elsewhere
 
 # ── Respawn ───────────────────────────────────────────────────────
 
@@ -91,10 +119,8 @@ func _respawn_later(character: Node, spawn: Marker2D) -> void:
 	_respawn(character, spawn)
 
 func _respawn(character: Node, spawn: Marker2D) -> void:
-	# Reset position
 	character.global_position = spawn.global_position
 
-	# Reset facing to initial direction
 	if character is Enemy:
 		var dir: Vector2 = character._facing_to_vector(character.initial_facing)
 		character.last_direction = dir
@@ -102,27 +128,19 @@ func _respawn(character: Node, spawn: Marker2D) -> void:
 		character.target = null
 		character.ai_state = Enemy.AIState.IDLE
 
-	# Reset health to full
 	character.health.current_hp = character.health.max_hp
 	character.health._invincible = false
 	character.health._invincibility_timer = 0.0
-
-	# Re-emit a fake signal so health bar updates
 	character.health.emit_signal("damaged", 0, character.health.current_hp)
 
-	# Reset velocity and knockback
 	character.velocity = Vector2.ZERO
 	character.knockback_component._active = false
 	character.knockback_component._tier = "none"
 
-	# Clear weapon
 	character.current_weapon = null
 	character._update_weapon_visuals()
-
-	# Snap animation back to idle
 	character._cancel_into_idle()
 
-	# Refresh HUD if player
 	if character is Player:
 		var hud := get_tree().get_first_node_in_group("hud") as HUD
 		if hud:

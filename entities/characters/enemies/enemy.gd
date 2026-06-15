@@ -9,13 +9,17 @@ class_name Enemy
 @export var can_toss_weapons: bool = false
 @export var destroy_weapon_on_death: bool = false
 
+@export_group("Round")
+@export var lives: int = 1
+@export var is_main_enemy: bool = false
+
 @export_group("Spawn")
 @export var spawn_point: Marker2D
 
 @export_group("AI")
 @export var detection_range: float = 200.0
 @export var attack_range: float = 40.0
-@export var idle_wander_speed: float = 0.0  # 0 = stands still when no target
+@export var idle_wander_speed: float = 0.0
 
 @export_group("Attack")
 @export var main_attack_cooldown: float = 1.0
@@ -62,14 +66,13 @@ func _ready() -> void:
 	super()
 	detection_area.body_entered.connect(_on_target_entered)
 	detection_area.body_exited.connect(_on_target_exited)
-	# Resize detection shape to match exported value
 	var shape: CircleShape2D = $DetectionArea/CollisionShape2D.shape as CircleShape2D
 	if shape != null:
 		shape.radius = detection_range
 	var dir := _facing_to_vector(initial_facing)
 	last_direction = dir
 	rotation = dir.angle()
-			
+
 # ── Health Callbacks ─────────────────────────────────────────────
 
 func _on_damaged(_amount: int, _remaining: int) -> void:
@@ -83,12 +86,12 @@ func _on_died() -> void:
 	tween.tween_property($Body, "modulate", Color(8.0, 8.0, 8.0, 1.0), 0.1)
 	tween.tween_interval(0.1)
 	tween.tween_callback(func(): _hide_until_respawn())
-	
+
 func _hide_until_respawn() -> void:
 	visible = false
 	set_physics_process(false)
 	set_process(false)
-	
+
 func _drop_weapon() -> void:
 	if current_weapon == null:
 		return
@@ -150,7 +153,6 @@ func _update_ai_state() -> void:
 # ── Physics Process ──────────────────────────────────────────────
 
 func _physics_process(delta: float) -> void:
-	# Tick combo timers
 	if main_combo_timer > 0:
 		main_combo_timer -= delta
 		if main_combo_timer <= 0:
@@ -159,14 +161,12 @@ func _physics_process(delta: float) -> void:
 		alt_combo_timer -= delta
 		if alt_combo_timer <= 0:
 			alt_combo_index = 0
-			
-	# Tick attack timers
+
 	if _main_attack_timer > 0:
 		_main_attack_timer -= delta
 	if _alt_attack_timer > 0:
 		_alt_attack_timer -= delta
 
-	# Clean up invalid targets
 	targets_in_range = targets_in_range.filter(func(t): return is_instance_valid(t))
 	if target and not is_instance_valid(target):
 		target = _get_nearest_target()
@@ -198,7 +198,6 @@ func _physics_process(delta: float) -> void:
 
 		AIState.ATTACK:
 			_apply_movement(Vector2.ZERO)
-			# Face the target while attacking
 			if target != null:
 				var dir := (target.global_position - global_position).normalized()
 				last_direction = dir
