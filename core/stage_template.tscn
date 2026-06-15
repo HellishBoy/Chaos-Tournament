@@ -82,11 +82,9 @@ script = ExtResource("15_qpbrc")
 player_bar_border_thickness = 2.0
 vignette_threshold = 0.3
 
-[node name="RoundManager" type="Node" parent="." unique_id=1923771772 node_paths=PackedStringArray("player_spawn", "enemy_spawns", "win_screen", "lose_screen")]
+[node name="RoundManager" type="Node" parent="." unique_id=1923771772 node_paths=PackedStringArray("player_spawn", "win_screen", "lose_screen")]
 script = ExtResource("16_dlfso")
 player_lives = 2
-enemy_lives = 2
 player_spawn = NodePath("../SpawnPoints/PlayerSpawn")
-enemy_spawns = [NodePath("../SpawnPoints/EnemySpawn1"), NodePath("")]
 win_screen = NodePath("../Hud/WinScreen")
 lose_screen = NodePath("../Hud/LoseScreen")
