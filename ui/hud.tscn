@@ -70,6 +70,18 @@ offset_right = 200.0
 offset_bottom = 16.0
 color = Color(0.48452926, 0.9063318, 0.48452926, 1)
 
+[node name="DodgeCharges" type="HBoxContainer" parent="PlayerHealthBar" unique_id=1794451974]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -26.0
+offset_bottom = -26.0
+grow_horizontal = 2
+grow_vertical = 0
+
 [node name="Vignette" type="ColorRect" parent="." unique_id=643934752]
 material = SubResource("ShaderMaterial_rbyyf")
 anchors_preset = 15
