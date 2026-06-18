@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://cm8ewcb3xswx5"]
 
-[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/_ranged/bullet_prot.tscn" id="1_axg57"]
+[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/_ranged/bullets/bullet_prot.tscn" id="1_axg57"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/weapon_data.gd" id="1_l3xga"]
 [ext_resource type="Texture2D" uid="uid://cxu4eumkk4e7q" path="res://weapons/_ranged/ranged_1h-nail_gun.png" id="2_bm5xl"]
 

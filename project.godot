@@ -141,11 +141,14 @@ guard={
 
 2d_physics/layer_1="Environment"
 2d_physics/layer_2="Player"
-2d_physics/layer_3="Enemies"
-2d_physics/layer_4="Weapons"
-2d_physics/layer_5="Bullets"
-2d_physics/layer_6="Hurtbox"
-2d_physics/layer_7="Hitbox"
+2d_physics/layer_3="Enemy"
+2d_physics/layer_4="Ally"
+2d_physics/layer_5="Prop"
+2d_physics/layer_7="Hurtbox"
+2d_physics/layer_8="Hitbox"
+2d_physics/layer_9="Weapon"
+2d_physics/layer_10="Bullet"
+2d_physics/layer_11="Projectile"
 
 [physics]
 

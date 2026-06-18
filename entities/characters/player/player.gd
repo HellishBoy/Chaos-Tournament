@@ -37,6 +37,7 @@ func _ready() -> void:
 	super()
 	lock_on_area.body_entered.connect(_on_enemy_entered)
 	lock_on_area.body_exited.connect(_on_enemy_exited)
+	set_invincible(false)
 
 # ── Health Callbacks ─────────────────────────────────────────────
 
@@ -113,6 +114,8 @@ func _get_nearest_enemy() -> Node2D:
 
 func set_invincible(state: bool) -> void:
 	set_collision_mask_value(3, not state)
+	set_collision_mask_value(4, not state)
+	set_collision_mask_value(5, not state)
 	
 # ── Physics Process ──────────────────────────────────────────────
 

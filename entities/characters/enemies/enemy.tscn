@@ -70,7 +70,7 @@ radius = 6.0
 
 [node name="Enemy" type="CharacterBody2D" unique_id=390347379 groups=["enemy"]]
 collision_layer = 4
-collision_mask = 7
+collision_mask = 5
 script = ExtResource("1_7p1mj")
 can_pick_up_weapons = true
 detection_range = 100.0
@@ -113,8 +113,8 @@ show_behind_parent = true
 position = Vector2(14, 5)
 
 [node name="HitboxLeft" type="Area2D" parent="Body/Hands/HandLeft" unique_id=462773800]
-collision_layer = 64
-collision_mask = 32
+collision_layer = 128
+collision_mask = 64
 script = ExtResource("6_s1ycm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body/Hands/HandLeft/HitboxLeft" unique_id=917595213]
@@ -136,8 +136,8 @@ show_behind_parent = true
 position = Vector2(14, -5)
 
 [node name="HitboxRight" type="Area2D" parent="Body/Hands/HandRight" unique_id=1457903818]
-collision_layer = 64
-collision_mask = 32
+collision_layer = 128
+collision_mask = 64
 script = ExtResource("6_s1ycm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body/Hands/HandRight/HitboxRight" unique_id=493798252]
@@ -171,8 +171,8 @@ shape = SubResource("CircleShape2D_qhqgy")
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=546847491]
 visible = false
-collision_layer = 32
-collision_mask = 16
+collision_layer = 64
+collision_mask = 1536
 
 [node name="Hurtbox" type="CollisionShape2D" parent="Hurtbox" unique_id=1403478423]
 shape = SubResource("CircleShape2D_fjrip")
