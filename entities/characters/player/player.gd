@@ -25,6 +25,7 @@ var using_controller: bool = false
 var is_dodging: bool = false
 var dodge_traveled: float = 0.0
 var cooldown_timer: float = 0.0
+var _stamina: float = 0.0
 var dodge_direction: Vector2 = Vector2.ZERO
 
 var lock_on_active: bool = false
@@ -35,6 +36,7 @@ var enemies_in_range: Array = []
 
 func _ready() -> void:
 	super()
+	_stamina = stats.stamina_max
 	lock_on_area.body_entered.connect(_on_enemy_entered)
 	lock_on_area.body_exited.connect(_on_enemy_exited)
 	set_invincible(false)
@@ -116,6 +118,7 @@ func set_invincible(state: bool) -> void:
 	set_collision_mask_value(3, not state)
 	set_collision_mask_value(4, not state)
 	set_collision_mask_value(5, not state)
+	hurtbox.set_deferred("monitorable", not state)
 	
 # ── Physics Process ──────────────────────────────────────────────
 
@@ -135,19 +138,29 @@ func _physics_process(delta: float) -> void:
 	# Track held attack keys
 	main_attack_held = Input.is_action_pressed("attack_main")
 	alt_attack_held  = Input.is_action_pressed("attack_alt")
+	
+	if _stamina < stats.stamina_max:
+		_stamina = min(_stamina + stats.stamina_regen * delta, stats.stamina_max)
+		var hud := get_tree().get_first_node_in_group("hud") as HUD
+		if hud:
+			hud.refresh_dodge(_stamina, stats.stamina_max, stats.stamina_per_dodge)
 
 	# ── Priority 1: Dodge ────────────────────────────────────────
-	if Input.is_action_just_pressed("dodge") and not is_dodging and cooldown_timer <= 0:
+	if Input.is_action_just_pressed("dodge") and not is_dodging and cooldown_timer <= 0 and _stamina >= stats.stamina_per_dodge:
 		var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		dodge_direction = input_dir if input_dir.length() > 0 else last_direction
 		is_dodging = true
 		dodge_traveled = 0.0
 		cooldown_timer = dodge_cooldown
+		_stamina -= stats.stamina_per_dodge
 		set_invincible(true)
 		is_tossing = false
 		_cancel_into_idle()
 		anim_upper.play("uni_dodge")
 		anim_lower.stop()
+		var hud := get_tree().get_first_node_in_group("hud") as HUD
+		if hud:
+			hud.refresh_dodge(_stamina, stats.stamina_max, stats.stamina_per_dodge)
 
 	# ── Priority 2: Toss ─────────────────────────────────────────
 	if not is_dodging and not is_tossing:

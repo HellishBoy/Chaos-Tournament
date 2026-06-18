@@ -25,6 +25,8 @@ class_name HUD
 @onready var player_health_border: ColorRect = $PlayerHealthBar/Border
 @onready var player_health_background: ColorRect = $PlayerHealthBar/Background
 
+@onready var dodge_charges_container: HBoxContainer = $PlayerHealthBar/DodgeCharges
+
 @onready var vignette: ColorRect = $Vignette
 
 var _player: Player = null
@@ -60,7 +62,36 @@ func _process(delta: float) -> void:
 		
 		_vignette_material.set_shader_parameter("intensity", base_intensity + pulse * pulse_intensity)
 		_vignette_material.set_shader_parameter("inner_edge", inner_edge)
-		
+
+func refresh_dodge(stamina: float, stamina_max: float, stamina_per_dodge: float) -> void:
+	var num_circles: int = int(stamina_max / stamina_per_dodge)
+	var circles := dodge_charges_container.get_children()
+	
+	# Rebuild if circle count changed
+	if circles.size() != num_circles:
+		for child in circles:
+			child.queue_free()
+		for i in num_circles:
+			var circle := DodgeCharge.new()
+			circle.custom_minimum_size = Vector2(14, 14)
+			dodge_charges_container.add_child(circle)
+		circles = dodge_charges_container.get_children()
+	
+	# Update each circle
+	for i in num_circles:
+		var circle := circles[i] as DodgeCharge
+		var circle_min := i * stamina_per_dodge
+		var circle_max := (i + 1) * stamina_per_dodge
+		if stamina >= circle_max:
+			# Fully filled
+			circle.set_state(true)
+		elif stamina <= circle_min:
+			# Fully empty
+			circle.set_state(false, 0.0)
+		else:
+			# Partially filled
+			circle.set_state(false, (stamina - circle_min) / stamina_per_dodge)
+
 func _update_vignette(current: int, max_hp: int) -> void:
 	var percent: float = float(current) / float(max_hp)
 	if percent <= vignette_threshold:
@@ -85,6 +116,7 @@ func setup(player: Player) -> void:
 	_setup_player_health_bar()
 	refresh()
 	_update_vignette(player.health.current_hp, player.health.max_hp)
+	refresh_dodge(player._stamina, player.stats.stamina_max, player.stats.stamina_per_dodge)
 	
 func _setup_player_health_bar() -> void:
 	# Border
