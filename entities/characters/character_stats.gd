@@ -5,7 +5,7 @@ extends Resource
 class_name CharacterStats
 
 @export_group("Movement")
-@export var move_speed: float = 100.0
+@export var move_speed: float = 120.0
 
 @export_group("Dodge")
 @export var stamina_max: float = 10.0

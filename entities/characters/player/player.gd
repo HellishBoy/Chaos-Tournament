@@ -11,7 +11,7 @@ class_name Player
 @export_group("Dodge")
 @export var dodge_speed: float = 250.0
 @export var dodge_distance: float = 48.0
-@export var dodge_cooldown: float = 0.2
+@export var dodge_cooldown: float = 0.1
 
 # ── Node References ──────────────────────────────────────────────
 
@@ -39,7 +39,6 @@ func _ready() -> void:
 	_stamina = stats.stamina_max
 	lock_on_area.body_entered.connect(_on_enemy_entered)
 	lock_on_area.body_exited.connect(_on_enemy_exited)
-	set_invincible(false)
 
 # ── Health Callbacks ─────────────────────────────────────────────
 
@@ -115,6 +114,7 @@ func _get_nearest_enemy() -> Node2D:
 # ── Dodge ────────────────────────────────────────────────────────
 
 func set_invincible(state: bool) -> void:
+	set_collision_mask_value(2, not state)
 	set_collision_mask_value(3, not state)
 	set_collision_mask_value(4, not state)
 	set_collision_mask_value(5, not state)

@@ -4,8 +4,6 @@
 
 [resource]
 script = ExtResource("1_7kogv")
-move_speed = 120.0
-stamina_regen = 3.0
 max_hp = 300
 knockback_immune = true
 metadata/_custom_type_script = "uid://cuf0jjkwlmjfm"
