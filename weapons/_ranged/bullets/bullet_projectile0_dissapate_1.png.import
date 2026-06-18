@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://btr61etwuvw8r"
-path="res://.godot/imported/bullet_copper.png-3028551bc77c2434fc1a441fd0f0e85e.ctex"
+uid="uid://d0es1lwpfadd7"
+path="res://.godot/imported/bullet_projectile0_dissapate_1.png-1dd876866a818d9011af955ced103757.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/_ranged/bullet_copper.png"
-dest_files=["res://.godot/imported/bullet_copper.png-3028551bc77c2434fc1a441fd0f0e85e.ctex"]
+source_file="res://weapons/_ranged/bullets/bullet_projectile0_dissapate_1.png"
+dest_files=["res://.godot/imported/bullet_projectile0_dissapate_1.png-1dd876866a818d9011af955ced103757.ctex"]
 
 [params]
 
