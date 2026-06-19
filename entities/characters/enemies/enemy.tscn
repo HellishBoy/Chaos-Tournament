@@ -71,6 +71,8 @@ radius = 6.0
 [node name="Enemy" type="CharacterBody2D" unique_id=390347379 groups=["enemy"]]
 collision_layer = 4
 collision_mask = 29
+motion_mode = 1
+wall_min_slide_angle = 0.0
 script = ExtResource("1_7p1mj")
 can_pick_up_weapons = true
 detection_range = 100.0
@@ -190,3 +192,6 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=267916114]
 shape = SubResource("CircleShape2D_nenq2")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=449910812]
+avoidance_enabled = true
