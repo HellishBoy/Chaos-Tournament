@@ -28,11 +28,15 @@ class_name Enemy
 # ── Node References ──────────────────────────────────────────────
 
 @onready var detection_area: Area2D = $DetectionArea
+@onready var nav_agent: NavigationAgent2D = $NavigationAgent2D
 
 # ── Variables ────────────────────────────────────────────────────
 
 var _main_attack_timer: float = 0.0
 var _alt_attack_timer: float = 0.0
+
+var _nav_update_timer: float = 0.0
+const NAV_UPDATE_INTERVAL: float = 0.05  # recalculate path every 0.2 seconds
 
 # ── State ────────────────────────────────────────────────────────
 
@@ -72,7 +76,7 @@ func _ready() -> void:
 	var dir := _facing_to_vector(initial_facing)
 	last_direction = dir
 	rotation = dir.angle()
-
+	
 # ── Health Callbacks ─────────────────────────────────────────────
 
 func _on_damaged(_amount: int, _remaining: int) -> void:
@@ -112,6 +116,15 @@ func _drop_weapon() -> void:
 	pickup.setup_toss(global_position, Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized())
 
 # ── Detection ────────────────────────────────────────────────────
+
+func _update_navigation_target(delta: float) -> void:
+	if target == null or not is_instance_valid(target):
+		return
+	_nav_update_timer -= delta
+	if _nav_update_timer <= 0.0:
+		_nav_update_timer = NAV_UPDATE_INTERVAL
+		nav_agent.target_position = target.global_position
+	print("path: ", nav_agent.get_current_navigation_path())
 
 func _on_target_entered(body: Node2D) -> void:
 	if body is Player:
@@ -153,6 +166,9 @@ func _update_ai_state() -> void:
 # ── Physics Process ──────────────────────────────────────────────
 
 func _physics_process(delta: float) -> void:
+	
+	_update_navigation_target(delta)
+	
 	if main_combo_timer > 0:
 		main_combo_timer -= delta
 		if main_combo_timer <= 0:
@@ -170,7 +186,7 @@ func _physics_process(delta: float) -> void:
 	targets_in_range = targets_in_range.filter(func(t): return is_instance_valid(t))
 	if target and not is_instance_valid(target):
 		target = _get_nearest_target()
-
+	
 	_update_ai_state()
 
 	match ai_state:
@@ -182,7 +198,13 @@ func _physics_process(delta: float) -> void:
 
 		AIState.CHASE:
 			if not _is_attacking():
-				var dir := (target.global_position - global_position).normalized()
+				var next_pos := nav_agent.get_next_path_position()
+				var dir := (next_pos - global_position).normalized()
+				print("next_pos: ", next_pos)
+				print("my_pos: ", global_position)
+				print("dir: ", dir)
+				print("velocity: ", velocity)
+				print("is_attacking: ", _is_attacking())
 				last_direction = dir
 				rotation = dir.angle()
 				_apply_movement(dir * stats.move_speed)
