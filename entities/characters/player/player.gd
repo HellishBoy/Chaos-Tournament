@@ -61,10 +61,10 @@ func _on_died() -> void:
 
 # ── Input ────────────────────────────────────────────────────────
 
-func _unhandled_input(_event: InputEvent) -> void:
-	for action in InputMap.get_actions():
-		if Input.is_action_just_pressed(action):
-			print("Action pressed: ", action)
+#func _unhandled_input(_event: InputEvent) -> void:
+	#for action in InputMap.get_actions():
+		#if Input.is_action_just_pressed(action):
+			#print("Action pressed: ", action)
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventJoypadMotion or event is InputEventJoypadButton:

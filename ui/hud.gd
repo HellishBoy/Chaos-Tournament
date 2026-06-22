@@ -159,9 +159,6 @@ func refresh() -> void:
 	if _player == null:
 		return
 	var weapon := _player.get_active_weapon()
-	print("weapon: ", weapon.weapon_name)
-	print("durability: ", weapon.durability)
-	print("durability_current: ", weapon.durability_current)
 
 	# Weapon name
 	weapon_name_label.text = weapon.weapon_name

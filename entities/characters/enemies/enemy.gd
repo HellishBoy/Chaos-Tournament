@@ -124,7 +124,6 @@ func _update_navigation_target(delta: float) -> void:
 	if _nav_update_timer <= 0.0:
 		_nav_update_timer = NAV_UPDATE_INTERVAL
 		nav_agent.target_position = target.global_position
-	print("path: ", nav_agent.get_current_navigation_path())
 
 func _on_target_entered(body: Node2D) -> void:
 	if body is Player:
@@ -200,11 +199,6 @@ func _physics_process(delta: float) -> void:
 			if not _is_attacking():
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
-				print("next_pos: ", next_pos)
-				print("my_pos: ", global_position)
-				print("dir: ", dir)
-				print("velocity: ", velocity)
-				print("is_attacking: ", _is_attacking())
 				last_direction = dir
 				rotation = dir.angle()
 				_apply_movement(dir * stats.move_speed)

@@ -13,6 +13,9 @@ class_name WeaponData
 @export var main_attack_animations: Array[String] = []
 @export var alt_attack_animations: Array[String] = []
 
+@export_group("Drop")
+@export var despawn_timer: float = 8.0  # -1 = never despawn
+
 @export_group("Camera")
 @export var peek_distance_aim: float = 0.0
 @export var peek_distance_lockon: float = 0.0

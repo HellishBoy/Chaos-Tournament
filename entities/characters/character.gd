@@ -95,7 +95,7 @@ func get_active_weapon() -> WeaponData:
 func try_pickup(pickup_node: Node) -> void:
 	if current_weapon != null:
 		return
-	var data: WeaponData = pickup_node.weapon_data
+	var data: WeaponData = pickup_node.weapon_data.duplicate()
 	pickup_node.queue_free()
 	current_weapon = data
 	# Only initialize durability if not already set
@@ -127,7 +127,13 @@ func _do_toss() -> void:
 	pickup.position = global_position + toss_dir * 10.0
 	get_parent().add_child(pickup)
 	pickup.setup_toss(global_position, toss_dir)
-		# Refresh HUD after toss
+	
+	# Notify drop manager about the tossed weapon
+	var manager := get_tree().get_first_node_in_group("weapon_drop_manager") as WeaponDropManager
+	if manager:
+		manager.register_tossed_weapon(pickup)
+		
+	# Refresh HUD after toss
 	var hud := get_tree().get_first_node_in_group("hud") as HUD
 	if hud:
 		hud.refresh()
@@ -343,9 +349,14 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 # ── Weapon break ──────────────────────────────────────────────────────
 
 func break_weapon() -> void:
+	var broken_data := current_weapon
 	current_weapon = null
 	_update_weapon_visuals()
 	_cancel_into_idle()
 	var hud := get_tree().get_first_node_in_group("hud") as HUD
 	if hud:
 		hud.refresh()
+	# Notify drop manager that this weapon is gone
+	var manager := get_tree().get_first_node_in_group("weapon_drop_manager") as WeaponDropManager
+	if manager:
+		manager.register_weapon_broken(broken_data)

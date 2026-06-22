@@ -7,6 +7,7 @@
 [resource]
 script = ExtResource("2_2xi72")
 weapon_name = "Dual MAC-10"
+weapon_category = "ranged_dual"
 idle_animation = "idle_ranged_dual"
 walk_animation = "walk_ranged_dual"
 main_attack_animations = Array[String](["attack_ranged_dual_fire_R", "attack_ranged_dual_fire_L"])
