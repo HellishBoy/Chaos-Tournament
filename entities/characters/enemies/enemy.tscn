@@ -194,4 +194,5 @@ collision_mask = 2
 shape = SubResource("CircleShape2D_nenq2")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=449910812]
+path_desired_distance = 5.0
 avoidance_enabled = true

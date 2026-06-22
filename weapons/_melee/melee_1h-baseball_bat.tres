@@ -17,6 +17,6 @@ main_knockback = "low"
 alt_knockback = "high"
 knockback_main_facing = true
 durability = "medium"
-durability_current = 3
+durability_current = 5
 weapon_sprite_right = ExtResource("2_0be63")
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"

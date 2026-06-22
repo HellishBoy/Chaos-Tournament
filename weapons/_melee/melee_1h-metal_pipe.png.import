@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cex37gfbw86gu"
-path="res://.godot/imported/melee_1h-broken_pipe.png-886b7aca124f9f7bb3f4d693c5ab5112.ctex"
+path="res://.godot/imported/melee_1h-metal_pipe.png-08ed887a0e1b46e5ba09e53bb11f3452.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/_melee/melee_1h-broken_pipe.png"
-dest_files=["res://.godot/imported/melee_1h-broken_pipe.png-886b7aca124f9f7bb3f4d693c5ab5112.ctex"]
+source_file="res://weapons/_melee/melee_1h-metal_pipe.png"
+dest_files=["res://.godot/imported/melee_1h-metal_pipe.png-08ed887a0e1b46e5ba09e53bb11f3452.ctex"]
 
 [params]
 

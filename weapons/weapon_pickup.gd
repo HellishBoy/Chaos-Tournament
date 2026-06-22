@@ -1,4 +1,11 @@
 extends CharacterBody2D
+
+signal picked_up
+
+var _was_picked_up: bool = false
+var _despawn_timer_remaining: float = -1.0
+var _despawn_tween: Tween = null
+
 @export var weapon_data: WeaponData
 @export var toss_initial_speed: float = 220.0
 @export var toss_bounce_damping: float = 0.45
@@ -19,6 +26,9 @@ func _ready() -> void:
 	if not _was_tossed:
 		_resting = true
 		_pickup_enabled = true
+		# Start despawn for pre-placed weapons too
+		if weapon_data != null and weapon_data.despawn_timer > 0.0:
+			start_despawn_timer(weapon_data.despawn_timer)
 
 func _apply_sprite() -> void:
 	if weapon_data == null:
@@ -39,6 +49,7 @@ func setup_toss(origin: Vector2, direction: Vector2) -> void:
 	_pickup_enabled = false
 	_toss_timer = toss_duration
 	sprite.modulate.a = 0.4
+	_was_picked_up = false  # reset so manager knows it's back on the ground
 	_apply_sprite()
 
 func _physics_process(delta: float) -> void:
@@ -70,6 +81,9 @@ func _come_to_rest() -> void:
 	_pickup_enabled = true
 	velocity = Vector2.ZERO
 	sprite.modulate.a = 1.0
+	# Start despawn timer when weapon hits the ground
+	if weapon_data != null and weapon_data.despawn_timer > 0.0:
+		start_despawn_timer(weapon_data.despawn_timer)
 
 func _check_player_overlap() -> void:
 	var space := get_world_2d().direct_space_state
@@ -85,5 +99,24 @@ func _check_player_overlap() -> void:
 			# Check if it's an enemy that isn't allowed to pick up weapons
 			if body is Enemy and not body.can_pick_up_weapons:
 				continue
+			_was_picked_up = true
+			emit_signal("picked_up")
 			body.try_pickup(self)
 			return
+			
+func start_despawn_timer(duration: float) -> void:
+	_despawn_timer_remaining = duration
+	_start_countdown()
+
+func _start_countdown() -> void:
+	if _despawn_tween:
+		_despawn_tween.kill()
+	if _despawn_timer_remaining <= 0.0:
+		queue_free()
+		return
+	_despawn_tween = create_tween()
+	_despawn_tween.tween_interval(_despawn_timer_remaining)
+	_despawn_tween.tween_callback(func(): 
+		if is_instance_valid(self):
+			queue_free()
+	)

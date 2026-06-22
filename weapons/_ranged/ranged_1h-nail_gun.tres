@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://cm8ewcb3xswx5"]
 
-[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/_ranged/bullets/bullet_prot.tscn" id="1_axg57"]
-[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/weapon_data.gd" id="1_l3xga"]
-[ext_resource type="Texture2D" uid="uid://cxu4eumkk4e7q" path="res://weapons/_ranged/ranged_1h-nail_gun.png" id="2_bm5xl"]
+[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/_ranged/bullets/bullet_prot.tscn" id="1_6senr"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/weapon_data.gd" id="2_st5pi"]
+[ext_resource type="Texture2D" uid="uid://cxu4eumkk4e7q" path="res://weapons/_ranged/ranged_1h-nail_gun.png" id="3_63b1t"]
 
 [resource]
-script = ExtResource("1_l3xga")
+script = ExtResource("2_st5pi")
 weapon_name = "Nail Gun"
 weapon_category = "ranged_1h"
 idle_animation = "idle_ranged_1h"
@@ -17,8 +17,8 @@ movement_penalty = 0.7
 alt_attack_speed = 0.88
 main_knockback = "low"
 ammo = 15
-bullet_scene = ExtResource("1_axg57")
+bullet_scene = ExtResource("1_6senr")
 bullet_speed = 1000.0
 bullet_range = 60.0
-weapon_sprite_right = ExtResource("2_bm5xl")
+weapon_sprite_right = ExtResource("3_63b1t")
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"
