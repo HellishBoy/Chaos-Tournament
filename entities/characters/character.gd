@@ -42,6 +42,8 @@ class_name Character
 
 var last_direction: Vector2 = Vector2.UP
 
+var is_dead: bool = false
+
 var is_tossing: bool = false
 var is_main_attacking: bool = false
 var is_alt_attacking: bool = false
@@ -84,6 +86,27 @@ func _setup_health_bar() -> void:
 		bar.bar_width = health_bar_width
 		bar.bar_height = health_bar_height
 		bar.setup(health, self)
+
+func _apply_death_state() -> void:
+	is_dead = true
+	# Stop all animation
+	anim_lower.stop()
+	anim_upper.stop()
+	# Disable collision
+	set_collision_layer_value(2, false)
+	set_collision_layer_value(3, false)
+	set_collision_mask_value(1, false)
+	# Grayscale modulate
+	$Body.modulate = Color(0.3, 0.3, 0.3, 1.0)
+
+func _apply_alive_state() -> void:
+	is_dead = false
+	# Re-enable collision
+	set_collision_layer_value(2, true)
+	set_collision_layer_value(3, true)
+	set_collision_mask_value(1, true)
+	# Restore color
+	$Body.modulate = Color.WHITE
 
 # ── Active Weapon ────────────────────────────────────────────────
 

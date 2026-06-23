@@ -76,6 +76,8 @@ func _ready() -> void:
 	var dir := _facing_to_vector(initial_facing)
 	last_direction = dir
 	rotation = dir.angle()
+	await get_tree().physics_frame
+	_find_player_target()
 	
 # ── Health Callbacks ─────────────────────────────────────────────
 
@@ -89,12 +91,11 @@ func _on_died() -> void:
 	var tween := create_tween()
 	tween.tween_property($Body, "modulate", Color(8.0, 8.0, 8.0, 1.0), 0.1)
 	tween.tween_interval(0.1)
-	tween.tween_callback(func(): _hide_until_respawn())
-
-func _hide_until_respawn() -> void:
-	visible = false
-	set_physics_process(false)
-	set_process(false)
+	tween.tween_callback(func(): 
+		_apply_death_state()
+		set_physics_process(false)
+		set_process(false)
+	)
 
 func _drop_weapon() -> void:
 	if current_weapon == null:
@@ -116,6 +117,15 @@ func _drop_weapon() -> void:
 	pickup.setup_toss(global_position, Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized())
 
 # ── Detection ────────────────────────────────────────────────────
+
+func _find_player_target() -> void:
+	var player := get_tree().get_first_node_in_group("player") as Player
+	if player and is_instance_valid(player) and not player.is_dead:
+		target = player
+		ai_state = AIState.CHASE
+	else:
+		target = null
+		ai_state = AIState.IDLE
 
 func _update_navigation_target(delta: float) -> void:
 	if target == null or not is_instance_valid(target):
@@ -153,9 +163,11 @@ func _get_nearest_target() -> Node2D:
 # ── AI State Machine ─────────────────────────────────────────────
 
 func _update_ai_state() -> void:
-	if target == null or not is_instance_valid(target):
-		ai_state = AIState.IDLE
-		return
+	if target == null or not is_instance_valid(target) or target.is_dead:
+		_find_player_target()
+		if target == null:
+			ai_state = AIState.IDLE
+			return
 	var dist := global_position.distance_to(target.global_position)
 	if dist <= attack_range:
 		ai_state = AIState.ATTACK
@@ -214,13 +226,14 @@ func _physics_process(delta: float) -> void:
 
 		AIState.ATTACK:
 			_apply_movement(Vector2.ZERO)
-			if target != null:
+			if target != null and not target.is_dead:
 				var dir := (target.global_position - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
 			if not _is_attacking() and not is_tossing and _main_attack_timer <= 0:
-				_play_main_attack()
-				_main_attack_timer = main_attack_cooldown
+				if target != null and not target.is_dead:
+					_play_main_attack()
+					_main_attack_timer = main_attack_cooldown
 
 # ── Facing on start ──────────────────────────────────────────────
 

@@ -66,7 +66,7 @@ radius = 6.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_fjrip"]
 radius = 6.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_nenq2"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_u5q8g"]
 
 [node name="Enemy" type="CharacterBody2D" unique_id=390347379 groups=["enemy"]]
 collision_layer = 4
@@ -172,7 +172,6 @@ libraries/ = ExtResource("7_8qclf")
 shape = SubResource("CircleShape2D_qhqgy")
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=546847491]
-visible = false
 collision_layer = 64
 collision_mask = 1536
 
@@ -186,12 +185,12 @@ health_bar_visibility = 2
 [node name="KnockbackComponent" type="Node2D" parent="." unique_id=687752596]
 script = ExtResource("11_rogs8")
 
-[node name="DetectionArea" type="Area2D" parent="." unique_id=2140008127]
+[node name="DetectionArea" type="Area2D" parent="." unique_id=1409583353]
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=267916114]
-shape = SubResource("CircleShape2D_nenq2")
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=1220762500]
+shape = SubResource("CircleShape2D_u5q8g")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=449910812]
 path_desired_distance = 5.0
