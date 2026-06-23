@@ -149,9 +149,13 @@ func _respawn(character: Node, spawn: Marker2D) -> void:
 		character.is_tossing = false
 		character._reset_attacks()
 
-	character.visible = true
+	# Restore alive state — re-enables collision and restores color
+	character._apply_alive_state()
 	character.set_physics_process(true)
 	character.set_process(true)
+
+	if character is Enemy:
+		character._find_player_target()
 
 # ── Win / Lose ────────────────────────────────────────────────────
 
