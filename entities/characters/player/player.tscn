@@ -176,7 +176,6 @@ shape = SubResource("CircleShape2D_tuyoq")
 debug_color = Color(0, 0.645647, 0.2622566, 0.41960785)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=59279071]
-zoom = Vector2(1.2, 1.2)
 process_callback = 0
 limit_left = -1000000
 limit_top = -1000000

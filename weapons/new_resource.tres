@@ -59,7 +59,7 @@ metadata/_custom_type_script = "uid://dwlwg725t31ip"
 script = ExtResource("1_utmmb")
 weapon_data = ExtResource("8_yks4s")
 drop_weight = 2.0
-allowed_groups = Array[String](["Left Area"])
+allowed_groups = Array[String](["Corners"])
 max_concurrent = 2
 metadata/_custom_type_script = "uid://dwlwg725t31ip"
 

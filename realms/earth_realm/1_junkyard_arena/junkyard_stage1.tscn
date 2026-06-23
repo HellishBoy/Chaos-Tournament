@@ -258,3 +258,23 @@ weapon_pickup_scene = ExtResource("7_ryemf")
 polygon = PackedVector2Array(32, 24, 32, 48, 48, 88, 88, 96, 88, 136.47157, 56, 136, 56, 184, 32, 184, 32, 256, 64, 256, 88, 288, 88, 336, 120, 336, 144, 320, 192, 320, 208, 336, 240, 336, 240, 304, 208, 304, 208, 208, 192, 208, 192, 304, 128, 304, 128, 272, 104, 272, 88, 256, 64, 224, 128, 224, 128, 96, 200, 96, 200, 64, 240, 32, 160, 32, 160, 64, 64, 64, 64, 24)
 script = ExtResource("19_us766")
 zone_group = "Left Area"
+
+[node name="WeaponDropZone - Corners" type="Polygon2D" parent="." unique_id=136789262]
+script = ExtResource("19_us766")
+zone_group = "Corners"
+zone_type = 1
+
+[node name="Marker2D" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=1179947166]
+position = Vector2(576, 336)
+
+[node name="Marker2D2" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=1554072429]
+position = Vector2(640, 336)
+
+[node name="Marker2D3" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=2115942287]
+position = Vector2(640, 32)
+
+[node name="Marker2D4" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=1617265652]
+position = Vector2(432, 32)
+
+[node name="Marker2D5" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=1684402268]
+position = Vector2(432, 336)
