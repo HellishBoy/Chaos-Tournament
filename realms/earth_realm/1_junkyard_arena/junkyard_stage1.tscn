@@ -107,6 +107,7 @@ y_sort_enabled = true
 
 [node name="Enemy1" parent="Contestants" unique_id=1826535128 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
 position = Vector2(320, -80)
+lives = 2
 is_main_enemy = true
 spawn_point = NodePath("../../SpawnPoints/EnemySpawn1")
 detection_range = 20000.0
