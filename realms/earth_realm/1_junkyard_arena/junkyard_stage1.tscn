@@ -6,8 +6,13 @@
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="5_ipurl"]
 [ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://entities/prop/dummy/dummy.tscn" id="6_ah1uk"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/weapon_pickup.tscn" id="7_ryemf"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/weapon_data.gd" id="13_qtryu"]
+[ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/_melee/melee_1h-sword.tres" id="14_p3ne0"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="15_1dd6p"]
+[ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/_melee/melee_2h-battle_axe.tres" id="15_us766"]
+[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/_ranged/ranged_1h-mac_10x2.tres" id="16_5ltjn"]
 [ext_resource type="Script" uid="uid://ctrptflhtsjqv" path="res://ui/hud.gd" id="16_jqoj8"]
+[ext_resource type="Script" uid="uid://dwlwg725t31ip" path="res://weapons/weapon_drop_entry.gd" id="17_ipurl"]
 [ext_resource type="Script" uid="uid://o13aqvpie2db" path="res://weapons/weapon_drop_manager.gd" id="17_qtryu"]
 [ext_resource type="Script" uid="uid://bvoq4k2jkkt3v" path="res://core/round_manager.gd" id="17_suu1f"]
 [ext_resource type="Resource" uid="uid://b0vw2o2dgfcf0" path="res://weapons/new_resource.tres" id="18_p3ne0"]
@@ -88,6 +93,28 @@ vertices = PackedVector2Array(581, 181, 597, 203, 555, 203, 229, 197, 539, 181, 
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7, 8, 9), PackedInt32Array(10, 11, 12, 13), PackedInt32Array(14, 15, 16, 17), PackedInt32Array(13, 12, 18, 19), PackedInt32Array(20, 4, 3), PackedInt32Array(21, 20, 3), PackedInt32Array(22, 21, 23, 24, 25), PackedInt32Array(23, 21, 3, 26), PackedInt32Array(27, 26, 3, 28, 29), PackedInt32Array(9, 30, 2, 17), PackedInt32Array(3, 2, 30), PackedInt32Array(3, 30, 31), PackedInt32Array(32, 11, 10, 33), PackedInt32Array(34, 33, 19, 18, 35, 36), PackedInt32Array(29, 37, 38, 25, 24, 27), PackedInt32Array(39, 40, 41, 42), PackedInt32Array(43, 39, 42, 44, 45, 46), PackedInt32Array(47, 48, 49, 50), PackedInt32Array(50, 51, 15), PackedInt32Array(47, 50, 15), PackedInt32Array(47, 15, 14, 1), PackedInt32Array(47, 1, 0, 45, 44), PackedInt32Array(46, 4, 20, 52), PackedInt32Array(43, 46, 52), PackedInt32Array(43, 52, 53), PackedInt32Array(43, 53, 54, 22, 25), PackedInt32Array(28, 55, 56, 57, 29), PackedInt32Array(16, 58, 59, 60), PackedInt32Array(17, 16, 60, 61), PackedInt32Array(9, 17, 61, 62, 5), PackedInt32Array(61, 63, 64, 65, 62), PackedInt32Array(8, 7, 66, 31), PackedInt32Array(3, 31, 66), PackedInt32Array(3, 66, 67), PackedInt32Array(68, 7, 6, 69, 70, 71), PackedInt32Array(72, 73, 74, 75), PackedInt32Array(76, 72, 75, 77), PackedInt32Array(78, 76, 77, 79), PackedInt32Array(78, 79, 71, 70), PackedInt32Array(80, 81, 82), PackedInt32Array(83, 80, 82, 84), PackedInt32Array(85, 80, 83, 86), PackedInt32Array(87, 88, 36), PackedInt32Array(34, 89, 90, 33), PackedInt32Array(82, 91, 84), PackedInt32Array(83, 84, 32, 90), PackedInt32Array(90, 32, 33), PackedInt32Array(36, 35, 92, 93, 94, 87), PackedInt32Array(95, 96, 97, 98, 99), PackedInt32Array(98, 100, 101, 99), PackedInt32Array(102, 103, 104, 105, 106), PackedInt32Array(107, 108, 109, 110), PackedInt32Array(107, 110, 111, 112), PackedInt32Array(112, 111, 113, 114), PackedInt32Array(29, 114, 113, 37), PackedInt32Array(3, 67, 68, 71, 85, 86), PackedInt32Array(94, 3, 86, 87), PackedInt32Array(102, 106, 57, 56, 115, 95), PackedInt32Array(96, 95, 115, 94, 93)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(672, 368, 400, 368, 400, 496, 272, 496, 272, 368, 0, 368, 0, 0, 272, 0, 272, -128, 400, -128, 400, 0, 672, 0)])
 agent_radius = 5.0
+
+[sub_resource type="Resource" id="Resource_ah1uk"]
+script = ExtResource("17_ipurl")
+weapon_data = ExtResource("14_p3ne0")
+drop_weight = 2.0
+allowed_groups = Array[String](["Altar"])
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_ryemf"]
+script = ExtResource("17_ipurl")
+weapon_data = ExtResource("15_us766")
+allowed_groups = Array[String](["Altar"])
+max_concurrent = 2
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_2ejke"]
+script = ExtResource("17_ipurl")
+weapon_data = ExtResource("16_5ltjn")
+drop_weight = 2.0
+allowed_groups = Array[String](["Altar"])
+max_concurrent = 2
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
 
 [node name="Sandbox Stage 1" type="Node2D" unique_id=646780844]
 
@@ -278,3 +305,19 @@ position = Vector2(432, 32)
 
 [node name="Marker2D5" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=1684402268]
 position = Vector2(432, 336)
+
+[node name="WeaponDropZone - Altar" type="Polygon2D" parent="." unique_id=385875780]
+script = ExtResource("19_us766")
+zone_group = "Altar"
+zone_type = 2
+altar_weapons = Array[ExtResource("13_qtryu")]([ExtResource("14_p3ne0"), ExtResource("15_us766"), ExtResource("16_5ltjn")])
+altar_pool = Array[ExtResource("17_ipurl")]([SubResource("Resource_ah1uk"), SubResource("Resource_ryemf"), SubResource("Resource_2ejke")])
+
+[node name="Marker2D" type="Marker2D" parent="WeaponDropZone - Altar" unique_id=169334448]
+position = Vector2(528, 128)
+
+[node name="Marker2D2" type="Marker2D" parent="WeaponDropZone - Altar" unique_id=1675281668]
+position = Vector2(528, 147)
+
+[node name="Marker2D3" type="Marker2D" parent="WeaponDropZone - Altar" unique_id=2067094182]
+position = Vector2(528, 168)

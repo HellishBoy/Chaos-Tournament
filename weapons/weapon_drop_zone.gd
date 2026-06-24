@@ -5,10 +5,19 @@ class_name WeaponDropZone
 enum ZoneType {
 	POLYGON,
 	MARKERS,
+	ALTAR,
 }
 
 @export var zone_group: String = ""
 @export var zone_type: ZoneType = ZoneType.POLYGON
+
+# For ALTAR type only
+@export var altar_weapons: Array[WeaponData] = []
+@export var altar_pool: Array[WeaponDropEntry] = []
+
+# Runtime tracking for altar markers
+var _disturbed_markers: Array[Marker2D] = []
+var _occupied_markers: Array[Marker2D] = []
 
 func _ready() -> void:
 	add_to_group("weapon_drop_zone")
@@ -23,8 +32,52 @@ func get_random_position() -> Vector2:
 			return _random_point_in_polygon()
 		ZoneType.MARKERS:
 			return _random_marker_position()
+		ZoneType.ALTAR:
+			return _random_disturbed_marker_position()
 	return global_position
 
+func mark_occupied(marker: Marker2D) -> void:
+	if not _occupied_markers.has(marker):
+		_occupied_markers.append(marker)
+
+func mark_unoccupied(marker: Marker2D) -> void:
+	_occupied_markers.erase(marker)
+
+func get_available_disturbed_markers() -> Array:
+	var result: Array = []
+	for marker in _disturbed_markers:
+		if not _occupied_markers.has(marker):
+			result.append(marker)
+	return result
+
+func has_available_disturbed_markers() -> bool:
+	return not get_available_disturbed_markers().is_empty()
+
+func get_altar_markers() -> Array:
+	var markers: Array = []
+	for child in get_children():
+		if child is Marker2D:
+			markers.append(child)
+	return markers
+
+func mark_disturbed(marker: Marker2D) -> void:
+	if not _disturbed_markers.has(marker):
+		_disturbed_markers.append(marker)
+
+func get_disturbed_markers() -> Array:
+	return _disturbed_markers
+
+func has_disturbed_markers() -> bool:
+	return has_available_disturbed_markers()
+
+func _random_disturbed_marker_position() -> Vector2:
+	var available := get_available_disturbed_markers()
+	if available.is_empty():
+		push_warning(name + ": no available disturbed markers.")
+		return global_position
+	var marker: Marker2D = available[randi() % available.size()]
+	return marker.global_position
+	
 func _random_point_in_polygon() -> Vector2:
 	var poly := polygon
 	if poly.size() < 3:

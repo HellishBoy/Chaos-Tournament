@@ -21,13 +21,16 @@ var _was_tossed: bool = false
 var _toss_timer: float = 0.0
 var _has_bounced: bool = false
 
+var disable_despawn: bool = false
+
 func _ready() -> void:
 	call_deferred("_apply_sprite")
 	if not _was_tossed:
 		_resting = true
 		_pickup_enabled = true
+		
 		# Start despawn for pre-placed weapons too
-		if weapon_data != null and weapon_data.despawn_timer > 0.0:
+		if not disable_despawn and weapon_data != null and weapon_data.despawn_timer > 0.0:
 			start_despawn_timer(weapon_data.despawn_timer)
 
 func _apply_sprite() -> void:
