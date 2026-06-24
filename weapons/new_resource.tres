@@ -5,65 +5,43 @@
 [ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://weapons/_melee/melee_1h-lollipop.tres" id="3_8brk3"]
 [ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/_melee/melee_1h-baseball_bat.tres" id="4_2ju0k"]
 [ext_resource type="Resource" uid="uid://w2sashhtg4jm" path="res://weapons/_melee/melee_1h-metal_pipe.tres" id="4_dnax7"]
-[ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/_melee/melee_1h-sword.tres" id="5_wl7ad"]
-[ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/_melee/melee_2h-battle_axe.tres" id="6_c0qq2"]
 [ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/_ranged/ranged_1h-nail_gun.tres" id="7_bi3hl"]
-[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/_ranged/ranged_1h-mac_10x2.tres" id="8_yks4s"]
 
-[sub_resource type="Resource" id="Resource_ehves"]
+[sub_resource type="Resource" id="Resource_1vh8a"]
 script = ExtResource("1_utmmb")
 weapon_data = ExtResource("4_2ju0k")
-drop_weight = 6.0
+drop_weight = 4.0
 allowed_groups = Array[String](["Left Area"])
-max_concurrent = 5
+max_concurrent = 6
 metadata/_custom_type_script = "uid://dwlwg725t31ip"
 
-[sub_resource type="Resource" id="Resource_a2jcp"]
-script = ExtResource("1_utmmb")
-weapon_data = ExtResource("3_8brk3")
-drop_weight = 8.0
-allowed_groups = Array[String](["Left Area"])
-metadata/_custom_type_script = "uid://dwlwg725t31ip"
-
-[sub_resource type="Resource" id="Resource_k8q71"]
-script = ExtResource("1_utmmb")
-weapon_data = ExtResource("4_dnax7")
-drop_weight = 6.0
-allowed_groups = Array[String](["Left Area"])
-metadata/_custom_type_script = "uid://dwlwg725t31ip"
-
-[sub_resource type="Resource" id="Resource_2uqwn"]
-script = ExtResource("1_utmmb")
-weapon_data = ExtResource("5_wl7ad")
-drop_weight = 3.0
-allowed_groups = Array[String](["Left Area"])
-max_concurrent = 2
-metadata/_custom_type_script = "uid://dwlwg725t31ip"
-
-[sub_resource type="Resource" id="Resource_1ide7"]
-script = ExtResource("1_utmmb")
-weapon_data = ExtResource("6_c0qq2")
-allowed_groups = Array[String](["Left Area"])
-max_concurrent = 1
-metadata/_custom_type_script = "uid://dwlwg725t31ip"
-
-[sub_resource type="Resource" id="Resource_8brk3"]
+[sub_resource type="Resource" id="Resource_2ju0k"]
 script = ExtResource("1_utmmb")
 weapon_data = ExtResource("7_bi3hl")
-drop_weight = 4.0
+drop_weight = 2.0
 allowed_groups = Array[String](["Left Area"])
 max_concurrent = 4
 metadata/_custom_type_script = "uid://dwlwg725t31ip"
 
-[sub_resource type="Resource" id="Resource_ehx0g"]
+[sub_resource type="Resource" id="Resource_1ide7"]
 script = ExtResource("1_utmmb")
-weapon_data = ExtResource("8_yks4s")
-drop_weight = 2.0
+weapon_data = ExtResource("3_8brk3")
+drop_weight = 4.0
 allowed_groups = Array[String](["Left Area"])
-max_concurrent = 2
+max_concurrent = 6
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_ehves"]
+script = ExtResource("1_utmmb")
+weapon_data = ExtResource("4_dnax7")
+drop_weight = 3.0
+allowed_groups = Array[String](["Left Area"])
+max_concurrent = 5
 metadata/_custom_type_script = "uid://dwlwg725t31ip"
 
 [resource]
 script = ExtResource("2_i4xys")
-entries = Array[ExtResource("1_utmmb")]([SubResource("Resource_ehves"), SubResource("Resource_a2jcp"), SubResource("Resource_k8q71"), SubResource("Resource_2uqwn"), SubResource("Resource_1ide7"), SubResource("Resource_8brk3"), SubResource("Resource_ehx0g")])
+drop_interval = 2.5
+max_drops_per_interval = 3
+entries = Array[ExtResource("1_utmmb")]([SubResource("Resource_1vh8a"), SubResource("Resource_2ju0k"), SubResource("Resource_1ide7"), SubResource("Resource_ehves")])
 metadata/_custom_type_script = "uid://co24hvnc6y0dt"
