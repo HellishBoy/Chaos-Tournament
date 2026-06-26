@@ -151,6 +151,8 @@ func _respawn(character: Node, spawn: Marker2D) -> void:
 
 	# Restore alive state — re-enables collision and restores color
 	character._apply_alive_state()
+	if character is Player:
+		character.set_invincible(false)
 	character.set_physics_process(true)
 	character.set_process(true)
 

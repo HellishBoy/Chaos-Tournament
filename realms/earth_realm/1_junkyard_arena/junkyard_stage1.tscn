@@ -133,10 +133,16 @@ tile_set = SubResource("TileSet_scryw")
 y_sort_enabled = true
 
 [node name="Enemy1" parent="Contestants" unique_id=1826535128 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
-position = Vector2(320, -80)
+position = Vector2(314, -88)
 lives = 2
 is_main_enemy = true
 spawn_point = NodePath("../../SpawnPoints/EnemySpawn1")
+main_attack_cooldown = 0.8
+
+[node name="Enemy2" parent="Contestants" unique_id=390347379 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
+position = Vector2(357, -88)
+lives = 2
+spawn_point = NodePath("../../SpawnPoints/EnemySpawn2")
 main_attack_cooldown = 0.8
 
 [node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("4_5ltjn")]

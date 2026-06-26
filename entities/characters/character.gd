@@ -6,6 +6,8 @@ class_name Character
 
 # ── Exports ──────────────────────────────────────────────────────
 
+@export var collision_layer_index: int = 0
+
 @export var stats: CharacterStats
 @export var current_weapon: WeaponData
 @export var fists: WeaponData
@@ -44,6 +46,12 @@ var last_direction: Vector2 = Vector2.UP
 
 var is_dead: bool = false
 
+var is_dodging: bool = false
+var dodge_traveled: float = 0.0
+var dodge_direction: Vector2 = Vector2.ZERO
+var cooldown_timer: float = 0.0
+var _stamina: float = 0.0
+
 var is_tossing: bool = false
 var is_main_attacking: bool = false
 var is_alt_attacking: bool = false
@@ -72,6 +80,9 @@ func _ready() -> void:
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
 
+	_stamina = stats.stamina_max
+	set_invincible(false)
+
 	knockback_component.immune = stats.knockback_immune
 	
 	_update_weapon_visuals()
@@ -89,23 +100,19 @@ func _setup_health_bar() -> void:
 
 func _apply_death_state() -> void:
 	is_dead = true
+	
 	# Stop all animation
 	anim_lower.stop()
 	anim_upper.stop()
-	# Disable collision
-	set_collision_layer_value(2, false)
-	set_collision_layer_value(3, false)
-	set_collision_mask_value(1, false)
-	# Grayscale modulate
+	
+	if collision_layer_index > 0:
+		set_collision_layer_value(collision_layer_index, false)
 	$Body.modulate = Color(0.3, 0.3, 0.3, 1.0)
 
 func _apply_alive_state() -> void:
 	is_dead = false
-	# Re-enable collision
-	set_collision_layer_value(2, true)
-	set_collision_layer_value(3, true)
-	set_collision_mask_value(1, true)
-	# Restore color
+	if collision_layer_index > 0:
+		set_collision_layer_value(collision_layer_index, true)
 	$Body.modulate = Color.WHITE
 
 # ── Active Weapon ────────────────────────────────────────────────
@@ -117,6 +124,8 @@ func get_active_weapon() -> WeaponData:
 
 func try_pickup(pickup_node: Node) -> void:
 	if current_weapon != null:
+		return
+	if is_dead:
 		return
 	var data: WeaponData = pickup_node.weapon_data.duplicate()
 	pickup_node.queue_free()
@@ -157,6 +166,26 @@ func _do_toss() -> void:
 		manager.register_tossed_weapon(pickup)
 		
 	# Refresh HUD after toss
+	var hud := get_tree().get_first_node_in_group("hud") as HUD
+	if hud:
+		hud.refresh()
+
+func _toss_weapon_data(data: WeaponData) -> void:
+	if data == null or not data.can_toss:
+		return
+	if weapon_pickup_scene == null:
+		push_warning(name + ": weapon_pickup_scene not assigned in Inspector.")
+		return
+	var toss_dir := Vector2.RIGHT.rotated(rotation)
+	var pickup = weapon_pickup_scene.instantiate()
+	pickup.weapon_data = data
+	pickup._was_tossed = true
+	pickup.position = global_position + toss_dir * 10.0
+	get_parent().add_child(pickup)
+	pickup.setup_toss(global_position, toss_dir)
+	var manager := get_tree().get_first_node_in_group("weapon_drop_manager") as WeaponDropManager
+	if manager:
+		manager.register_tossed_weapon(pickup)
 	var hud := get_tree().get_first_node_in_group("hud") as HUD
 	if hud:
 		hud.refresh()
@@ -334,6 +363,54 @@ func _apply_movement(desired_velocity: Vector2) -> void:
 	else:
 		velocity = desired_velocity
 	move_and_slide()
+
+func set_invincible(state: bool) -> void:
+	set_collision_mask_value(2, not state)
+	set_collision_mask_value(3, not state)
+	set_collision_mask_value(4, not state)
+	set_collision_mask_value(5, not state)
+	set_collision_mask_value(6, not state)
+	hurtbox.set_deferred("monitorable", not state)
+	# Tell all other characters to drop this character's layer from their mask
+	var all_characters := get_tree().get_nodes_in_group("player") + \
+		get_tree().get_nodes_in_group("enemy")
+	for character in all_characters:
+		if character == self:
+			continue
+		character.set_collision_mask_value(collision_layer_index, not state)
+
+func try_dodge(direction: Vector2) -> void:
+	if is_dodging or cooldown_timer > 0 or _stamina < stats.stamina_per_dodge:
+		return
+	dodge_direction = direction if direction.length() > 0 else last_direction
+	is_dodging = true
+	dodge_traveled = 0.0
+	cooldown_timer = stats.dodge_cooldown
+	_stamina -= stats.stamina_per_dodge
+	set_invincible(true)
+	is_tossing = false
+	_cancel_into_idle()
+	anim_upper.play("uni_dodge")
+	anim_lower.stop()
+
+func _tick_dodge(delta: float) -> void:
+	if is_dodging:
+		var step := dodge_direction.normalized() * stats.dodge_speed * delta
+		dodge_traveled += step.length()
+		_apply_movement(dodge_direction.normalized() * stats.dodge_speed)
+		if dodge_traveled >= stats.dodge_distance:
+			is_dodging = false
+			set_invincible(false)
+			if main_attack_held:
+				_play_main_attack()
+			elif alt_attack_held:
+				_play_alt_attack()
+			else:
+				_snap_to_idle()
+
+func _tick_stamina(delta: float) -> void:
+	if _stamina < stats.stamina_max:
+		_stamina = min(_stamina + stats.stamina_regen * delta, stats.stamina_max)
 
 # ── Bullets ──────────────────────────────────────────────────────
 
