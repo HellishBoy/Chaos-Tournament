@@ -71,9 +71,10 @@ radius = 6.0
 
 [node name="Player" type="CharacterBody2D" unique_id=390347379 groups=["player"]]
 collision_layer = 2
-collision_mask = 29
+collision_mask = 61
 motion_mode = 1
 script = ExtResource("1_g2els")
+collision_layer_index = 2
 stats = ExtResource("2_y4r1p")
 fists = ExtResource("2_qlg0r")
 weapon_pickup_scene = ExtResource("3_fjrip")
@@ -176,7 +177,6 @@ shape = SubResource("CircleShape2D_tuyoq")
 debug_color = Color(0, 0.645647, 0.2622566, 0.41960785)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=59279071]
-zoom = Vector2(0.3, 0.3)
 process_callback = 0
 limit_left = -1000000
 limit_top = -1000000
@@ -187,7 +187,6 @@ script = ExtResource("5_qlg0r")
 aim_toggle_mode = true
 
 [node name="Hurtbox" type="Area2D" parent="." unique_id=546847491]
-visible = false
 collision_layer = 64
 collision_mask = 1536
 

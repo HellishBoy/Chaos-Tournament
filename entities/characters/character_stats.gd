@@ -11,6 +11,9 @@ class_name CharacterStats
 @export var stamina_max: float = 10.0
 @export var stamina_regen: float = 3.0
 @export var stamina_per_dodge: float = 5.0
+@export var dodge_speed: float = 250.0
+@export var dodge_distance: float = 48.0
+@export var dodge_cooldown: float = 0.1
 
 @export_group("Combat")
 @export var damage_multiplier: float = 1.0

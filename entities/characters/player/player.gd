@@ -8,11 +8,6 @@ class_name Player
 
 @export var lock_on_toggle_mode: bool = false
 
-@export_group("Dodge")
-@export var dodge_speed: float = 250.0
-@export var dodge_distance: float = 48.0
-@export var dodge_cooldown: float = 0.1
-
 # ── Node References ──────────────────────────────────────────────
 
 @onready var lock_on_area: Area2D = $Area2D
@@ -22,12 +17,6 @@ class_name Player
 
 var using_controller: bool = false
 
-var is_dodging: bool = false
-var dodge_traveled: float = 0.0
-var cooldown_timer: float = 0.0
-var _stamina: float = 0.0
-var dodge_direction: Vector2 = Vector2.ZERO
-
 var lock_on_active: bool = false
 var lock_on_target: Node2D = null
 var enemies_in_range: Array = []
@@ -36,7 +25,6 @@ var enemies_in_range: Array = []
 
 func _ready() -> void:
 	super()
-	_stamina = stats.stamina_max
 	lock_on_area.body_entered.connect(_on_enemy_entered)
 	lock_on_area.body_exited.connect(_on_enemy_exited)
 
@@ -48,14 +36,19 @@ func _on_damaged(_amount: int, _remaining: int) -> void:
 	tween.tween_property($Body, "modulate", Color.WHITE, 0.1)
 
 func _on_died() -> void:
+	
 	# Clear enemy targets
 	for enemy in get_tree().get_nodes_in_group("enemy"):
 		if enemy.target == self:
 			enemy.target = null
 			enemy.ai_state = Enemy.AIState.IDLE
+			
 	# Drop weapon
 	if current_weapon != null:
-		call_deferred("_do_toss")
+		var data := current_weapon
+		current_weapon = null
+		call_deferred("_toss_weapon_data", data)
+
 	# White flash then grayscale
 	var tween := create_tween()
 	tween.tween_property($Body, "modulate", Color(8.0, 8.0, 8.0, 1.0), 0.1)
@@ -83,10 +76,12 @@ func _input(event: InputEvent) -> void:
 		if event.is_action_pressed("lock_on"):
 			lock_on_active = !lock_on_active
 			lock_on_target = _get_nearest_enemy() if lock_on_active else null
+			print("lock-on active: ", _get_nearest_enemy())
 	else:
 		if event.is_action_pressed("lock_on"):
 			lock_on_active = true
 			lock_on_target = _get_nearest_enemy()
+			print("lock-on active: ", _get_nearest_enemy())
 		if event.is_action_released("lock_on"):
 			lock_on_active = false
 			lock_on_target = null
@@ -94,12 +89,17 @@ func _input(event: InputEvent) -> void:
 # ── Lock-on ──────────────────────────────────────────────────────
 
 func _on_enemy_entered(body: Node2D) -> void:
+	print("enemy entered lock-on range: ", body.name)
+	if not (body is Enemy):
+		return
 	if not enemies_in_range.has(body):
 		enemies_in_range.append(body)
 	if lock_on_active:
 		lock_on_target = _get_nearest_enemy()
 
 func _on_enemy_exited(body: Node2D) -> void:
+	if not (body is Enemy):
+		return
 	enemies_in_range.erase(body)
 	if lock_on_target == body:
 		lock_on_target = _get_nearest_enemy()
@@ -117,15 +117,6 @@ func _get_nearest_enemy() -> Node2D:
 			nearest_dist = dist
 			nearest = enemy
 	return nearest
-
-# ── Dodge ────────────────────────────────────────────────────────
-
-func set_invincible(state: bool) -> void:
-	set_collision_mask_value(2, not state)
-	set_collision_mask_value(3, not state)
-	set_collision_mask_value(4, not state)
-	set_collision_mask_value(5, not state)
-	hurtbox.set_deferred("monitorable", not state)
 	
 # ── Physics Process ──────────────────────────────────────────────
 
@@ -146,28 +137,20 @@ func _physics_process(delta: float) -> void:
 	main_attack_held = Input.is_action_pressed("attack_main")
 	alt_attack_held  = Input.is_action_pressed("attack_alt")
 	
-	if _stamina < stats.stamina_max:
-		_stamina = min(_stamina + stats.stamina_regen * delta, stats.stamina_max)
-		var hud := get_tree().get_first_node_in_group("hud") as HUD
-		if hud:
-			hud.refresh_dodge(_stamina, stats.stamina_max, stats.stamina_per_dodge)
+	# ── Stamina regen ────────────────────────────────────────────
+	_tick_stamina(delta)
+	var hud := get_tree().get_first_node_in_group("hud") as HUD
+	if hud:
+		hud.refresh_dodge(_stamina, stats.stamina_max, stats.stamina_per_dodge)
 
 	# ── Priority 1: Dodge ────────────────────────────────────────
-	if Input.is_action_just_pressed("dodge") and not is_dodging and cooldown_timer <= 0 and _stamina >= stats.stamina_per_dodge:
+	if Input.is_action_just_pressed("dodge") and not is_dodging:
 		var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-		dodge_direction = input_dir if input_dir.length() > 0 else last_direction
-		is_dodging = true
-		dodge_traveled = 0.0
-		cooldown_timer = dodge_cooldown
-		_stamina -= stats.stamina_per_dodge
-		set_invincible(true)
-		is_tossing = false
-		_cancel_into_idle()
-		anim_upper.play("uni_dodge")
-		anim_lower.stop()
-		var hud := get_tree().get_first_node_in_group("hud") as HUD
-		if hud:
-			hud.refresh_dodge(_stamina, stats.stamina_max, stats.stamina_per_dodge)
+		try_dodge(input_dir)
+		if is_dodging:
+			var hud2 := get_tree().get_first_node_in_group("hud") as HUD
+			if hud2:
+				hud2.refresh_dodge(_stamina, stats.stamina_max, stats.stamina_per_dodge)
 
 	# ── Priority 2: Toss ─────────────────────────────────────────
 	if not is_dodging and not is_tossing:
@@ -194,18 +177,7 @@ func _physics_process(delta: float) -> void:
 
 	# ── Movement ─────────────────────────────────────────────────
 	if is_dodging:
-		var step := dodge_direction.normalized() * dodge_speed * delta
-		dodge_traveled += step.length()
-		_apply_movement(dodge_direction.normalized() * dodge_speed)
-		if dodge_traveled >= dodge_distance:
-			is_dodging = false
-			set_invincible(false)
-			if main_attack_held:
-				_play_main_attack()
-			elif alt_attack_held:
-				_play_alt_attack()
-			else:
-				_snap_to_idle()
+		_tick_dodge(delta)
 	else:
 		var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		var knock_mult := knockback_component.get_speed_multiplier()
