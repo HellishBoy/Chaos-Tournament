@@ -54,14 +54,17 @@ func _on_hurtbox_area_entered(area: Area2D) -> void:
 
 # ── Physics Process ──────────────────────────────────────────────
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if knockback_component.is_active() and not knockback_immune:
 		var tier := knockback_component.get_tier()
 		var dir := knockback_component.get_direction()
 		var push_speed: float = KnockbackComponent.TIER_SPEEDS.get(tier, 0.0)
 		var mult := knockback_component.get_speed_multiplier()
 		velocity = dir * push_speed * mult
-		move_and_slide()
+		var collision := move_and_collide(velocity * delta)
+		if collision:
+			velocity = velocity.bounce(collision.get_normal())
+			knockback_component._direction = velocity.normalized()
 	else:
 		velocity = Vector2.ZERO
 

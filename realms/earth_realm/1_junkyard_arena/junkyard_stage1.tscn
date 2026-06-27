@@ -154,6 +154,7 @@ y_sort_enabled = true
 
 [node name="Dummy" parent="Contestants/Props" unique_id=228317739 instance=ExtResource("6_ah1uk")]
 position = Vector2(80, 208)
+knockback_immune = false
 
 [node name="Dummy2" parent="Contestants/Props" unique_id=263292854 instance=ExtResource("6_ah1uk")]
 position = Vector2(488, 244)
