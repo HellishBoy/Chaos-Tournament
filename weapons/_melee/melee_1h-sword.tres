@@ -7,6 +7,7 @@
 script = ExtResource("1_t8t18")
 weapon_name = "Sword"
 weapon_category = "melee_1h"
+power = 3
 idle_animation = "idle_melee_1h"
 walk_animation = "walk_melee_1h"
 main_attack_animations = Array[String](["attack_melee_1h_cleave_a", "attack_melee_1h_cleave_b"])
@@ -21,4 +22,5 @@ alt_knockback = "low"
 durability = "high"
 durability_current = 6
 weapon_sprite_right = ExtResource("2_t8t18")
+ai_main_attack_range = 30.0
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"

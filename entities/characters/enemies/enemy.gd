@@ -7,6 +7,8 @@ class_name Enemy
 
 @export var can_pick_up_weapons: bool = false
 @export var can_toss_weapons: bool = false
+@export var can_find_weapons: bool = false
+@export var can_dodge: bool = false
 @export var destroy_weapon_on_death: bool = false
 
 @export_group("Round")
@@ -17,13 +19,18 @@ class_name Enemy
 @export var spawn_point: Marker2D
 
 @export_group("AI")
-@export var detection_range: float = 200.0
-@export var attack_range: float = 40.0
+@export var detection_range: float = 100.0
 @export var idle_wander_speed: float = 0.0
 
+@export_group("Intelligence")
+@export var weapon_detection_range: float = 100.0
+@export var is_scared: bool = false
+@export var is_aggressive: bool = false
+@export var is_picky: bool = false
+
 @export_group("Attack")
-@export var main_attack_cooldown: float = 1.0
-@export var alt_attack_cooldown: float = 1.5
+@export var main_attack_cooldown: float = 0.8
+@export var alt_attack_cooldown: float = 0.8
 
 # ── Node References ──────────────────────────────────────────────
 
@@ -35,8 +42,19 @@ class_name Enemy
 var _main_attack_timer: float = 0.0
 var _alt_attack_timer: float = 0.0
 
+var _weapon_target: Node = null  # the pickup node being sought
+var _weapon_scan_timer: float = 0.0
+const WEAPON_SCAN_INTERVAL: float = 0.1  # scan for weapons every 0.1s
+
+var _seeking_better_weapon: bool = false
+
+var _toss_cooldown_timer: float = 0.0
+const TOSS_COOLDOWN: float = 0.8
+
 var _nav_update_timer: float = 0.0
-const NAV_UPDATE_INTERVAL: float = 0.05  # recalculate path every 0.2 seconds
+const NAV_UPDATE_INTERVAL: float = 0.05  # recalculate path every 0.05 seconds
+
+const LOW_HP_THRESHOLD: float = 0.35
 
 # ── State ────────────────────────────────────────────────────────
 
@@ -58,8 +76,8 @@ var targets_in_range: Array = []
 
 enum AIState {
 	IDLE,
-	CHASE,
-	ATTACK,
+	SEEK_WEAPON,
+	ACTIVE,
 }
 
 var ai_state: AIState = AIState.IDLE
@@ -122,7 +140,7 @@ func _find_player_target() -> void:
 	var player := get_tree().get_first_node_in_group("player") as Player
 	if player and is_instance_valid(player) and not player.is_dead:
 		target = player
-		ai_state = AIState.CHASE
+		ai_state = AIState.ACTIVE
 	else:
 		target = null
 		ai_state = AIState.IDLE
@@ -163,16 +181,47 @@ func _get_nearest_target() -> Node2D:
 # ── AI State Machine ─────────────────────────────────────────────
 
 func _update_ai_state() -> void:
+	if _seeking_better_weapon and current_weapon != null and _weapon_target != null:
+		if not is_instance_valid(_weapon_target) or _weapon_target._was_picked_up:
+			_seeking_better_weapon = false
+			_weapon_target = null
+	
+	# Invalidate weapon target if it's gone or picked up
+	if _weapon_target != null:
+		if not is_instance_valid(_weapon_target) or _weapon_target._was_picked_up:
+			_weapon_target = null
+
+	# Scan for weapons on interval
+	_weapon_scan_timer -= get_physics_process_delta_time()
+	if _weapon_scan_timer <= 0.0:
+		_weapon_scan_timer = WEAPON_SCAN_INTERVAL
+		if can_find_weapons:
+			if current_weapon == null:
+				_weapon_target = _scan_for_weapon()
+				_seeking_better_weapon = false
+			elif _toss_cooldown_timer <= 0.0:
+				var better := _scan_for_better_weapon()
+				if better != null:
+					_weapon_target = better
+					_seeking_better_weapon = true
+					_toss_cooldown_timer = TOSS_COOLDOWN
+					call_deferred("_toss_backward_and_seek")
+
+	# Weapon seeking takes priority — check this before target validation
+	if _weapon_target != null and (current_weapon == null or _seeking_better_weapon):
+		ai_state = AIState.SEEK_WEAPON
+		return
+
+	# No target — try to find player
 	if target == null or not is_instance_valid(target) or target.is_dead:
 		_find_player_target()
 		if target == null:
 			ai_state = AIState.IDLE
+			main_attack_held = false
 			return
-	var dist := global_position.distance_to(target.global_position)
-	if dist <= attack_range:
-		ai_state = AIState.ATTACK
-	else:
-		ai_state = AIState.CHASE
+
+	ai_state = AIState.ACTIVE
+
 
 # ── Physics Process ──────────────────────────────────────────────
 
@@ -198,6 +247,9 @@ func _physics_process(delta: float) -> void:
 	if target and not is_instance_valid(target):
 		target = _get_nearest_target()
 	
+	if _toss_cooldown_timer > 0:
+		_toss_cooldown_timer -= delta
+	
 	_update_ai_state()
 
 	match ai_state:
@@ -207,33 +259,70 @@ func _physics_process(delta: float) -> void:
 				_snap_to_idle()
 				anim_lower.stop()
 
-		AIState.CHASE:
-			if not _is_attacking():
+		AIState.SEEK_WEAPON:
+			if _weapon_target == null or not is_instance_valid(_weapon_target):
+				ai_state = AIState.ACTIVE
+			else:
+				nav_agent.target_position = _weapon_target.global_position
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
 				_apply_movement(dir * stats.move_speed)
-				var walk := get_active_weapon().walk_animation
-				if walk != "":
-					anim_upper.play(walk)
+				if not _is_attacking():
+					var walk := get_active_weapon().walk_animation
+					if walk != "":
+						anim_upper.play(walk)
 				if velocity.length() > 0:
 					anim_lower.play("feet_normal")
 				else:
 					anim_lower.stop()
-			else:
-				_apply_movement(Vector2.ZERO)
 
-		AIState.ATTACK:
-			_apply_movement(Vector2.ZERO)
-			if target != null and not target.is_dead:
-				var dir := (target.global_position - global_position).normalized()
+		AIState.ACTIVE:
+			# ── Feet — move toward target, stop when in range ────
+			var weapon := get_active_weapon()
+			var attack_dist := weapon.ai_main_attack_range
+			var dist := global_position.distance_to(target.global_position)
+			var has_los := _has_line_of_sight() if weapon.requires_line_of_sight else true
+
+			if dist > attack_dist or (weapon.requires_line_of_sight and not has_los):
+				var next_pos := nav_agent.get_next_path_position()
+				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
-			if not _is_attacking() and not is_tossing and _main_attack_timer <= 0:
-				if target != null and not target.is_dead:
-					_play_main_attack()
-					_main_attack_timer = main_attack_cooldown
+				_apply_movement(dir * stats.move_speed)
+			else:
+				# In range and has LOS — face target but stop moving
+				if target != null and is_instance_valid(target):
+					var dir := (target.global_position - global_position).normalized()
+					last_direction = dir
+					rotation = dir.angle()
+				_apply_movement(Vector2.ZERO)
+
+			if not _is_attacking():
+				var walk := get_active_weapon().walk_animation
+				if walk != "":
+					anim_upper.play(walk)
+			if velocity.length() > 0:
+				anim_lower.play("feet_slow" if _is_attacking() else "feet_normal")
+			else:
+				anim_lower.stop()
+
+			# ── Hands — attack if in range ────────────────────────
+			if dist <= attack_dist and has_los:
+				if not is_tossing and _main_attack_timer <= 0:
+					if target != null and not target.is_dead:
+						if weapon.ai_main_attack_mode == "HOLD":
+							main_attack_held = true
+							if not _is_attacking():
+								_play_main_attack()
+						else:
+							main_attack_held = false
+							if not _is_attacking():
+								_play_main_attack()
+								_main_attack_timer = main_attack_cooldown
+			else:
+				main_attack_held = false
 
 # ── Facing on start ──────────────────────────────────────────────
 
@@ -248,3 +337,103 @@ func _facing_to_vector(facing: FacingDirection) -> Vector2:
 		FacingDirection.LEFT:       return Vector2(-1, 0)
 		FacingDirection.UP_LEFT:    return Vector2(-1, -1).normalized()
 	return Vector2(0, 1)
+	
+# ── Helpers ──────────────────────────────────────────────
+	
+func _has_line_of_sight() -> bool:
+	if target == null or not is_instance_valid(target):
+		return false
+	var space := get_world_2d().direct_space_state
+	var query := PhysicsRayQueryParameters2D.create(
+		global_position,
+		target.global_position,
+		collision_mask
+	)
+	query.exclude = [self]
+	var result := space.intersect_ray(query)
+	if result.is_empty():
+		return true
+	return result["collider"] == target
+	
+func _get_effective_weapon_range() -> float:
+	if is_aggressive and target != null:
+		var target_hp_percent := float(target.health.current_hp) / float(target.health.max_hp)
+		if target_hp_percent <= 0.1:
+			return 30.0
+	if is_scared:
+		var hp_percent := float(health.current_hp) / float(health.max_hp)
+		if hp_percent <= 0.2:
+			return 225.0
+		elif hp_percent <= LOW_HP_THRESHOLD:
+			return 175.0
+	return weapon_detection_range
+
+func _scan_for_weapon() -> Node:
+	if not can_find_weapons or current_weapon != null:
+		return null
+	var effective_range := _get_effective_weapon_range()
+	var hp_percent := float(health.current_hp) / float(health.max_hp)
+	var use_picky := is_picky and hp_percent > LOW_HP_THRESHOLD
+
+	var best: Node = null
+	var best_power: int = -1
+	var best_dist: float = INF
+
+	for pickup in get_tree().get_nodes_in_group("weapon_pickup"):
+		if not is_instance_valid(pickup):
+			continue
+		if pickup._was_picked_up:
+			continue
+		if not pickup._pickup_enabled:
+			continue
+		var dist := global_position.distance_to(pickup.global_position)
+		if dist > effective_range:
+			continue
+		if use_picky:
+			var power: int = pickup.weapon_data.power if pickup.weapon_data else 0
+			if power > best_power or (power == best_power and dist < best_dist):
+				best_power = power
+				best_dist = dist
+				best = pickup
+		else:
+			if dist < best_dist:
+				best_dist = dist
+				best = pickup
+	return best
+
+func _scan_for_better_weapon() -> Node:
+	if not is_picky or not can_find_weapons:
+		return null
+	if current_weapon == null:
+		return null
+	var hp_percent := float(health.current_hp) / float(health.max_hp)
+	if hp_percent <= LOW_HP_THRESHOLD:
+		return null
+	var effective_range := _get_effective_weapon_range()
+	var best: Node = null
+	var best_power: int = current_weapon.power  # only beat what we have
+	for pickup in get_tree().get_nodes_in_group("weapon_pickup"):
+		if not is_instance_valid(pickup):
+			continue
+		if pickup._was_picked_up:
+			continue
+		if not pickup._pickup_enabled:
+			continue
+		var dist := global_position.distance_to(pickup.global_position)
+		if dist > effective_range:
+			continue
+		var power: int = pickup.weapon_data.power if pickup.weapon_data else 0
+		if power > best_power:
+			best_power = power
+			best = pickup
+	return best
+
+func _toss_backward_and_seek() -> void:
+	# Rotate 180 to toss behind
+	var original_rotation := rotation
+	rotation = original_rotation + PI
+	_do_toss()
+	# Rotate back to original facing after toss
+	await get_tree().create_timer(0.1).timeout
+	if is_instance_valid(self) and not is_dead:
+		rotation = original_rotation

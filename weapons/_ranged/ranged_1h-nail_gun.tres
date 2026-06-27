@@ -8,6 +8,7 @@
 script = ExtResource("2_st5pi")
 weapon_name = "Nail Gun"
 weapon_category = "ranged_1h"
+power = 2
 idle_animation = "idle_ranged_1h"
 walk_animation = "walk_ranged_1h"
 main_attack_animations = Array[String](["attack_ranged_1h_fire"])
@@ -21,4 +22,7 @@ bullet_scene = ExtResource("1_6senr")
 bullet_speed = 1000.0
 bullet_range = 60.0
 weapon_sprite_right = ExtResource("3_63b1t")
+ai_main_attack_mode = "HOLD"
+ai_main_attack_range = 80.0
+requires_line_of_sight = true
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"
