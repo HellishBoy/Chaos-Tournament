@@ -6,6 +6,8 @@
 [resource]
 script = ExtResource("1_j53w5")
 weapon_name = "Battle Axe"
+weapon_category = "melee_2h"
+power = 4
 idle_animation = "idle_melee_2h_1"
 walk_animation = "walk_melee_2h_1"
 main_attack_animations = Array[String](["attack_melee_2h_1_cleave_a", "attack_melee_2h_1_cleave_b"])
@@ -20,4 +22,5 @@ alt_knockback = "high"
 durability = "high"
 durability_current = 12
 weapon_sprite_left = ExtResource("2_8ws87")
+ai_alt_attack_range = 30.0
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"

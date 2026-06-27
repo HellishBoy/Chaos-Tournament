@@ -11,6 +11,7 @@ var _distance_traveled: float = 0.0
 var _hit_count: int = 0
 
 func _ready() -> void:
+	z_index = -1
 	area_entered.connect(_on_area_entered)
 	body_entered.connect(_on_body_entered)
 

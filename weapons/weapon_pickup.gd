@@ -32,6 +32,8 @@ func _ready() -> void:
 		# Start despawn for pre-placed weapons too
 		if not disable_despawn and weapon_data != null and weapon_data.despawn_timer > 0.0:
 			start_despawn_timer(weapon_data.despawn_timer)
+	
+	add_to_group("weapon_pickup")
 
 func _apply_sprite() -> void:
 	if weapon_data == null:

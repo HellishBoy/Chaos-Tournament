@@ -6,6 +6,7 @@ class_name WeaponData
 @export_enum("none", "melee_1h", "melee_2h", "melee_dual",
 			 "ranged_1h", "ranged_2h", "ranged_dual",
 			 "projectile", "grenade") var weapon_category: String = "none"
+@export var power: int = 1
 
 @export_group("Animations")
 @export var idle_animation: String = ""
@@ -54,6 +55,7 @@ class_name WeaponData
 @export var bullet_speed: float = 300.0
 @export var bullet_range: float = -1.0  # -1 = infinite
 @export var bullet_pierce: int = 0      # 0 = no pierce, -1 = infinite
+@export var bullet_spread: float = 0.0  # degrees
 
 @export_group("Special Effects")
 @export var special_effect: String = ""
@@ -64,3 +66,12 @@ class_name WeaponData
 @export var weapon_sprite_ground: Texture2D
 @export var weapon_sprite_left: Texture2D
 @export var weapon_sprite_right: Texture2D
+
+@export_group("AI")
+@export_enum("TAP", "HOLD") var ai_main_attack_mode: String = "TAP"
+@export var ai_main_attack_range: float = 24.0
+
+@export_enum("TAP", "HOLD") var ai_alt_attack_mode: String = "TAP"
+@export var ai_alt_attack_range: float = 24.0
+
+@export var requires_line_of_sight: bool = false

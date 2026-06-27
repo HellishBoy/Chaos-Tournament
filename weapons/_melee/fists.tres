@@ -10,4 +10,5 @@ main_attack_animations = Array[String](["attack_melee_fists_a", "attack_melee_fi
 alt_attack_animations = Array[String](["attack_feet_kick"])
 movement_penalty = 0.8
 alt_attack_speed = 0.8
+ai_main_attack_mode = "HOLD"
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"

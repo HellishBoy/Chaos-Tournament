@@ -428,8 +428,10 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 	var bullet = weapon.bullet_scene.instantiate()
 	bullet.position = muzzle.global_position
 	get_parent().add_child(bullet)
+	var spread_rad := deg_to_rad(randf_range(-weapon.bullet_spread, weapon.bullet_spread))
+	var direction := Vector2.RIGHT.rotated(rotation + spread_rad)
 	bullet.setup(
-		Vector2.RIGHT.rotated(rotation),
+		direction,
 		weapon.bullet_speed,
 		weapon.bullet_range,
 		weapon.bullet_pierce,
