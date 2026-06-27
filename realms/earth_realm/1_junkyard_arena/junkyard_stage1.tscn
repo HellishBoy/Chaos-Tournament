@@ -144,7 +144,12 @@ is_picky = true
 
 [node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("4_5ltjn")]
 position = Vector2(336, 424)
+lock_on_toggle_mode = false
 health_bar_scene = ExtResource("5_ipurl")
+health_bar_width = 20.0
+health_bar_height = 2.0
+health_bar_offset = Vector2(0, -16)
+combo_window = 0.4
 
 [node name="Props" type="Node2D" parent="Contestants" unique_id=526174102]
 y_sort_enabled = true

@@ -299,7 +299,7 @@ func _physics_process(delta: float) -> void:
 					rotation = dir.angle()
 				_apply_movement(Vector2.ZERO)
 
-			if not _is_attacking():
+			if not _is_attacking() and not is_tossing:
 				var walk := get_active_weapon().walk_animation
 				if walk != "":
 					anim_upper.play(walk)
@@ -309,7 +309,8 @@ func _physics_process(delta: float) -> void:
 				anim_lower.stop()
 
 			# ── Hands — attack if in range ────────────────────────
-			if dist <= attack_dist and has_los:
+			#print("is_tossing: ", is_tossing, " | timer: ", _main_attack_timer, " | dist: ", dist, " | attack_dist: ", attack_dist)
+			if dist <= attack_dist and has_los and not is_tossing:
 				if not is_tossing and _main_attack_timer <= 0:
 					if target != null and not target.is_dead:
 						if weapon.ai_main_attack_mode == "HOLD":
@@ -437,3 +438,10 @@ func _toss_backward_and_seek() -> void:
 	await get_tree().create_timer(0.1).timeout
 	if is_instance_valid(self) and not is_dead:
 		rotation = original_rotation
+
+func _on_animation_finished(anim_name: StringName) -> void:
+	if anim_name == "uni_toss":
+		is_tossing = false
+		_snap_to_idle()
+		return
+	super._on_animation_finished(anim_name)

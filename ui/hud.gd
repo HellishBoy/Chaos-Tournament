@@ -103,7 +103,6 @@ func _update_vignette(current: int, max_hp: int) -> void:
 
 func _find_player() -> void:
 	var player := get_tree().get_first_node_in_group("player") as Player
-	print("HUD found player: ", player)
 	if player:
 		setup(player)
 

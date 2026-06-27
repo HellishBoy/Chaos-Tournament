@@ -76,12 +76,10 @@ func _input(event: InputEvent) -> void:
 		if event.is_action_pressed("lock_on"):
 			lock_on_active = !lock_on_active
 			lock_on_target = _get_nearest_enemy() if lock_on_active else null
-			print("lock-on active: ", _get_nearest_enemy())
 	else:
 		if event.is_action_pressed("lock_on"):
 			lock_on_active = true
 			lock_on_target = _get_nearest_enemy()
-			print("lock-on active: ", _get_nearest_enemy())
 		if event.is_action_released("lock_on"):
 			lock_on_active = false
 			lock_on_target = null
@@ -89,7 +87,6 @@ func _input(event: InputEvent) -> void:
 # ── Lock-on ──────────────────────────────────────────────────────
 
 func _on_enemy_entered(body: Node2D) -> void:
-	print("enemy entered lock-on range: ", body.name)
 	if not (body is Enemy):
 		return
 	if not enemies_in_range.has(body):

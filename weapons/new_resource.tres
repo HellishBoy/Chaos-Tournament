@@ -41,7 +41,7 @@ metadata/_custom_type_script = "uid://dwlwg725t31ip"
 
 [resource]
 script = ExtResource("2_i4xys")
-drop_interval = 2.5
+drop_interval = 5.0
 max_drops_per_interval = 3
 entries = Array[ExtResource("1_utmmb")]([SubResource("Resource_1vh8a"), SubResource("Resource_2ju0k"), SubResource("Resource_1ide7"), SubResource("Resource_ehves")])
 metadata/_custom_type_script = "uid://co24hvnc6y0dt"

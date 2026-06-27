@@ -422,6 +422,8 @@ func spawn_bullet_left() -> void:
 
 func spawn_bullet(muzzle: Marker2D) -> void:
 	var weapon := get_active_weapon()
+	if weapon == fists:
+		return
 	if weapon.bullet_scene == null:
 		push_warning("spawn_bullet: no bullet_scene assigned on %s" % weapon.weapon_name)
 		return

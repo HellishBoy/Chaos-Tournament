@@ -74,10 +74,15 @@ collision_layer = 2
 collision_mask = 61
 motion_mode = 1
 script = ExtResource("1_g2els")
+lock_on_toggle_mode = null
 collision_layer_index = 2
 stats = ExtResource("2_y4r1p")
 fists = ExtResource("2_qlg0r")
 weapon_pickup_scene = ExtResource("3_fjrip")
+health_bar_width = null
+health_bar_height = null
+health_bar_offset = null
+combo_window = null
 
 [node name="Body" type="Node2D" parent="." unique_id=180073333]
 
