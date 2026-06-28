@@ -20,7 +20,6 @@ damage_alt = 40
 main_knockback = "medium"
 alt_knockback = "high"
 durability = "high"
-durability_current = 12
 weapon_sprite_left = ExtResource("2_8ws87")
 ai_alt_attack_range = 30.0
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"

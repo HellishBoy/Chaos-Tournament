@@ -145,6 +145,12 @@ func _find_player_target() -> void:
 		target = null
 		ai_state = AIState.IDLE
 
+func try_pickup(pickup_node: Node) -> void:
+	super.try_pickup(pickup_node)
+	_weapon_scan_timer = 0.0
+	_seeking_better_weapon = false
+	_weapon_target = null
+
 func _update_navigation_target(delta: float) -> void:
 	if target == null or not is_instance_valid(target):
 		return
@@ -392,7 +398,7 @@ func _scan_for_weapon() -> Node:
 			continue
 		if use_picky:
 			var power: int = pickup.weapon_data.power if pickup.weapon_data else 0
-			if power > best_power or (power == best_power and dist < best_dist):
+			if power > best_power:
 				best_power = power
 				best_dist = dist
 				best = pickup
