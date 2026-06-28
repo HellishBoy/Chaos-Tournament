@@ -113,7 +113,12 @@ func _check_win_condition() -> void:
 # ── Respawn ───────────────────────────────────────────────────────
 
 func _respawn_later(character: Node, spawn: Marker2D) -> void:
-	await get_tree().create_timer(respawn_delay).timeout
+	await get_tree().create_timer(respawn_delay * 0.98).timeout
+	if not is_instance_valid(character):
+		return
+	# Move dead body to spawn after some delay
+	character.global_position = spawn.global_position
+	await get_tree().create_timer(respawn_delay * 0.02).timeout
 	if not is_instance_valid(character):
 		return
 	_respawn(character, spawn)
