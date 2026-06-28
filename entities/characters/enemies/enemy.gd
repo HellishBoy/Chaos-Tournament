@@ -146,6 +146,21 @@ func _find_player_target() -> void:
 		ai_state = AIState.IDLE
 
 func try_pickup(pickup_node: Node) -> void:
+	if current_weapon != null and is_picky:
+		var hp_percent := float(health.current_hp) / float(health.max_hp)
+		if hp_percent > LOW_HP_THRESHOLD:
+			var incoming_power: int = pickup_node.weapon_data.power if pickup_node.weapon_data else 0
+			if incoming_power > current_weapon.power:
+				# Toss current weapon and pick up the better one
+				_do_toss()
+				# Wait one frame for toss to clear current_weapon
+				await get_tree().physics_frame
+				if is_instance_valid(pickup_node) and not pickup_node._was_picked_up:
+					super.try_pickup(pickup_node)
+				_weapon_scan_timer = 0.0
+				_seeking_better_weapon = false
+				_weapon_target = null
+				return
 	super.try_pickup(pickup_node)
 	_weapon_scan_timer = 0.0
 	_seeking_better_weapon = false

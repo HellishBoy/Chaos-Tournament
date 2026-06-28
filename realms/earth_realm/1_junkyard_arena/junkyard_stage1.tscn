@@ -140,6 +140,7 @@ lives = 2
 is_main_enemy = true
 spawn_point = NodePath("../../SpawnPoints/EnemySpawn1")
 is_scared = true
+is_aggressive = true
 is_picky = true
 
 [node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("4_5ltjn")]

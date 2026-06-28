@@ -101,6 +101,9 @@ func _setup_health_bar() -> void:
 func _apply_death_state() -> void:
 	is_dead = true
 	
+	current_weapon = null
+	_update_weapon_visuals()
+	
 	# Stop all animation
 	anim_lower.stop()
 	anim_upper.stop()
