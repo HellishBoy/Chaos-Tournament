@@ -7,7 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://entities/prop/dummy/dummy.tscn" id="6_ah1uk"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/weapon_pickup.tscn" id="7_ryemf"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/weapon_data.gd" id="13_qtryu"]
-[ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/_melee/melee_1h-sword.tres" id="14_p3ne0"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="15_1dd6p"]
 [ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/_melee/melee_2h-battle_axe.tres" id="15_us766"]
 [ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/_ranged/ranged_1h-mac_10x2.tres" id="16_5ltjn"]
@@ -15,8 +14,14 @@
 [ext_resource type="Script" uid="uid://dwlwg725t31ip" path="res://weapons/weapon_drop_entry.gd" id="17_ipurl"]
 [ext_resource type="Script" uid="uid://o13aqvpie2db" path="res://weapons/weapon_drop_manager.gd" id="17_qtryu"]
 [ext_resource type="Script" uid="uid://bvoq4k2jkkt3v" path="res://core/round_manager.gd" id="17_suu1f"]
+[ext_resource type="Script" uid="uid://clhccd8w6ac47" path="res://items/item_drop_manager.gd" id="18_5ltjn"]
 [ext_resource type="Resource" uid="uid://b0vw2o2dgfcf0" path="res://weapons/new_resource.tres" id="18_p3ne0"]
-[ext_resource type="Script" uid="uid://byj40y30kigbn" path="res://weapons/weapon_drop_zone.gd" id="19_us766"]
+[ext_resource type="Script" uid="uid://dygtfyp4md0or" path="res://items/item_data.gd" id="19_5ltjn"]
+[ext_resource type="Resource" uid="uid://cfwgiyx6n4l2u" path="res://items/new_resource.tres" id="19_ipurl"]
+[ext_resource type="Script" uid="uid://byj40y30kigbn" path="res://weapons/drop_zone.gd" id="19_us766"]
+[ext_resource type="PackedScene" uid="uid://dolrqfgx3sw2y" path="res://items/ItemPickup.tscn" id="20_ah1uk"]
+[ext_resource type="Resource" uid="uid://d2yj3gq8u2axh" path="res://items/health_pack_1.tres" id="20_ipurl"]
+[ext_resource type="Script" uid="uid://cktqq00sbkh2v" path="res://items/item_drop_entry.gd" id="22_ah1uk"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_qtryu"]
 
@@ -94,27 +99,23 @@ polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32
 outlines = Array[PackedVector2Array]([PackedVector2Array(672, 368, 400, 368, 400, 496, 272, 496, 272, 368, 0, 368, 0, 0, 272, 0, 272, -128, 400, -128, 400, 0, 672, 0)])
 agent_radius = 5.0
 
-[sub_resource type="Resource" id="Resource_ah1uk"]
-script = ExtResource("17_ipurl")
-weapon_data = ExtResource("14_p3ne0")
-drop_weight = 2.0
-allowed_groups = Array[String](["Altar"])
-metadata/_custom_type_script = "uid://dwlwg725t31ip"
-
 [sub_resource type="Resource" id="Resource_ryemf"]
 script = ExtResource("17_ipurl")
 weapon_data = ExtResource("15_us766")
 allowed_groups = Array[String](["Altar"])
-max_concurrent = 2
 metadata/_custom_type_script = "uid://dwlwg725t31ip"
 
 [sub_resource type="Resource" id="Resource_2ejke"]
 script = ExtResource("17_ipurl")
 weapon_data = ExtResource("16_5ltjn")
-drop_weight = 2.0
 allowed_groups = Array[String](["Altar"])
-max_concurrent = 2
 metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_ah1uk"]
+script = ExtResource("22_ah1uk")
+item_data = ExtResource("20_ipurl")
+allowed_groups = Array[String](["Altar"])
+metadata/_custom_type_script = "uid://cktqq00sbkh2v"
 
 [node name="Sandbox Stage 1" type="Node2D" unique_id=646780844]
 
@@ -291,43 +292,50 @@ script = ExtResource("17_qtryu")
 config = ExtResource("18_p3ne0")
 weapon_pickup_scene = ExtResource("7_ryemf")
 
-[node name="WeaponDropZone - Left Area" type="Polygon2D" parent="." unique_id=1896668465]
+[node name="ItemDropManager" type="Node" parent="." unique_id=678214938]
+script = ExtResource("18_5ltjn")
+config = ExtResource("19_ipurl")
+item_pickup_scene = ExtResource("20_ah1uk")
+
+[node name="DropZone - Left Area" type="Polygon2D" parent="." unique_id=1896668465]
 polygon = PackedVector2Array(32, 24, 32, 48, 48, 88, 88, 96, 88, 136.47157, 56, 136, 56, 184, 32, 184, 32, 256, 64, 256, 88, 288, 88, 336, 120, 336, 144, 320, 192, 320, 208, 336, 240, 336, 240, 304, 208, 304, 208, 208, 192, 208, 192, 304, 128, 304, 128, 272, 104, 272, 88, 256, 64, 224, 128, 224, 128, 96, 200, 96, 200, 64, 240, 32, 160, 32, 160, 64, 64, 64, 64, 24)
 script = ExtResource("19_us766")
 zone_group = "Left Area"
 
-[node name="WeaponDropZone - Corners" type="Polygon2D" parent="." unique_id=136789262]
+[node name="DropZone - Corners" type="Polygon2D" parent="." unique_id=136789262]
 script = ExtResource("19_us766")
 zone_group = "Corners"
 zone_type = 1
 
-[node name="Marker2D" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=1179947166]
+[node name="Marker2D" type="Marker2D" parent="DropZone - Corners" unique_id=1179947166]
 position = Vector2(576, 336)
 
-[node name="Marker2D2" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=1554072429]
+[node name="Marker2D2" type="Marker2D" parent="DropZone - Corners" unique_id=1554072429]
 position = Vector2(640, 336)
 
-[node name="Marker2D3" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=2115942287]
+[node name="Marker2D3" type="Marker2D" parent="DropZone - Corners" unique_id=2115942287]
 position = Vector2(640, 32)
 
-[node name="Marker2D4" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=1617265652]
+[node name="Marker2D4" type="Marker2D" parent="DropZone - Corners" unique_id=1617265652]
 position = Vector2(432, 32)
 
-[node name="Marker2D5" type="Marker2D" parent="WeaponDropZone - Corners" unique_id=1684402268]
+[node name="Marker2D5" type="Marker2D" parent="DropZone - Corners" unique_id=1684402268]
 position = Vector2(432, 336)
 
-[node name="WeaponDropZone - Altar" type="Polygon2D" parent="." unique_id=385875780]
+[node name="DropZone - Altar" type="Polygon2D" parent="." unique_id=385875780]
 script = ExtResource("19_us766")
 zone_group = "Altar"
 zone_type = 2
-altar_weapons = Array[ExtResource("13_qtryu")]([ExtResource("14_p3ne0"), ExtResource("15_us766"), ExtResource("16_5ltjn")])
-altar_pool = Array[ExtResource("17_ipurl")]([SubResource("Resource_ah1uk"), SubResource("Resource_ryemf"), SubResource("Resource_2ejke")])
+altar_weapons = Array[ExtResource("13_qtryu")]([ExtResource("15_us766"), ExtResource("16_5ltjn")])
+altar_weapon_pool = Array[ExtResource("17_ipurl")]([SubResource("Resource_ryemf"), SubResource("Resource_2ejke")])
+altar_items = Array[ExtResource("19_5ltjn")]([ExtResource("20_ipurl")])
+altar_item_pool = Array[ExtResource("22_ah1uk")]([SubResource("Resource_ah1uk")])
 
-[node name="Marker2D" type="Marker2D" parent="WeaponDropZone - Altar" unique_id=169334448]
+[node name="Marker2D" type="Marker2D" parent="DropZone - Altar" unique_id=169334448]
 position = Vector2(308, 192)
 
-[node name="Marker2D2" type="Marker2D" parent="WeaponDropZone - Altar" unique_id=1675281668]
+[node name="Marker2D2" type="Marker2D" parent="DropZone - Altar" unique_id=1675281668]
 position = Vector2(340, 192)
 
-[node name="Marker2D3" type="Marker2D" parent="WeaponDropZone - Altar" unique_id=2067094182]
+[node name="Marker2D3" type="Marker2D" parent="DropZone - Altar" unique_id=2067094182]
 position = Vector2(376, 192)

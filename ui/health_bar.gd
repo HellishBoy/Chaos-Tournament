@@ -40,6 +40,7 @@ func setup(health: HealthComponent, follow_target: Node2D) -> void:
 	_max_hp = health.max_hp
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
+	health.healed.connect(_on_healed)
 	_update_fill(health.current_hp, health.max_hp)
 	if health.immortal:
 		fill.color = COLOR_IMMORTAL
@@ -86,6 +87,10 @@ func _on_damaged(_amount: int, remaining: int) -> void:
 
 func _on_died() -> void:
 	visible = false
+	
+func _on_healed(_amount: int, remaining: int) -> void:
+	_update_fill(remaining, _max_hp)
+	_update_visibility()
 	
 func _flash() -> void:
 	var tween := create_tween()

@@ -18,16 +18,16 @@ func _ready() -> void:
 	# Wait for stage to finish loading
 	await owner.ready
 	# Collect all drop zones in the stage
-	_zones = get_tree().get_nodes_in_group("weapon_drop_zone")
+	_zones = get_tree().get_nodes_in_group("drop_zone")
 	if _zones.is_empty():
-		push_warning("WeaponDropManager: no nodes in group 'weapon_drop_zone' found.")
+		push_warning("WeaponDropManager: no nodes in group 'drop_zone' found.")
 	if config:
 		for entry in config.entries:
 			_active_counts[entry] = 0
 		# Initialize altar pool counts
 		for zone in _zones:
-			if zone.zone_type == WeaponDropZone.ZoneType.ALTAR:
-				for entry in zone.altar_pool:
+			if zone.zone_type == DropZone.ZoneType.ALTAR:
+				for entry in zone.altar_weapon_pool:
 					if not _active_counts.has(entry):
 						_active_counts[entry] = 0
 	_drop_timer = config.drop_interval if config else 0.0
@@ -36,7 +36,7 @@ func _ready() -> void:
 
 func _initialize_altars() -> void:
 	for zone in _zones:
-		if zone.zone_type != WeaponDropZone.ZoneType.ALTAR:
+		if zone.zone_type != DropZone.ZoneType.ALTAR:
 			continue
 		var markers: Array = zone.get_altar_markers()
 		for i in min(markers.size(), zone.altar_weapons.size()):
@@ -44,10 +44,10 @@ func _initialize_altars() -> void:
 			var weapon_data: WeaponData = zone.altar_weapons[i]
 			_spawn_altar_weapon(weapon_data, marker.global_position, zone, marker)
 
-func _on_altar_weapon_removed(zone: WeaponDropZone, marker: Marker2D) -> void:
+func _on_altar_weapon_removed(zone: DropZone, marker: Marker2D) -> void:
 	zone.mark_unoccupied(marker)
 
-func _spawn_altar_weapon(weapon_data: WeaponData, pos: Vector2, zone: WeaponDropZone, marker: Marker2D) -> void:
+func _spawn_altar_weapon(weapon_data: WeaponData, pos: Vector2, zone: DropZone, marker: Marker2D) -> void:
 	if weapon_pickup_scene == null:
 		return
 	var pickup = weapon_pickup_scene.instantiate()
@@ -63,7 +63,7 @@ func _spawn_altar_weapon(weapon_data: WeaponData, pos: Vector2, zone: WeaponDrop
 	pickup.picked_up.connect(_on_altar_weapon_picked_up.bind(zone, marker))
 	pickup.tree_exited.connect(_on_altar_weapon_removed.bind(zone, marker))
 	
-func _on_altar_weapon_picked_up(zone: WeaponDropZone, marker: Marker2D) -> void:
+func _on_altar_weapon_picked_up(zone: DropZone, marker: Marker2D) -> void:
 	zone.mark_disturbed(marker)
 
 func _process(delta: float) -> void:
@@ -91,11 +91,11 @@ func _do_single_drop() -> void:
 
 	# Altar pool drops — only on available disturbed markers
 	for zone in _zones:
-		if zone.zone_type != WeaponDropZone.ZoneType.ALTAR:
+		if zone.zone_type != DropZone.ZoneType.ALTAR:
 			continue
 		if not zone.has_available_disturbed_markers():
 			continue
-		for entry in zone.altar_pool:
+		for entry in zone.altar_weapon_pool:
 			if entry.max_concurrent != -1 and _active_counts.get(entry, 0) >= entry.max_concurrent:
 				continue
 			if not eligible.has(entry):
@@ -110,7 +110,7 @@ func _do_single_drop() -> void:
 
 	# Check if this entry belongs to an altar pool
 	for zone in _zones:
-		if zone.zone_type == WeaponDropZone.ZoneType.ALTAR and zone.altar_pool.has(entry):
+		if zone.zone_type == DropZone.ZoneType.ALTAR and zone.altar_weapon_pool.has(entry):
 			var available: Array = zone.get_available_disturbed_markers()
 			if available.is_empty():
 				return
@@ -123,14 +123,14 @@ func _do_single_drop() -> void:
 
 	# Normal drop
 	var valid_zones := _get_valid_zones(entry)
-	var zone: WeaponDropZone = valid_zones[randi() % valid_zones.size()]
+	var zone: DropZone = valid_zones[randi() % valid_zones.size()]
 	var spawn_pos: Vector2 = zone.get_random_position()
 	_spawn_weapon(entry, spawn_pos)
 
 func _get_valid_zones(entry: WeaponDropEntry) -> Array:
 	var result: Array = []
 	for zone in _zones:
-		if zone.zone_type == WeaponDropZone.ZoneType.ALTAR:
+		if zone.zone_type == DropZone.ZoneType.ALTAR:
 			continue  # altar zones handled separately
 		if entry.allowed_groups.has(zone.zone_group):
 			result.append(zone)
@@ -188,9 +188,9 @@ func register_weapon_broken(weapon_data: WeaponData) -> void:
 			return
 			
 	for zone in _zones:
-		if zone.zone_type != WeaponDropZone.ZoneType.ALTAR:
+		if zone.zone_type != DropZone.ZoneType.ALTAR:
 			continue
-		for entry in zone.altar_pool:
+		for entry in zone.altar_weapon_pool:
 			if entry.weapon_data.weapon_name == weapon_data.weapon_name:
 				_active_counts[entry] = max(_active_counts.get(entry, 0) - 1, 0)
 				return
@@ -201,9 +201,9 @@ func register_tossed_weapon(pickup: Node) -> void:
 			pickup.tree_exited.connect(_on_tossed_weapon_removed.bind(entry))
 			return
 	for zone in _zones:
-		if zone.zone_type != WeaponDropZone.ZoneType.ALTAR:
+		if zone.zone_type != DropZone.ZoneType.ALTAR:
 			continue
-		for entry in zone.altar_pool:
+		for entry in zone.altar_weapon_pool:
 			if entry.weapon_data.weapon_name == pickup.weapon_data.weapon_name:
 				pickup.tree_exited.connect(_on_tossed_weapon_removed.bind(entry))
 				return
