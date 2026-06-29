@@ -27,6 +27,8 @@ signal died
 signal invincibility_started
 signal invincibility_ended
 
+signal healed(amount: int, current: int)
+
 var _invincible: bool = false
 var _invincibility_timer: float = 0.0
 
@@ -60,6 +62,7 @@ func take_damage(amount: int) -> void:
 
 func heal(amount: int) -> void:
 	current_hp = min(current_hp + amount, max_hp)
+	emit_signal("healed", amount, current_hp)
 
 func is_dead() -> bool:
 	return current_hp <= 0

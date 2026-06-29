@@ -111,6 +111,7 @@ func setup(player: Player) -> void:
 	_player_max_hp = player.health.max_hp
 	player.health.damaged.connect(_on_player_damaged)
 	player.health.died.connect(_on_player_died)
+	player.health.healed.connect(_on_player_healed)
 	_update_player_health(player.health.current_hp, player.health.max_hp)
 	_setup_player_health_bar()
 	refresh()
@@ -136,6 +137,10 @@ func _on_player_damaged(_amount: int, remaining: int) -> void:
 	
 func _on_player_died() -> void:
 	player_health_fill.size.x = 0.0
+	
+func _on_player_healed(_amount: int, remaining: int) -> void:
+	_update_player_health(remaining, _player_max_hp)
+	_update_vignette(remaining, _player_max_hp)
 	
 func _flash_health_bar() -> void:
 	var tween := create_tween()

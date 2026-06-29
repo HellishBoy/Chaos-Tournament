@@ -1,6 +1,6 @@
-# WeaponDropZone.gd
+# DropZone.gd
 extends Polygon2D
-class_name WeaponDropZone
+class_name DropZone
 
 enum ZoneType {
 	POLYGON,
@@ -13,14 +13,16 @@ enum ZoneType {
 
 # For ALTAR type only
 @export var altar_weapons: Array[WeaponData] = []
-@export var altar_pool: Array[WeaponDropEntry] = []
+@export var altar_weapon_pool: Array[WeaponDropEntry] = []
+@export var altar_items: Array[ItemData] = []
+@export var altar_item_pool: Array[ItemDropEntry] = []
 
 # Runtime tracking for altar markers
 var _disturbed_markers: Array[Marker2D] = []
 var _occupied_markers: Array[Marker2D] = []
 
 func _ready() -> void:
-	add_to_group("weapon_drop_zone")
+	add_to_group("drop_zone")
 	# Make it semi-transparent so you can see it in game if needed
 	modulate = Color(1.0, 1.0, 0.0, 0.3)
 	# Hide in game, only useful in editor
