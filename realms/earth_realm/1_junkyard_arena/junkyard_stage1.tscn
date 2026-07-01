@@ -133,12 +133,15 @@ y_sort_enabled = true
 
 [node name="Enemy1" parent="Contestants" unique_id=1826535128 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
 position = Vector2(314, -88)
+can_double_dodge = true
 lives = 2
 is_main_enemy = true
 spawn_point = NodePath("../../SpawnPoints/EnemySpawn1")
+is_careful = true
 is_scared = true
-is_aggressive = true
 is_picky = true
+is_swift = true
+is_panic = true
 
 [node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("4_5ltjn")]
 position = Vector2(336, 424)

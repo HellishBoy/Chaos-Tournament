@@ -9,6 +9,7 @@ class_name Enemy
 @export var can_toss_weapons: bool = false
 @export var can_find_weapons: bool = false
 @export var can_dodge: bool = false
+@export var can_double_dodge: bool = false
 @export var destroy_weapon_on_death: bool = false
 
 @export_group("Round")
@@ -24,9 +25,15 @@ class_name Enemy
 
 @export_group("Intelligence")
 @export var weapon_detection_range: float = 100.0
+@export var is_careful: bool = false
+@export var is_healthy: bool = false
 @export var is_scared: bool = false
 @export var is_aggressive: bool = false
 @export var is_picky: bool = false
+@export var is_swift: bool = false
+@export var is_panic: bool = false
+@export var dodge_interval_min: float = 1.0
+@export var dodge_interval_max: float = 3.0
 
 @export_group("Attack")
 @export var main_attack_cooldown: float = 0.8
@@ -42,11 +49,16 @@ class_name Enemy
 var _main_attack_timer: float = 0.0
 var _alt_attack_timer: float = 0.0
 
+var _dodge_timer: float = 0.0
+var _pending_dodges: int = 0
+
 var _weapon_target: Node = null  # the pickup node being sought
 var _weapon_scan_timer: float = 0.0
 const WEAPON_SCAN_INTERVAL: float = 0.1  # scan for weapons every 0.1s
 
 var _seeking_better_weapon: bool = false
+
+var _item_target: Node = null
 
 var _toss_cooldown_timer: float = 0.0
 const TOSS_COOLDOWN: float = 0.8
@@ -77,6 +89,7 @@ var targets_in_range: Array = []
 enum AIState {
 	IDLE,
 	SEEK_WEAPON,
+	SEEK_ITEM,
 	ACTIVE,
 }
 
@@ -91,12 +104,15 @@ func _ready() -> void:
 	var shape: CircleShape2D = $DetectionArea/CollisionShape2D.shape as CircleShape2D
 	if shape != null:
 		shape.radius = detection_range
+	if can_double_dodge and not can_dodge:
+		push_warning(name + ": can_double_dodge is true but can_dodge is false — can_double_dodge will have no effect.")
 	var dir := _facing_to_vector(initial_facing)
 	last_direction = dir
 	rotation = dir.angle()
 	await get_tree().physics_frame
 	_find_player_target()
-	
+	_reset_dodge_timer()
+
 # ── Health Callbacks ─────────────────────────────────────────────
 
 func _on_damaged(_amount: int, _remaining: int) -> void:
@@ -211,6 +227,18 @@ func _update_ai_state() -> void:
 	if _weapon_target != null:
 		if not is_instance_valid(_weapon_target) or _weapon_target._was_picked_up:
 			_weapon_target = null
+			
+	# Invalidate item target if it's gone or picked up		
+	if _item_target != null:
+		if not is_instance_valid(_item_target) or _item_target._was_picked_up:
+			_item_target = null
+			
+	# Scan for heal item — highest priority when scared and low HP
+	_item_target = _scan_for_heal_item()
+	if _item_target != null:
+		ai_state = AIState.SEEK_ITEM
+		main_attack_held = false
+		return
 
 	# Scan for weapons on interval
 	_weapon_scan_timer -= get_physics_process_delta_time()
@@ -263,13 +291,39 @@ func _physics_process(delta: float) -> void:
 		_main_attack_timer -= delta
 	if _alt_attack_timer > 0:
 		_alt_attack_timer -= delta
+	if _toss_cooldown_timer > 0:
+		_toss_cooldown_timer -= delta
+	if cooldown_timer > 0:
+		cooldown_timer -= delta
+		
+	_tick_stamina(delta)
+		
+	var hp_percent := float(health.current_hp) / float(health.max_hp)
+	var should_dodge := (is_swift and hp_percent > LOW_HP_THRESHOLD) or (is_panic and hp_percent <= LOW_HP_THRESHOLD)
+	
+	# If scared, only allow dodging during SEEK_WEAPON or SEEK_ITEM states
+	if is_scared and hp_percent <= LOW_HP_THRESHOLD and ai_state != AIState.SEEK_WEAPON and ai_state != AIState.SEEK_ITEM:
+		should_dodge = false
+	
+	if should_dodge and can_dodge and ai_state != AIState.IDLE:
+		_dodge_timer -= delta
+		if _dodge_timer <= 0.0:
+			_reset_dodge_timer()
+			_pending_dodges = int(_stamina / stats.stamina_per_dodge) if can_double_dodge else 1
+
+	# Fire pending dodges when not already dodging
+	if _pending_dodges > 0 and not is_dodging and cooldown_timer <= 0:
+		_pending_dodges -= 1
+		try_dodge(last_direction)
+			
+	# Tick dodge for all states
+	if is_dodging:
+		_tick_dodge(delta)
+		return
 
 	targets_in_range = targets_in_range.filter(func(t): return is_instance_valid(t))
 	if target and not is_instance_valid(target):
 		target = _get_nearest_target()
-	
-	if _toss_cooldown_timer > 0:
-		_toss_cooldown_timer -= delta
 	
 	_update_ai_state()
 
@@ -285,6 +339,25 @@ func _physics_process(delta: float) -> void:
 				ai_state = AIState.ACTIVE
 			else:
 				nav_agent.target_position = _weapon_target.global_position
+				var next_pos := nav_agent.get_next_path_position()
+				var dir := (next_pos - global_position).normalized()
+				last_direction = dir
+				rotation = dir.angle()
+				_apply_movement(dir * stats.move_speed)
+				if not _is_attacking():
+					var walk := get_active_weapon().walk_animation
+					if walk != "":
+						anim_upper.play(walk)
+				if velocity.length() > 0:
+					anim_lower.play("feet_normal")
+				else:
+					anim_lower.stop()
+
+		AIState.SEEK_ITEM:
+			if _item_target == null or not is_instance_valid(_item_target):
+				ai_state = AIState.ACTIVE
+			else:
+				nav_agent.target_position = _item_target.global_position
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
@@ -330,7 +403,6 @@ func _physics_process(delta: float) -> void:
 				anim_lower.stop()
 
 			# ── Hands — attack if in range ────────────────────────
-			#print("is_tossing: ", is_tossing, " | timer: ", _main_attack_timer, " | dist: ", dist, " | attack_dist: ", attack_dist)
 			if dist <= attack_dist and has_los and not is_tossing:
 				if not is_tossing and _main_attack_timer <= 0:
 					if target != null and not target.is_dead:
@@ -450,6 +522,30 @@ func _scan_for_better_weapon() -> Node:
 			best = pickup
 	return best
 
+func _scan_for_heal_item() -> Node:
+	if not is_careful and not is_healthy:
+		return null
+	var hp_percent := float(health.current_hp) / float(health.max_hp)
+	if is_careful and hp_percent > LOW_HP_THRESHOLD:
+		return null
+	if is_healthy and hp_percent >= 1.0:
+		return null
+	var effective_range := _get_effective_weapon_range()
+	var best: Node = null
+	var best_dist: float = INF
+	for pickup in get_tree().get_nodes_in_group("item_pickup"):
+		if not is_instance_valid(pickup):
+			continue
+		if pickup._was_picked_up:
+			continue
+		if pickup.item_data == null or pickup.item_data.effect != ItemData.ItemEffect.HEAL:
+			continue
+		var dist := global_position.distance_to(pickup.global_position)
+		if dist <= effective_range and dist < best_dist:
+			best_dist = dist
+			best = pickup
+	return best
+
 func _toss_backward_and_seek() -> void:
 	# Rotate 180 to toss behind
 	var original_rotation := rotation
@@ -466,3 +562,6 @@ func _on_animation_finished(anim_name: StringName) -> void:
 		_snap_to_idle()
 		return
 	super._on_animation_finished(anim_name)
+	
+func _reset_dodge_timer() -> void:
+	_dodge_timer = randf_range(dodge_interval_min, dodge_interval_max)
