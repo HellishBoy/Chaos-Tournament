@@ -133,6 +133,7 @@ y_sort_enabled = true
 
 [node name="Enemy1" parent="Contestants" unique_id=1826535128 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
 position = Vector2(314, -88)
+can_double_dodge = true
 lives = 2
 is_main_enemy = true
 spawn_point = NodePath("../../SpawnPoints/EnemySpawn1")
@@ -145,6 +146,23 @@ is_swift = true
 is_panic = true
 is_tactical = true
 is_strafing = true
+main_attack_cooldown = 0.4
+alt_attack_cooldown = 0.5
+can_combo = true
+
+[node name="Enemy2" parent="Contestants" unique_id=390347379 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
+position = Vector2(357, -87)
+lives = 2
+spawn_point = NodePath("../../SpawnPoints/EnemySpawn2")
+is_scared = true
+is_aggressive = true
+is_desperate = true
+is_swift = true
+is_panic = true
+is_tactical = true
+is_strafing = true
+main_attack_cooldown = 0.4
+alt_attack_cooldown = 0.5
 can_combo = true
 
 [node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("4_5ltjn")]
@@ -285,7 +303,6 @@ text = "Stage Selection"
 
 [node name="RoundManager" type="Node" parent="." unique_id=1923771772 node_paths=PackedStringArray("player_spawn", "win_screen", "lose_screen")]
 script = ExtResource("17_suu1f")
-player_lives = 2
 player_spawn = NodePath("../SpawnPoints/PlayerSpawn")
 win_screen = NodePath("../Hud/WinScreen")
 lose_screen = NodePath("../Hud/LoseScreen")

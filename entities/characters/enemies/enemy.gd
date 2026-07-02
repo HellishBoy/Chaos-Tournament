@@ -653,4 +653,7 @@ func break_weapon() -> void:
 	_use_alt_attack = false
 	alt_attack_held = false
 	main_attack_held = false
+	is_alt_attacking = false
+	is_main_attacking = false
 	_reset_combo_switch_timer()
+	_cancel_into_idle()
