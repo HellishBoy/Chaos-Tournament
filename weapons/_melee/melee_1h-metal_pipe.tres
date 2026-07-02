@@ -14,6 +14,7 @@ alt_attack_animations = Array[String](["attack_melee_1h_sweep"])
 alt_attack_speed = 0.7
 main_knockback = "low"
 alt_knockback = "medium"
+has_combo = true
 durability = "low"
 durability_current = 3
 weapon_sprite_right = ExtResource("2_ko34i")

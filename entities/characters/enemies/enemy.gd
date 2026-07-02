@@ -25,19 +25,32 @@ class_name Enemy
 
 @export_group("Intelligence")
 @export var weapon_detection_range: float = 100.0
+
 @export var is_careful: bool = false
 @export var is_healthy: bool = false
+
 @export var is_scared: bool = false
 @export var is_aggressive: bool = false
+
 @export var is_picky: bool = false
+@export var is_desperate: bool = false
+
 @export var is_swift: bool = false
 @export var is_panic: bool = false
 @export var dodge_interval_min: float = 1.0
 @export var dodge_interval_max: float = 3.0
 
+@export var is_tactical: bool = false
+@export var is_strafing: bool = false
+@export var tactical_strafe_min: float = 1.5
+@export var tactical_strafe_max: float = 3.5
+
 @export_group("Attack")
 @export var main_attack_cooldown: float = 0.8
 @export var alt_attack_cooldown: float = 0.8
+@export var can_combo: bool = false
+@export var combo_switch_min: float = 1.0
+@export var combo_switch_max: float = 2.5
 
 # ── Node References ──────────────────────────────────────────────
 
@@ -49,8 +62,15 @@ class_name Enemy
 var _main_attack_timer: float = 0.0
 var _alt_attack_timer: float = 0.0
 
+var _combo_switch_timer: float = 0.0
+var _use_alt_attack: bool = false
+
 var _dodge_timer: float = 0.0
 var _pending_dodges: int = 0
+
+var _strafe_timer: float = 0.0
+var _strafe_angle_offset: float = 0.0
+var _strafe_direction: float = 1.0
 
 var _weapon_target: Node = null  # the pickup node being sought
 var _weapon_scan_timer: float = 0.0
@@ -62,9 +82,6 @@ var _item_target: Node = null
 
 var _toss_cooldown_timer: float = 0.0
 const TOSS_COOLDOWN: float = 0.8
-
-var _nav_update_timer: float = 0.0
-const NAV_UPDATE_INTERVAL: float = 0.05  # recalculate path every 0.05 seconds
 
 const LOW_HP_THRESHOLD: float = 0.35
 
@@ -106,12 +123,16 @@ func _ready() -> void:
 		shape.radius = detection_range
 	if can_double_dodge and not can_dodge:
 		push_warning(name + ": can_double_dodge is true but can_dodge is false — can_double_dodge will have no effect.")
+	if is_strafing and not is_tactical:
+		push_warning(name + ": is_strafing is true but is_tactical is false — is_strafing will have no effect.")
 	var dir := _facing_to_vector(initial_facing)
 	last_direction = dir
 	rotation = dir.angle()
 	await get_tree().physics_frame
 	_find_player_target()
 	_reset_dodge_timer()
+	_reset_strafe_timer()
+	_reset_combo_switch_timer()
 
 # ── Health Callbacks ─────────────────────────────────────────────
 
@@ -162,9 +183,11 @@ func _find_player_target() -> void:
 		ai_state = AIState.IDLE
 
 func try_pickup(pickup_node: Node) -> void:
-	if current_weapon != null and is_picky:
+	if current_weapon != null:
 		var hp_percent := float(health.current_hp) / float(health.max_hp)
-		if hp_percent > LOW_HP_THRESHOLD:
+		var picky_active := is_picky and hp_percent > LOW_HP_THRESHOLD
+		var desperate_active := is_desperate and hp_percent <= LOW_HP_THRESHOLD
+		if picky_active or desperate_active:
 			var incoming_power: int = pickup_node.weapon_data.power if pickup_node.weapon_data else 0
 			if incoming_power > current_weapon.power:
 				# Toss current weapon and pick up the better one
@@ -176,19 +199,15 @@ func try_pickup(pickup_node: Node) -> void:
 				_weapon_scan_timer = 0.0
 				_seeking_better_weapon = false
 				_weapon_target = null
+				_use_alt_attack = false
+				_reset_combo_switch_timer()
 				return
 	super.try_pickup(pickup_node)
 	_weapon_scan_timer = 0.0
 	_seeking_better_weapon = false
 	_weapon_target = null
-
-func _update_navigation_target(delta: float) -> void:
-	if target == null or not is_instance_valid(target):
-		return
-	_nav_update_timer -= delta
-	if _nav_update_timer <= 0.0:
-		_nav_update_timer = NAV_UPDATE_INTERVAL
-		nav_agent.target_position = target.global_position
+	_use_alt_attack = false
+	_reset_combo_switch_timer()
 
 func _on_target_entered(body: Node2D) -> void:
 	if body is Player:
@@ -276,8 +295,6 @@ func _update_ai_state() -> void:
 
 func _physics_process(delta: float) -> void:
 	
-	_update_navigation_target(delta)
-	
 	if main_combo_timer > 0:
 		main_combo_timer -= delta
 		if main_combo_timer <= 0:
@@ -297,6 +314,12 @@ func _physics_process(delta: float) -> void:
 		cooldown_timer -= delta
 		
 	_tick_stamina(delta)
+	
+	if can_combo and get_active_weapon().has_combo:
+		_combo_switch_timer -= delta
+		if _combo_switch_timer <= 0.0:
+			_reset_combo_switch_timer()
+			_use_alt_attack = not _use_alt_attack
 		
 	var hp_percent := float(health.current_hp) / float(health.max_hp)
 	var should_dodge := (is_swift and hp_percent > LOW_HP_THRESHOLD) or (is_panic and hp_percent <= LOW_HP_THRESHOLD)
@@ -373,24 +396,49 @@ func _physics_process(delta: float) -> void:
 					anim_lower.stop()
 
 		AIState.ACTIVE:
-			# ── Feet — move toward target, stop when in range ────
 			var weapon := get_active_weapon()
-			var attack_dist := weapon.ai_main_attack_range
+			var attack_dist := _get_current_attack_range()
 			var dist := global_position.distance_to(target.global_position)
 			var has_los := _has_line_of_sight() if weapon.requires_line_of_sight else true
 
-			if dist > attack_dist or (weapon.requires_line_of_sight and not has_los):
+			if is_tactical and target != null and is_instance_valid(target) and has_los:
+				# ── Tactical — orbit at ideal range ──────────────────
+				if is_strafing:
+					_strafe_timer -= get_physics_process_delta_time()
+					if _strafe_timer <= 0.0:
+						_reset_strafe_timer()
+				else:
+					_strafe_angle_offset = 0.0
+
+				var angle_to_target := (global_position - target.global_position).angle()
+				var strafe_angle := angle_to_target + _strafe_angle_offset * _strafe_direction
+				var ideal_pos := target.global_position + Vector2.RIGHT.rotated(strafe_angle) * (attack_dist * 0.95)
+				var dist_to_ideal := global_position.distance_to(ideal_pos)
+				if dist_to_ideal > 1.0:
+					nav_agent.target_position = ideal_pos
+					var next_pos := nav_agent.get_next_path_position()
+					var dir := (next_pos - global_position).normalized()
+					last_direction = (target.global_position - global_position).normalized()
+					rotation = last_direction.angle()
+					_apply_movement(dir * stats.move_speed)
+				else:
+					var dir := (target.global_position - global_position).normalized()
+					last_direction = dir
+					rotation = dir.angle()
+					_apply_movement(Vector2.ZERO)
+			elif dist > attack_dist or (weapon.requires_line_of_sight and not has_los):
+				# ── Standard chase ────────────────────────────────────
+				nav_agent.target_position = target.global_position
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
 				_apply_movement(dir * stats.move_speed)
 			else:
-				# In range and has LOS — face target but stop moving
-				if target != null and is_instance_valid(target):
-					var dir := (target.global_position - global_position).normalized()
-					last_direction = dir
-					rotation = dir.angle()
+				# ── In range — face target and stop ──────────────────
+				var dir := (target.global_position - global_position).normalized()
+				last_direction = dir
+				rotation = dir.angle()
 				_apply_movement(Vector2.ZERO)
 
 			if not _is_attacking() and not is_tossing:
@@ -404,19 +452,35 @@ func _physics_process(delta: float) -> void:
 
 			# ── Hands — attack if in range ────────────────────────
 			if dist <= attack_dist and has_los and not is_tossing:
-				if not is_tossing and _main_attack_timer <= 0:
+				if _main_attack_timer <= 0:
 					if target != null and not target.is_dead:
-						if weapon.ai_main_attack_mode == "HOLD":
-							main_attack_held = true
-							if not _is_attacking():
-								_play_main_attack()
+						if _use_alt_attack and get_active_weapon().alt_attack_animations.size() > 0:
+							if weapon.ai_alt_attack_mode == "HOLD":
+								alt_attack_held = true
+								main_attack_held = false
+								if not _is_attacking():
+									_play_alt_attack()
+							else:
+								alt_attack_held = false
+								main_attack_held = false
+								if not _is_attacking():
+									_play_alt_attack()
+									_main_attack_timer = alt_attack_cooldown
 						else:
-							main_attack_held = false
-							if not _is_attacking():
-								_play_main_attack()
-								_main_attack_timer = main_attack_cooldown
+							if weapon.ai_main_attack_mode == "HOLD":
+								main_attack_held = true
+								alt_attack_held = false
+								if not _is_attacking():
+									_play_main_attack()
+							else:
+								main_attack_held = false
+								alt_attack_held = false
+								if not _is_attacking():
+									_play_main_attack()
+									_main_attack_timer = main_attack_cooldown
 			else:
 				main_attack_held = false
+				alt_attack_held = false
 
 # ── Facing on start ──────────────────────────────────────────────
 
@@ -468,6 +532,7 @@ func _scan_for_weapon() -> Node:
 	var effective_range := _get_effective_weapon_range()
 	var hp_percent := float(health.current_hp) / float(health.max_hp)
 	var use_picky := is_picky and hp_percent > LOW_HP_THRESHOLD
+	var use_desperate := is_desperate and hp_percent <= LOW_HP_THRESHOLD
 
 	var best: Node = null
 	var best_power: int = -1
@@ -483,7 +548,7 @@ func _scan_for_weapon() -> Node:
 		var dist := global_position.distance_to(pickup.global_position)
 		if dist > effective_range:
 			continue
-		if use_picky:
+		if use_picky or use_desperate:
 			var power: int = pickup.weapon_data.power if pickup.weapon_data else 0
 			if power > best_power:
 				best_power = power
@@ -494,18 +559,21 @@ func _scan_for_weapon() -> Node:
 				best_dist = dist
 				best = pickup
 	return best
-
+	
 func _scan_for_better_weapon() -> Node:
-	if not is_picky or not can_find_weapons:
+	if not is_picky and not is_desperate:
 		return null
 	if current_weapon == null:
 		return null
 	var hp_percent := float(health.current_hp) / float(health.max_hp)
-	if hp_percent <= LOW_HP_THRESHOLD:
+	# picky only works above threshold, desperate only below
+	if is_picky and not is_desperate and hp_percent <= LOW_HP_THRESHOLD:
+		return null
+	if is_desperate and not is_picky and hp_percent > LOW_HP_THRESHOLD:
 		return null
 	var effective_range := _get_effective_weapon_range()
 	var best: Node = null
-	var best_power: int = current_weapon.power  # only beat what we have
+	var best_power: int = current_weapon.power # only beat what we have
 	for pickup in get_tree().get_nodes_in_group("weapon_pickup"):
 		if not is_instance_valid(pickup):
 			continue
@@ -565,3 +633,24 @@ func _on_animation_finished(anim_name: StringName) -> void:
 	
 func _reset_dodge_timer() -> void:
 	_dodge_timer = randf_range(dodge_interval_min, dodge_interval_max)
+	
+func _reset_strafe_timer() -> void:
+	_strafe_timer = randf_range(tactical_strafe_min, tactical_strafe_max)
+	_strafe_direction = 1.0 if randf() > 0.5 else -1.0
+	_strafe_angle_offset = randf_range(-0.3, 0.3)
+
+func _get_current_attack_range() -> float:
+	var weapon := get_active_weapon()
+	if is_alt_attacking or _use_alt_attack:
+		return weapon.ai_alt_attack_range
+	return weapon.ai_main_attack_range
+
+func _reset_combo_switch_timer() -> void:
+	_combo_switch_timer = randf_range(combo_switch_min, combo_switch_max)
+	
+func break_weapon() -> void:
+	super.break_weapon()
+	_use_alt_attack = false
+	alt_attack_held = false
+	main_attack_held = false
+	_reset_combo_switch_timer()

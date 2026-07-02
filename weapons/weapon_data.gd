@@ -31,6 +31,8 @@ class_name WeaponData
 @export var damage_alt: int = 5
 @export_enum("none", "low", "medium", "high") var main_knockback: String = "none"
 @export_enum("none", "low", "medium", "high") var alt_knockback: String = "none"
+@export var has_combo: bool = false
+
 # false = push away from attacker, true = push in attacker's facing direction
 @export var knockback_main_facing: bool = false
 @export var knockback_alt_facing: bool = false

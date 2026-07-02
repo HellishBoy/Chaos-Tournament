@@ -15,6 +15,7 @@ movement_penalty = 0.7
 alt_attack_speed = 0.5
 main_knockback = "low"
 alt_knockback = "high"
+has_combo = true
 knockback_main_facing = true
 durability = "medium"
 durability_current = 5
