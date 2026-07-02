@@ -23,6 +23,6 @@ bullet_speed = 1000.0
 bullet_range = 60.0
 weapon_sprite_right = ExtResource("3_63b1t")
 ai_main_attack_mode = "HOLD"
-ai_main_attack_range = 80.0
+ai_main_attack_range = 60.0
 requires_line_of_sight = true
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"
