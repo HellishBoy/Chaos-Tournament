@@ -18,6 +18,7 @@ class_name CharacterStats
 @export_group("Combat")
 @export var damage_multiplier: float = 1.0
 @export var defense: int = 0
+@export var attack_speed_multiplier: float = 1.0
 
 @export_group("Health")
 @export var max_hp: int = 100
