@@ -3,14 +3,14 @@ class_name KnockbackComponent
 
 const TIERS = {
 	"none":   { "speed_reduction": 0.0, "recovery_time": 0.0 },
-	"low":    { "speed_reduction": 0.4, "recovery_time": 0.3 },
-	"medium": { "speed_reduction": 0.7, "recovery_time": 0.5 },
-	"high":   { "speed_reduction": 1.0, "recovery_time": 0.8 },
+	"low":    { "speed_reduction": 0.3, "recovery_time": 0.2 },
+	"medium": { "speed_reduction": 0.6, "recovery_time": 0.5 },
+	"high":   { "speed_reduction": 1.0, "recovery_time": 0.7 },
 }
 
 const TIER_SPEEDS: Dictionary = {
 	"none":   0.0,
-	"low":    80.0,
+	"low":    110.0,
 	"medium": 160.0,
 	"high":   200.0,
 }
@@ -57,7 +57,7 @@ func get_speed_multiplier() -> float:
 		# Ease out — starts at full push, gradually reduces
 		var t_out: float = clamp(_timer / _recovery_time, 0.3, 1.0)
 		return reduction * t_out
-
+		
 func get_tier() -> String:
 	return _tier
 

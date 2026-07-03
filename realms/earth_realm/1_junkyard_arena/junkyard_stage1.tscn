@@ -1,6 +1,7 @@
 [gd_scene format=4 uid="uid://djmsra37pfabk"]
 
 [ext_resource type="Texture2D" uid="uid://da2hol5y5g2wr" path="res://realms/earth_realm/1_junkyard_arena/sandbox_tileset.png" id="2_p3ne0"]
+[ext_resource type="Texture2D" uid="uid://booojuadidfpr" path="res://entities/characters/skins/skin-white_paws.png" id="3_ipurl"]
 [ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="3_us766"]
 [ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="4_5ltjn"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="5_ipurl"]
@@ -145,34 +146,30 @@ is_desperate = true
 is_swift = true
 is_panic = true
 is_tactical = true
-is_strafing = true
 main_attack_cooldown = 0.4
 alt_attack_cooldown = 0.5
 can_combo = true
+sprite_hand_left = ExtResource("3_ipurl")
+sprite_hand_right = ExtResource("3_ipurl")
 
 [node name="Enemy2" parent="Contestants" unique_id=390347379 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
-position = Vector2(357, -87)
+position = Vector2(357, -88)
+can_double_dodge = true
 lives = 2
 spawn_point = NodePath("../../SpawnPoints/EnemySpawn2")
+is_careful = true
 is_scared = true
-is_aggressive = true
 is_desperate = true
 is_swift = true
 is_panic = true
 is_tactical = true
-is_strafing = true
 main_attack_cooldown = 0.4
 alt_attack_cooldown = 0.5
 can_combo = true
 
 [node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("4_5ltjn")]
 position = Vector2(336, 424)
-lock_on_toggle_mode = false
 health_bar_scene = ExtResource("5_ipurl")
-health_bar_width = 20.0
-health_bar_height = 2.0
-health_bar_offset = Vector2(0, -16)
-combo_window = 0.4
 
 [node name="Props" type="Node2D" parent="Contestants" unique_id=526174102]
 y_sort_enabled = true

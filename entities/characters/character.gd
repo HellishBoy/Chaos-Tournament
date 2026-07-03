@@ -36,8 +36,8 @@ class_name Character
 @onready var hitbox_right: Area2D = $Body/Hands/HandRight/HitboxRight
 @onready var hitbox_left: Area2D  = $Body/Hands/HandLeft/HitboxLeft
 
-@onready var health: HealthComponent             = $HealthComponent
-@onready var hurtbox: Area2D                     = $Hurtbox
+@onready var health: HealthComponent = $HealthComponent
+@onready var hurtbox: Area2D = $Hurtbox
 @onready var knockback_component: KnockbackComponent = $KnockbackComponent
 
 # ── State ────────────────────────────────────────────────────────
@@ -328,7 +328,7 @@ func _play_main_attack() -> void:
 	is_main_attacking = true
 	is_alt_attacking = false
 	main_combo_timer = 0.0
-	anim_upper.speed_scale = get_active_weapon().main_attack_speed
+	anim_upper.speed_scale = get_active_weapon().main_attack_speed * stats.attack_speed_multiplier
 	_setup_hitboxes_main()
 	anim_upper.play(anims[main_combo_index])
 	main_combo_index += 1
@@ -341,7 +341,7 @@ func _play_alt_attack() -> void:
 	is_alt_attacking = true
 	is_main_attacking = false
 	alt_combo_timer = 0.0
-	anim_upper.speed_scale = get_active_weapon().alt_attack_speed
+	anim_upper.speed_scale = get_active_weapon().alt_attack_speed * stats.attack_speed_multiplier
 	_setup_hitboxes_alt()
 	anim_upper.play(anims[alt_combo_index])
 	alt_combo_index += 1

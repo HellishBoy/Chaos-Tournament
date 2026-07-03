@@ -52,6 +52,14 @@ class_name Enemy
 @export var combo_switch_min: float = 1.0
 @export var combo_switch_max: float = 2.5
 
+@export_group("Appearance")
+@export var sprite_feet_l: Texture2D
+@export var sprite_feet_r: Texture2D
+@export var sprite_hand_left: Texture2D
+@export var sprite_hand_right: Texture2D
+@export var sprite_head: Texture2D
+@export var sprite_head_down: Texture2D
+
 # ── Node References ──────────────────────────────────────────────
 
 @onready var detection_area: Area2D = $DetectionArea
@@ -116,19 +124,24 @@ var ai_state: AIState = AIState.IDLE
 
 func _ready() -> void:
 	super()
+	_apply_appearance()
+
 	detection_area.body_entered.connect(_on_target_entered)
 	detection_area.body_exited.connect(_on_target_exited)
 	var shape: CircleShape2D = $DetectionArea/CollisionShape2D.shape as CircleShape2D
+	
 	if shape != null:
 		shape.radius = detection_range
 	if can_double_dodge and not can_dodge:
 		push_warning(name + ": can_double_dodge is true but can_dodge is false — can_double_dodge will have no effect.")
 	if is_strafing and not is_tactical:
 		push_warning(name + ": is_strafing is true but is_tactical is false — is_strafing will have no effect.")
+		
 	var dir := _facing_to_vector(initial_facing)
 	last_direction = dir
 	rotation = dir.angle()
 	await get_tree().physics_frame
+	
 	_find_player_target()
 	_reset_dodge_timer()
 	_reset_strafe_timer()
@@ -294,6 +307,7 @@ func _update_ai_state() -> void:
 # ── Physics Process ──────────────────────────────────────────────
 
 func _physics_process(delta: float) -> void:
+	var knock_mult := knockback_component.get_speed_multiplier()
 	
 	if main_combo_timer > 0:
 		main_combo_timer -= delta
@@ -366,7 +380,7 @@ func _physics_process(delta: float) -> void:
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
-				_apply_movement(dir * stats.move_speed)
+				_apply_movement(dir * stats.move_speed * knock_mult)
 				if not _is_attacking():
 					var walk := get_active_weapon().walk_animation
 					if walk != "":
@@ -381,11 +395,12 @@ func _physics_process(delta: float) -> void:
 				ai_state = AIState.ACTIVE
 			else:
 				nav_agent.target_position = _item_target.global_position
+	
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
-				_apply_movement(dir * stats.move_speed)
+				_apply_movement(dir * stats.move_speed * knock_mult)
 				if not _is_attacking():
 					var walk := get_active_weapon().walk_animation
 					if walk != "":
@@ -420,7 +435,7 @@ func _physics_process(delta: float) -> void:
 					var dir := (next_pos - global_position).normalized()
 					last_direction = (target.global_position - global_position).normalized()
 					rotation = last_direction.angle()
-					_apply_movement(dir * stats.move_speed)
+					_apply_movement(dir * stats.move_speed * knock_mult)
 				else:
 					var dir := (target.global_position - global_position).normalized()
 					last_direction = dir
@@ -433,7 +448,7 @@ func _physics_process(delta: float) -> void:
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
-				_apply_movement(dir * stats.move_speed)
+				_apply_movement(dir * stats.move_speed * knock_mult)
 			else:
 				# ── In range — face target and stop ──────────────────
 				var dir := (target.global_position - global_position).normalized()
@@ -648,12 +663,16 @@ func _get_current_attack_range() -> float:
 func _reset_combo_switch_timer() -> void:
 	_combo_switch_timer = randf_range(combo_switch_min, combo_switch_max)
 	
-func break_weapon() -> void:
-	super.break_weapon()
-	_use_alt_attack = false
-	alt_attack_held = false
-	main_attack_held = false
-	is_alt_attacking = false
-	is_main_attacking = false
-	_reset_combo_switch_timer()
-	_cancel_into_idle()
+func _apply_appearance() -> void:
+	if sprite_feet_l:
+		$Body/FeetL.texture = sprite_feet_l
+	if sprite_feet_r:
+		$Body/FeetR.texture = sprite_feet_r
+	if sprite_hand_left:
+		$Body/Hands/HandLeft.texture = sprite_hand_left
+	if sprite_hand_right:
+		$Body/Hands/HandRight.texture = sprite_hand_right
+	if sprite_head:
+		$Body/Head.texture = sprite_head
+	if sprite_head_down:
+		$Body/HeadDown.texture = sprite_head_down
