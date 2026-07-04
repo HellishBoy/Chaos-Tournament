@@ -307,7 +307,7 @@ func _update_ai_state() -> void:
 # ── Physics Process ──────────────────────────────────────────────
 
 func _physics_process(delta: float) -> void:
-	var knock_mult := knockback_component.get_speed_multiplier()
+	var knock_mult := impact_component.get_control_speed_multiplier(stats.knockback_resistance)
 	
 	if main_combo_timer > 0:
 		main_combo_timer -= delta

@@ -20,6 +20,7 @@ damage_alt = 40
 main_knockback = "medium"
 alt_knockback = "high"
 has_combo = true
+can_knockback = true
 durability = "high"
 weapon_sprite_left = ExtResource("2_8ws87")
 ai_main_attack_range = 22.0

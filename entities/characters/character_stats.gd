@@ -23,7 +23,8 @@ class_name CharacterStats
 @export_group("Health")
 @export var max_hp: int = 100
 
-@export_group("Knockback")
+@export_group("Impact")
 # 0.0 = gets pushed full amount, 1.0 = immune to knockback
 @export_range(0.0, 1.0) var knockback_resistance: float = 0.0
-@export var knockback_immune: bool = false
+# 0.0 = takes full flinch effect, 1.0 = immune to flinch
+@export_range(0.0, 1.0) var flinch_resistance: float = 0.0

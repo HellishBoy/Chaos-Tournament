@@ -177,7 +177,7 @@ func _physics_process(delta: float) -> void:
 		_tick_dodge(delta)
 	else:
 		var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
-		var knock_mult := knockback_component.get_speed_multiplier()
+		var knock_mult := impact_component.get_control_speed_multiplier(stats.knockback_resistance)
 		if _is_attacking():
 			_apply_movement(direction * stats.move_speed * get_active_weapon().movement_penalty * knock_mult)
 		else:
