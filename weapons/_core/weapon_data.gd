@@ -126,5 +126,5 @@ func get_dot_config() -> Dictionary:
 	}
 
 func validate_dot_tag() -> void:
-	if can_apply_dot and not StatusEffectComponent.KNOWN_EFFECTS.has(dot_tag):
-		push_warning(weapon_name + ": dot_tag '" + dot_tag + "' does not match any entry in StatusEffectComponent.KNOWN_EFFECTS.")
+	if can_apply_dot and not StatusEffectComponent.is_known_effect(dot_tag):
+		push_warning(weapon_name + ": dot_tag '" + dot_tag + "' does not match any entry in StatusEffectComponent.EFFECT_REGISTRY.")

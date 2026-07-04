@@ -1,15 +1,15 @@
 [gd_scene format=3 uid="uid://bsgwjiljddn58"]
 
-[ext_resource type="Texture2D" uid="uid://da2hol5y5g2wr" path="res://realms/earth_realm/1_junkyard_arena/sandbox_tileset.png" id="1_hr1eq"]
-[ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="2_qjkne"]
-[ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="3_jtypj"]
-[ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="4_bexvg"]
-[ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="14_poaxc"]
-[ext_resource type="Script" uid="uid://ctrptflhtsjqv" path="res://ui/hud.gd" id="15_qpbrc"]
-[ext_resource type="Script" uid="uid://bvoq4k2jkkt3v" path="res://core/round_manager.gd" id="16_dlfso"]
+[ext_resource type="Texture2D" uid="uid://da2hol5y5g2wr" path="res://realms/earth_realm/1_junkyard_arena/sandbox_tileset.png" id="1_o1qhd"]
+[ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="2_5pf2s"]
+[ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="3_2uka1"]
+[ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="4_7hxbr"]
+[ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="5_pjhpa"]
+[ext_resource type="Script" uid="uid://ctrptflhtsjqv" path="res://ui/hud.gd" id="6_602yj"]
+[ext_resource type="Script" uid="uid://bvoq4k2jkkt3v" path="res://core/round_manager.gd" id="7_112eg"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rp871"]
-texture = ExtResource("1_hr1eq")
+texture = ExtResource("1_o1qhd")
 0:0/0 = 0
 0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 1:0/0 = 0
@@ -58,12 +58,12 @@ tile_set = SubResource("TileSet_scryw")
 [node name="Contestants" type="Node2D" parent="." unique_id=1275869653]
 y_sort_enabled = true
 
-[node name="Enemy" parent="Contestants" unique_id=390347379 instance=ExtResource("2_qjkne")]
+[node name="Enemy" parent="Contestants" unique_id=390347379 instance=ExtResource("2_5pf2s")]
 position = Vector2(309, 48)
 
-[node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("3_jtypj")]
+[node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("3_2uka1")]
 position = Vector2(336, 217)
-health_bar_scene = ExtResource("4_bexvg")
+health_bar_scene = ExtResource("4_7hxbr")
 
 [node name="SpawnPoints" type="Node2D" parent="." unique_id=2034989603]
 
@@ -77,14 +77,12 @@ position = Vector2(309, 8)
 
 [node name="Weapons" type="Node2D" parent="." unique_id=1522979745]
 
-[node name="Hud" parent="." unique_id=1799122153 groups=["hud"] instance=ExtResource("14_poaxc")]
-script = ExtResource("15_qpbrc")
+[node name="Hud" parent="." unique_id=1799122153 groups=["hud"] instance=ExtResource("5_pjhpa")]
+script = ExtResource("6_602yj")
 player_bar_border_thickness = 2.0
 vignette_threshold = 0.3
 
-[node name="RoundManager" type="Node" parent="." unique_id=1923771772 node_paths=PackedStringArray("player_spawn", "win_screen", "lose_screen")]
-script = ExtResource("16_dlfso")
+[node name="RoundManager" type="Node" parent="." unique_id=1923771772 node_paths=PackedStringArray("player_spawn")]
+script = ExtResource("7_112eg")
 player_lives = 2
 player_spawn = NodePath("../SpawnPoints/PlayerSpawn")
-win_screen = NodePath("../Hud/WinScreen")
-lose_screen = NodePath("../Hud/LoseScreen")

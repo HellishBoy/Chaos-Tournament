@@ -72,6 +72,12 @@ func _ready() -> void:
 	assert(fists != null, str(name) + ": fists WeaponData must be assigned in the Inspector.")
 	assert(stats != null, str(name) + ": CharacterStats must be assigned in the Inspector.")
 
+	stats = stats.duplicate()
+	fists = fists.duplicate()
+	if current_weapon:
+		current_weapon = current_weapon.duplicate()
+
+	# Apply stats to health component
 	health.max_hp = stats.max_hp
 	health.current_hp = stats.max_hp
 
@@ -111,7 +117,8 @@ func _apply_death_state() -> void:
 	
 	current_weapon = null
 	_update_weapon_visuals()
-	
+	status_effect_component.clear_all()
+
 	# Stop all animation
 	anim_lower.stop()
 	anim_upper.stop()
@@ -490,6 +497,14 @@ func break_weapon() -> void:
 	current_weapon = null
 	_update_weapon_visuals()
 	_cancel_into_idle()
+	
+	# Resume attacking with fists if the key/AI intent is still active —
+	# otherwise the swing silently drops until the button is released and re-pressed.
+	if main_attack_held and get_active_weapon().main_attack_animations.size() > 0:
+		_play_main_attack()
+	elif alt_attack_held and get_active_weapon().alt_attack_animations.size() > 0:
+		_play_alt_attack()
+		
 	var hud := get_tree().get_first_node_in_group("hud") as HUD
 	if hud:
 		hud.refresh()

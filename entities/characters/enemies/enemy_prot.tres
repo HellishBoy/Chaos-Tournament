@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="CharacterStats" format=3 uid="uid://b4i311rbgiym7"]
 
-[ext_resource type="Script" uid="uid://cuf0jjkwlmjfm" path="res://entities/characters/character_stats.gd" id="1_utkvq"]
+[ext_resource type="Script" uid="uid://cuf0jjkwlmjfm" path="res://entities/characters/character_stats.gd" id="1_x47af"]
 
 [resource]
-script = ExtResource("1_utkvq")
+script = ExtResource("1_x47af")
 move_speed = 110.0
 max_hp = 300
 metadata/_custom_type_script = "uid://cuf0jjkwlmjfm"

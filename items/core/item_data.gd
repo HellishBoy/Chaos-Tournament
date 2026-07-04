@@ -11,6 +11,9 @@ enum ItemEffect {
 @export_group("Identity")
 @export var item_name: String = "Health Pack"
 @export var effect: ItemEffect = ItemEffect.HEAL
+
+@export_group("Heal")
+# Only used when effect == HEAL.
 @export var effect_value: int = 50
 
 @export_group("Status Effect")
@@ -27,5 +30,5 @@ enum ItemEffect {
 @export var item_sprite: Texture2D
 
 func validate_status_effect() -> void:
-	if effect == ItemEffect.STATUS_EFFECT and not StatusEffectComponent.KNOWN_EFFECTS.has(status_effect_name):
-		push_warning(item_name + ": status_effect_name '" + status_effect_name + "' does not match any entry in StatusEffectComponent.KNOWN_EFFECTS.")
+	if effect == ItemEffect.STATUS_EFFECT and not StatusEffectComponent.is_known_effect(status_effect_name):
+		push_warning(item_name + ": status_effect_name '" + status_effect_name + "' does not match any entry in StatusEffectComponent.EFFECT_REGISTRY.")

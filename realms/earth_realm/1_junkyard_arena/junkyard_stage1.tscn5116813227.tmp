@@ -165,7 +165,29 @@ sprite_hand_left = ExtResource("3_ipurl")
 sprite_hand_right = ExtResource("3_ipurl")
 stats = SubResource("Resource_ah1uk")
 
-[node name="Enemy2" parent="Contestants" unique_id=390347379 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
+[node name="Enemy3" parent="Contestants" unique_id=390347379 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
+position = Vector2(314, -88)
+can_double_dodge = true
+lives = 2
+is_main_enemy = true
+spawn_point = NodePath("../../SpawnPoints/EnemySpawn1")
+is_healthy = true
+is_greedy = true
+is_scared = true
+is_aggressive = true
+is_picky = true
+is_desperate = true
+is_swift = true
+is_panic = true
+is_tactical = true
+main_attack_cooldown = 0.4
+alt_attack_cooldown = 0.5
+can_combo = true
+sprite_hand_left = ExtResource("3_ipurl")
+sprite_hand_right = ExtResource("3_ipurl")
+stats = SubResource("Resource_ah1uk")
+
+[node name="Enemy2" parent="Contestants" unique_id=792236036 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
 position = Vector2(357, -88)
 can_double_dodge = true
 lives = 2

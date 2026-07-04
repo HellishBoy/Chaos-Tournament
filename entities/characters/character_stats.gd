@@ -7,14 +7,6 @@ class_name CharacterStats
 @export_group("Movement")
 @export var move_speed: float = 120.0
 
-@export_group("Dodge")
-@export var stamina_max: float = 10.0
-@export var stamina_regen: float = 3.0
-@export var stamina_per_dodge: float = 5.0
-@export var dodge_speed: float = 250.0
-@export var dodge_distance: float = 48.0
-@export var dodge_cooldown: float = 0.1
-
 @export_group("Combat")
 @export var damage_multiplier: float = 1.0
 @export var defense: int = 0
@@ -28,3 +20,11 @@ class_name CharacterStats
 @export_range(0.0, 1.0) var knockback_resistance: float = 0.0
 # 0.0 = takes full flinch effect, 1.0 = immune to flinch
 @export_range(0.0, 1.0) var flinch_resistance: float = 0.0
+
+@export_group("Dodge")
+@export var stamina_max: float = 10.0
+@export var stamina_regen: float = 3.0
+@export var stamina_per_dodge: float = 5.0
+@export var dodge_speed: float = 250.0
+@export var dodge_distance: float = 48.0
+@export var dodge_cooldown: float = 0.1
