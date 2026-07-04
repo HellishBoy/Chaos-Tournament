@@ -20,6 +20,11 @@ var flinch_tier: String = "none"
 var knockback_facing: bool = false  # false = away from attacker, true = attacker's facing dir
 var attacker: Node2D = null         # set to the player node so we know position and facing
 
+var dot_tag: String = ""
+var dot_duration: float = 0.0
+var dot_tick_interval: float = 0.0
+var dot_damage_percent: float = 0.0
+
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	$CollisionShape2D.disabled = true
@@ -30,7 +35,10 @@ func _on_area_entered(area: Area2D) -> void:
 		var health := parent.get_node("HealthComponent") as HealthComponent
 		health.take_damage(damage)
 
-	if parent.has_node("ImpactComponent") and attacker != null:
+	var status: StatusEffectComponent = parent.get_node("StatusEffectComponent") if parent.has_node("StatusEffectComponent") else null
+	var is_steadfast: bool = status != null and status.has_effect("steadfast")
+
+	if parent.has_node("ImpactComponent") and attacker != null and not is_steadfast:
 		var impact := parent.get_node("ImpactComponent") as ImpactComponent
 		if knockback_tier != "none":
 			var direction: Vector2
@@ -42,6 +50,9 @@ func _on_area_entered(area: Area2D) -> void:
 		elif flinch_tier != "none":
 			var resistance: float = parent.stats.flinch_resistance if parent is Character else 0.0
 			impact.apply_flinch(flinch_tier, resistance)
+
+	if dot_tag != "" and status != null:
+		status.apply_effect(dot_tag, dot_duration, dot_tick_interval, dot_damage_percent)
 
 	if attacker != null and attacker is Character:
 		var weapon: WeaponData = attacker.get_active_weapon()

@@ -6,8 +6,11 @@ class_name Prop
 
 # ── Exports ──────────────────────────────────────────────────────
 
-@export var knockback_immune: bool = false
 @export var flash_target: Node2D
+
+@export_group("Knockback")
+# 0.0 = gets pushed full amount, 1.0 = immune to knockback
+@export_range(0.0, 1.0) var knockback_resistance: float = 0.0
 
 @export_group("Health Bar")
 @export var health_bar_scene: PackedScene
@@ -44,7 +47,7 @@ func _on_hurtbox_area_entered(area: Area2D) -> void:
 	if not area is Hitbox:
 		return
 	health.take_damage(area.damage)
-	if area.attacker != null and not knockback_immune:
+	if area.attacker != null and area.knockback_tier != "none":
 		var direction: Vector2
 		if area.knockback_facing:
 			direction = Vector2.RIGHT.rotated(area.attacker.rotation)
@@ -55,12 +58,13 @@ func _on_hurtbox_area_entered(area: Area2D) -> void:
 # ── Physics Process ──────────────────────────────────────────────
 
 func _physics_process(delta: float) -> void:
-	if impact_component.is_knockback_active() and not knockback_immune:
+	if impact_component.is_knockback_active():
 		var tier := impact_component.get_knockback_tier()
 		var dir := impact_component.get_knockback_direction()
 		var push_speed: float = ImpactComponent.KNOCKBACK_TIER_SPEEDS.get(tier, 0.0)
 		var mult := impact_component.get_knockback_multiplier()
-		velocity = dir * push_speed * mult
+		var resistance := 1.0 - knockback_resistance
+		velocity = dir * push_speed * mult * resistance
 		var collision := move_and_collide(velocity * delta)
 		if collision:
 			velocity = velocity.bounce(collision.get_normal())

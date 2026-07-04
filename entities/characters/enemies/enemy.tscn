@@ -3,8 +3,8 @@
 [ext_resource type="Script" uid="uid://c3ifw0ywkwp50" path="res://entities/characters/enemies/enemy.gd" id="1_7p1mj"]
 [ext_resource type="Resource" uid="uid://b4i311rbgiym7" path="res://entities/characters/enemies/enemy_stats.tres" id="2_ipns3"]
 [ext_resource type="Texture2D" uid="uid://ro2k6f5fjamo" path="res://entities/characters/skins/skin-robot.png" id="2_nenq2"]
-[ext_resource type="Resource" uid="uid://cxoiv5ap1cj22" path="res://weapons/_melee/fists.tres" id="3_wtq4b"]
-[ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/weapon_pickup.tscn" id="4_u5q8g"]
+[ext_resource type="Resource" uid="uid://cxoiv5ap1cj22" path="res://weapons/melee/fists.tres" id="3_wtq4b"]
+[ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="4_u5q8g"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="4_vk8x8"]
 [ext_resource type="Script" uid="uid://dt84g0ubdrtye" path="res://core/combat/hitbox.gd" id="6_s1ycm"]
 [ext_resource type="AnimationLibrary" uid="uid://dj7tuc120561t" path="res://entities/characters/animations/.tres" id="7_8qclf"]
@@ -12,6 +12,7 @@
 [ext_resource type="AnimationLibrary" uid="uid://c5nbhs05ohaok" path="res://entities/characters/animations/.res" id="8_8qclf"]
 [ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="10_2pwtc"]
 [ext_resource type="Script" uid="uid://emy3cu5poau2" path="res://core/combat/impact_component.gd" id="12_u5q8g"]
+[ext_resource type="Script" uid="uid://di3sej0r6kjqg" path="res://core/combat/status_effect_component.gd" id="13_jwbx2"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_smehm"]
 
@@ -186,6 +187,9 @@ health_bar_visibility = 2
 
 [node name="ImpactComponent" type="Node2D" parent="." unique_id=687752596]
 script = ExtResource("12_u5q8g")
+
+[node name="StatusEffectComponent" type="Node2D" parent="." unique_id=105194749]
+script = ExtResource("13_jwbx2")
 
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1409583353]
 collision_layer = 0

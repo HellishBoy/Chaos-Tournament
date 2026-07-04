@@ -39,6 +39,7 @@ class_name Character
 @onready var health: HealthComponent = $HealthComponent
 @onready var hurtbox: Area2D = $Hurtbox
 @onready var impact_component: ImpactComponent = $ImpactComponent
+@onready var status_effect_component: StatusEffectComponent = $StatusEffectComponent
 
 # ── State ────────────────────────────────────────────────────────
 
@@ -71,7 +72,6 @@ func _ready() -> void:
 	assert(fists != null, str(name) + ": fists WeaponData must be assigned in the Inspector.")
 	assert(stats != null, str(name) + ": CharacterStats must be assigned in the Inspector.")
 
-	# Apply stats to health component
 	health.max_hp = stats.max_hp
 	health.current_hp = stats.max_hp
 
@@ -79,17 +79,23 @@ func _ready() -> void:
 	hurtbox.area_entered.connect(_on_hurtbox_area_entered)
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
+	status_effect_component.effect_ticked.connect(_on_status_effect_ticked)
 
 	_stamina = stats.stamina_max
 	set_invincible(false)
 
 	fists.validate_impact_flags()
+	fists.validate_dot_tag()
 	if current_weapon:
 		current_weapon.validate_impact_flags()
-	
+		current_weapon.validate_dot_tag()
+
 	_update_weapon_visuals()
-	
 	call_deferred("_setup_health_bar")
+	
+func _on_status_effect_ticked(_effect_name: String, damage_percent: float) -> void:
+	var tick_damage: int = int(round(health.max_hp * damage_percent))
+	health.take_damage(tick_damage)
 
 func _setup_health_bar() -> void:
 	if health_bar_scene != null:
@@ -136,6 +142,7 @@ func try_pickup(pickup_node: Node) -> void:
 	pickup_node.queue_free()
 	current_weapon = data
 	current_weapon.validate_impact_flags()
+	current_weapon.validate_dot_tag()
 	# Only initialize durability if not already set
 	if data.durability_current == -1:
 		match data.durability:
@@ -247,7 +254,7 @@ func _on_hurtbox_area_entered(area: Area2D) -> void:
 	if not area is Hitbox:
 		return
 	health.take_damage(area.damage)
-	if area.attacker != null:
+	if area.attacker != null and not status_effect_component.has_effect("steadfast"):
 		if area.knockback_tier != "none":
 			var direction: Vector2
 			if area.knockback_facing:
@@ -314,6 +321,7 @@ func _setup_hitboxes_main() -> void:
 	hitbox_left.flinch_tier       = weapon.get_main_flinch_tier()
 	hitbox_right.knockback_facing = weapon.knockback_main_facing
 	hitbox_left.knockback_facing  = weapon.knockback_main_facing
+	_apply_dot_config(weapon)
 	hitbox_right.attacker         = self
 	hitbox_left.attacker          = self
 
@@ -327,8 +335,20 @@ func _setup_hitboxes_alt() -> void:
 	hitbox_left.flinch_tier       = weapon.get_alt_flinch_tier()
 	hitbox_right.knockback_facing = weapon.knockback_alt_facing
 	hitbox_left.knockback_facing  = weapon.knockback_alt_facing
+	_apply_dot_config(weapon)
 	hitbox_right.attacker         = self
 	hitbox_left.attacker          = self
+	
+func _apply_dot_config(weapon: WeaponData) -> void:
+	var dot_config := weapon.get_dot_config()
+	hitbox_right.dot_tag             = dot_config["tag"]
+	hitbox_right.dot_duration        = dot_config["duration"]
+	hitbox_right.dot_tick_interval   = dot_config["tick_interval"]
+	hitbox_right.dot_damage_percent  = dot_config["damage_percent"]
+	hitbox_left.dot_tag              = dot_config["tag"]
+	hitbox_left.dot_duration         = dot_config["duration"]
+	hitbox_left.dot_tick_interval    = dot_config["tick_interval"]
+	hitbox_left.dot_damage_percent   = dot_config["damage_percent"]
 
 func _play_main_attack() -> void:
 	var anims := get_active_weapon().main_attack_animations
@@ -450,7 +470,8 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 		weapon.bullet_pierce,
 		weapon.damage_main,
 		weapon.get_main_knockback_tier(),
-		weapon.get_main_flinch_tier()
+		weapon.get_main_flinch_tier(),
+		weapon.get_dot_config()
 	)
 	
 	# Decrement ammo
