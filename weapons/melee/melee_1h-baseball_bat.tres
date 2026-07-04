@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://bfxvybi132jdd"]
+
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="1_wudb1"]
+[ext_resource type="Texture2D" uid="uid://bqvv24tsdllxr" path="res://weapons/melee/melee_1h-baseball_bat.png" id="2_0be63"]
+
+[resource]
+script = ExtResource("1_wudb1")
+weapon_name = "Baseball Bat"
+weapon_category = "melee_1h"
+idle_animation = "idle_melee_1h"
+walk_animation = "walk_melee_1h"
+main_attack_animations = Array[String](["attack_melee_1h_cleave_a", "attack_melee_1h_cleave_b"])
+alt_attack_animations = Array[String](["attack_melee_2h_2_sweep"])
+movement_penalty = 0.7
+alt_attack_speed = 0.5
+main_knockback = "low"
+alt_knockback = "high"
+has_combo = true
+can_knockback = true
+durability = "medium"
+durability_current = 5
+weapon_sprite_right = ExtResource("2_0be63")
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"

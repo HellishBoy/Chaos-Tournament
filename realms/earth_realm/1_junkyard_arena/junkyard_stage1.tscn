@@ -6,21 +6,21 @@
 [ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="4_5ltjn"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="5_ipurl"]
 [ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://entities/prop/dummy/dummy.tscn" id="6_ah1uk"]
-[ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/weapon_pickup.tscn" id="7_ryemf"]
-[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/weapon_data.gd" id="13_qtryu"]
+[ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="7_ryemf"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="13_qtryu"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="15_1dd6p"]
-[ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/_melee/melee_2h-battle_axe.tres" id="15_us766"]
-[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/_ranged/ranged_1h-mac_10x2.tres" id="16_5ltjn"]
+[ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/melee/melee_2h-battle_axe.tres" id="15_us766"]
+[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/ranged/ranged_1h-mac_10x2.tres" id="16_5ltjn"]
 [ext_resource type="Script" uid="uid://ctrptflhtsjqv" path="res://ui/hud.gd" id="16_jqoj8"]
-[ext_resource type="Script" uid="uid://dwlwg725t31ip" path="res://weapons/weapon_drop_entry.gd" id="17_ipurl"]
-[ext_resource type="Script" uid="uid://o13aqvpie2db" path="res://weapons/weapon_drop_manager.gd" id="17_qtryu"]
+[ext_resource type="Script" uid="uid://dwlwg725t31ip" path="res://weapons/_core/weapon_drop_entry.gd" id="17_ipurl"]
+[ext_resource type="Script" uid="uid://o13aqvpie2db" path="res://weapons/_core/weapon_drop_manager.gd" id="17_qtryu"]
 [ext_resource type="Script" uid="uid://bvoq4k2jkkt3v" path="res://core/round_manager.gd" id="17_suu1f"]
-[ext_resource type="Script" uid="uid://clhccd8w6ac47" path="res://items/item_drop_manager.gd" id="18_5ltjn"]
-[ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/_melee/melee_1h-sword.tres" id="18_ipurl"]
-[ext_resource type="Resource" uid="uid://b0vw2o2dgfcf0" path="res://weapons/new_resource.tres" id="18_p3ne0"]
-[ext_resource type="Resource" uid="uid://cfwgiyx6n4l2u" path="res://items/new_resource.tres" id="19_ipurl"]
-[ext_resource type="Script" uid="uid://byj40y30kigbn" path="res://weapons/drop_zone.gd" id="19_us766"]
-[ext_resource type="PackedScene" uid="uid://dolrqfgx3sw2y" path="res://items/ItemPickup.tscn" id="20_ah1uk"]
+[ext_resource type="Script" uid="uid://clhccd8w6ac47" path="res://items/core/item_drop_manager.gd" id="18_5ltjn"]
+[ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/melee/melee_1h-sword.tres" id="18_ipurl"]
+[ext_resource type="Resource" uid="uid://b0vw2o2dgfcf0" path="res://weapons/_core/new_resource.tres" id="18_p3ne0"]
+[ext_resource type="Resource" uid="uid://cfwgiyx6n4l2u" path="res://items/core/new_resource.tres" id="19_ipurl"]
+[ext_resource type="Script" uid="uid://byj40y30kigbn" path="res://weapons/_core/drop_zone.gd" id="19_us766"]
+[ext_resource type="PackedScene" uid="uid://dolrqfgx3sw2y" path="res://items/core/ItemPickup.tscn" id="20_ah1uk"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_qtryu"]
 
@@ -176,11 +176,9 @@ y_sort_enabled = true
 
 [node name="Dummy" parent="Contestants/Props" unique_id=228317739 instance=ExtResource("6_ah1uk")]
 position = Vector2(80, 176)
-knockback_immune = false
 
 [node name="Dummy2" parent="Contestants/Props" unique_id=263292854 instance=ExtResource("6_ah1uk")]
 position = Vector2(512, 280)
-knockback_immune = false
 
 [node name="SpawnPoints" type="Node2D" parent="." unique_id=2034989603]
 

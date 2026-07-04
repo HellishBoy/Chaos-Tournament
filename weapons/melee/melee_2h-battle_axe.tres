@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://blc3h72syephy"]
+
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="1_j53w5"]
+[ext_resource type="Texture2D" uid="uid://b51h05dfxk38h" path="res://weapons/melee/melee_2h-battle_axe.png" id="2_8ws87"]
+
+[resource]
+script = ExtResource("1_j53w5")
+weapon_name = "Battle Axe"
+weapon_category = "melee_2h"
+power = 4
+idle_animation = "idle_melee_2h_1"
+walk_animation = "walk_melee_2h_1"
+main_attack_animations = Array[String](["attack_melee_2h_1_cleave_a", "attack_melee_2h_1_cleave_b"])
+alt_attack_animations = Array[String](["attack_melee_2h_1_sweep"])
+movement_penalty = 0.5
+main_attack_speed = 0.45
+alt_attack_speed = 0.35
+damage_main = 30
+damage_alt = 40
+main_knockback = "medium"
+alt_knockback = "high"
+has_combo = true
+can_knockback = true
+durability = "high"
+can_apply_dot = true
+dot_tag = "bleed"
+dot_duration = 2.0
+dot_damage_percent = 0.03
+weapon_sprite_left = ExtResource("2_8ws87")
+ai_main_attack_range = 22.0
+ai_alt_attack_range = 30.0
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"

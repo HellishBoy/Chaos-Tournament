@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ItemDropConfig" format=3 uid="uid://cfwgiyx6n4l2u"]
+
+[ext_resource type="Script" uid="uid://cktqq00sbkh2v" path="res://items/core/item_drop_entry.gd" id="1_mdsvg"]
+[ext_resource type="Script" uid="uid://cfeuhjyts30yy" path="res://items/core/item_drop_config.gd" id="2_5dyr6"]
+[ext_resource type="Resource" uid="uid://d2yj3gq8u2axh" path="res://items/health_pack_1.tres" id="2_hxwsm"]
+[ext_resource type="Resource" uid="uid://bcl033s2x7v1y" path="res://items/steadfast_pack.tres" id="3_dm5yq"]
+
+[sub_resource type="Resource" id="Resource_2i2wm"]
+script = ExtResource("1_mdsvg")
+item_data = ExtResource("2_hxwsm")
+allowed_groups = Array[String](["Corners", "Left Area"])
+max_concurrent = 4
+metadata/_custom_type_script = "uid://cktqq00sbkh2v"
+
+[sub_resource type="Resource" id="Resource_gk4o6"]
+script = ExtResource("1_mdsvg")
+item_data = ExtResource("3_dm5yq")
+allowed_groups = Array[String](["Left Area"])
+metadata/_custom_type_script = "uid://cktqq00sbkh2v"
+
+[resource]
+script = ExtResource("2_5dyr6")
+entries = Array[ExtResource("1_mdsvg")]([SubResource("Resource_2i2wm"), SubResource("Resource_gk4o6")])
+metadata/_custom_type_script = "uid://cfeuhjyts30yy"

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://yynomacn34w0"]
+
+[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/ranged/bullets/bullet_prot.tscn" id="1_axjb5"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="2_2xi72"]
+[ext_resource type="Texture2D" uid="uid://btdegwyw5xw1m" path="res://weapons/ranged/ranged_1h-mac_10.png" id="3_mp0yy"]
+
+[resource]
+script = ExtResource("2_2xi72")
+weapon_name = "Dual MAC-10"
+weapon_category = "ranged_dual"
+power = 5
+idle_animation = "idle_ranged_dual"
+walk_animation = "walk_ranged_dual"
+main_attack_animations = Array[String](["attack_ranged_dual_fire_R", "attack_ranged_dual_fire_L"])
+peek_distance_aim = 40.0
+main_attack_speed = 6.0
+damage_main = 3
+main_knockback = "low"
+main_flinch = "medium"
+can_flinch = true
+ammo = 40
+bullet_scene = ExtResource("1_axjb5")
+bullet_speed = 1000.0
+bullet_range = 80.0
+bullet_spread = 10.0
+weapon_sprite_left = ExtResource("3_mp0yy")
+weapon_sprite_right = ExtResource("3_mp0yy")
+ai_main_attack_mode = "HOLD"
+ai_main_attack_range = 70.0
+requires_line_of_sight = true
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"

@@ -1,0 +1,47 @@
+[gd_resource type="Resource" script_class="WeaponDropConfig" format=3 uid="uid://b0vw2o2dgfcf0"]
+
+[ext_resource type="Script" uid="uid://dwlwg725t31ip" path="res://weapons/_core/weapon_drop_entry.gd" id="1_utmmb"]
+[ext_resource type="Script" uid="uid://co24hvnc6y0dt" path="res://weapons/_core/weapon_drop_config.gd" id="2_i4xys"]
+[ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://weapons/melee/melee_1h-lollipop.tres" id="3_8brk3"]
+[ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/melee/melee_1h-baseball_bat.tres" id="4_2ju0k"]
+[ext_resource type="Resource" uid="uid://w2sashhtg4jm" path="res://weapons/melee/melee_1h-metal_pipe.tres" id="4_dnax7"]
+[ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/ranged/ranged_1h-nail_gun.tres" id="7_bi3hl"]
+
+[sub_resource type="Resource" id="Resource_1vh8a"]
+script = ExtResource("1_utmmb")
+weapon_data = ExtResource("4_2ju0k")
+drop_weight = 4.0
+allowed_groups = Array[String](["Left Area"])
+max_concurrent = 6
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_2ju0k"]
+script = ExtResource("1_utmmb")
+weapon_data = ExtResource("7_bi3hl")
+drop_weight = 2.0
+allowed_groups = Array[String](["Left Area"])
+max_concurrent = 4
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_1ide7"]
+script = ExtResource("1_utmmb")
+weapon_data = ExtResource("3_8brk3")
+drop_weight = 4.0
+allowed_groups = Array[String](["Left Area"])
+max_concurrent = 6
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_ehves"]
+script = ExtResource("1_utmmb")
+weapon_data = ExtResource("4_dnax7")
+drop_weight = 3.0
+allowed_groups = Array[String](["Left Area"])
+max_concurrent = 5
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[resource]
+script = ExtResource("2_i4xys")
+drop_interval = 5.0
+max_drops_per_interval = 3
+entries = Array[ExtResource("1_utmmb")]([SubResource("Resource_1vh8a"), SubResource("Resource_2ju0k"), SubResource("Resource_1ide7"), SubResource("Resource_ehves")])
+metadata/_custom_type_script = "uid://co24hvnc6y0dt"

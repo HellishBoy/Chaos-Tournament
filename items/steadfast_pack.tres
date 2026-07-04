@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bcl033s2x7v1y"]
+
+[ext_resource type="Script" uid="uid://dygtfyp4md0or" path="res://items/core/item_data.gd" id="1_jlk21"]
+[ext_resource type="Texture2D" uid="uid://bio50cotvv8uc" path="res://items/steadfast_pack.png" id="1_kg71r"]
+
+[resource]
+script = ExtResource("1_jlk21")
+item_name = "Steadfast Pack"
+effect = 1
+effect_value = 0
+status_effect_name = "steadfast"
+status_effect_duration = 10.0
+item_sprite = ExtResource("1_kg71r")
+metadata/_custom_type_script = "uid://dygtfyp4md0or"
