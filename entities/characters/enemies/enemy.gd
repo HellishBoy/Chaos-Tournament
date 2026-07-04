@@ -309,7 +309,13 @@ func _update_ai_state() -> void:
 
 func _physics_process(delta: float) -> void:
 	var knock_mult := impact_component.get_control_speed_multiplier(stats.knockback_resistance)
+	var weight_mult := get_active_weapon().get_weight_multiplier()
+	var combined_mult := _apply_speed_floor(weight_mult * knock_mult)
 	
+	if _is_petrified():
+		_apply_movement(Vector2.ZERO)
+		return
+
 	if main_combo_timer > 0:
 		main_combo_timer -= delta
 		if main_combo_timer <= 0:
@@ -381,7 +387,7 @@ func _physics_process(delta: float) -> void:
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
-				_apply_movement(dir * stats.move_speed * knock_mult)
+				_apply_movement(dir * stats.move_speed * combined_mult)
 				if not _is_attacking():
 					var walk := get_active_weapon().walk_animation
 					if walk != "":
@@ -401,7 +407,7 @@ func _physics_process(delta: float) -> void:
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
-				_apply_movement(dir * stats.move_speed * knock_mult)
+				_apply_movement(dir * stats.move_speed * combined_mult)
 				if not _is_attacking():
 					var walk := get_active_weapon().walk_animation
 					if walk != "":
@@ -436,7 +442,7 @@ func _physics_process(delta: float) -> void:
 					var dir := (next_pos - global_position).normalized()
 					last_direction = (target.global_position - global_position).normalized()
 					rotation = last_direction.angle()
-					_apply_movement(dir * stats.move_speed * knock_mult)
+					_apply_movement(dir * stats.move_speed * combined_mult)
 				else:
 					var dir := (target.global_position - global_position).normalized()
 					last_direction = dir
@@ -449,7 +455,7 @@ func _physics_process(delta: float) -> void:
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
-				_apply_movement(dir * stats.move_speed * knock_mult)
+				_apply_movement(dir * stats.move_speed * combined_mult)
 			else:
 				# ── In range — face target and stop ──────────────────
 				var dir := (target.global_position - global_position).normalized()

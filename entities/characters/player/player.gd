@@ -139,6 +139,10 @@ func _physics_process(delta: float) -> void:
 	var hud := get_tree().get_first_node_in_group("hud") as HUD
 	if hud:
 		hud.refresh_dodge(_stamina, stats.stamina_max, stats.stamina_per_dodge)
+		
+	if _is_petrified():
+		_apply_movement(Vector2.ZERO)
+		return
 
 	# ── Priority 1: Dodge ────────────────────────────────────────
 	if Input.is_action_just_pressed("dodge") and not is_dodging:
@@ -178,10 +182,13 @@ func _physics_process(delta: float) -> void:
 	else:
 		var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		var knock_mult := impact_component.get_control_speed_multiplier(stats.knockback_resistance)
+		var weight_mult := get_active_weapon().get_weight_multiplier()
 		if _is_attacking():
-			_apply_movement(direction * stats.move_speed * get_active_weapon().movement_penalty * knock_mult)
+			var combined := _apply_speed_floor(get_active_weapon().movement_penalty * weight_mult * knock_mult)
+			_apply_movement(direction * stats.move_speed * combined)
 		else:
-			_apply_movement(direction * stats.move_speed * knock_mult)
+			var combined := _apply_speed_floor(weight_mult * knock_mult)
+			_apply_movement(direction * stats.move_speed * combined)
 		if direction.length() > 0:
 			last_direction = direction
 
@@ -193,6 +200,9 @@ func _physics_process(delta: float) -> void:
 # ── Process (Facing / Animation) ─────────────────────────────────
 
 func _process(_delta: float) -> void:
+	if _is_petrified():
+		return
+
 	# ── Facing ───────────────────────────────────────────────────
 	if lock_on_target:
 		look_at(lock_on_target.global_position)

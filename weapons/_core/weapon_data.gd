@@ -24,6 +24,20 @@ class_name WeaponData
 @export_group("Movement")
 @export var movement_penalty: float = 0.6
 
+@export_group("Weight")
+@export_enum("none", "low", "medium", "high") var weight: String = "none"
+
+const WEIGHT_TIERS: Dictionary = {
+	"none":   0.0,
+	"low":    0.10,
+	"medium": 0.30,
+	"high":   0.55,
+}
+
+func get_weight_multiplier() -> float:
+	var penalty: float = WEIGHT_TIERS.get(weight, 0.0)
+	return 1.0 - penalty
+
 @export_group("Combat")
 @export var main_attack_speed: float = 1.0
 @export var alt_attack_speed: float = 1.0
@@ -38,6 +52,11 @@ class_name WeaponData
 # false = push away from attacker, true = push in attacker's facing direction
 @export var knockback_main_facing: bool = false
 @export var knockback_alt_facing: bool = false
+
+@export_group("Recoil")
+@export var can_recoil: bool = false
+@export_enum("none", "low", "medium", "high") var main_recoil: String = "none"
+@export_enum("none", "low", "medium", "high") var alt_recoil: String = "none"
 
 @export_group("Impact")
 @export var can_knockback: bool = false
@@ -69,15 +88,21 @@ class_name WeaponData
 @export var can_apply_dot: bool = false
 # Cosmetic identity only — "bleed", "poison", "burn", etc. All tags share
 # the exact same tick mechanic; VFX/behavior differences are purely visual.
-@export var dot_tag: String = ""
-@export var dot_duration: float = 0.0
-@export var dot_tick_interval: float = 1.0
-@export var dot_damage_percent: float = 0.0  # percent of target's max HP, per tick
+@export var main_dot_tag: String = ""
+@export var main_dot_duration: float = 0.0
+@export var main_dot_tick_interval: float = 1.0
+@export var main_dot_damage_percent: float = 0.0 # percent of target's max HP, per tick
+@export var alt_dot_tag: String = ""
+@export var alt_dot_duration: float = 0.0
+@export var alt_dot_tick_interval: float = 1.0
+@export var alt_dot_damage_percent: float = 0.0 # percent of target's max HP, per tick
 
-@export_group("Special Effects")
-@export var special_effect: String = ""
-@export var effect_duration: float = 0.0
-@export var effect_damage: int = 0
+@export_group("Root")
+@export var can_root: bool = false
+@export_enum("none", "anchored", "petrified") var main_root_type: String = "none"
+@export var main_root_duration: float = 0.0
+@export_enum("none", "anchored", "petrified") var alt_root_type: String = "none"
+@export var alt_root_duration: float = 0.0
 
 @export_group("Sprites")
 @export var weapon_sprite_ground: Texture2D
@@ -108,6 +133,18 @@ func get_main_flinch_tier() -> String:
 
 func get_alt_flinch_tier() -> String:
 	return alt_flinch if can_flinch else "none"
+	
+func get_main_recoil_tier() -> String:
+	return main_recoil if can_recoil else "none"
+
+func get_alt_recoil_tier() -> String:
+	return alt_recoil if can_recoil else "none"
+	
+func get_main_root_type() -> String:
+	return main_root_type if can_root else "none"
+
+func get_alt_root_type() -> String:
+	return alt_root_type if can_root else "none"
 
 func validate_impact_flags() -> void:
 	if can_knockback and can_flinch:
@@ -115,16 +152,30 @@ func validate_impact_flags() -> void:
 
 # ── Damage Over Time ──────────────────────────────────────────
 
-func get_dot_config() -> Dictionary:
+func get_main_dot_config() -> Dictionary:
 	if not can_apply_dot:
 		return { "tag": "", "duration": 0.0, "tick_interval": 0.0, "damage_percent": 0.0 }
 	return {
-		"tag": dot_tag,
-		"duration": dot_duration,
-		"tick_interval": dot_tick_interval,
-		"damage_percent": dot_damage_percent,
+		"tag": main_dot_tag,
+		"duration": main_dot_duration,
+		"tick_interval": main_dot_tick_interval,
+		"damage_percent": main_dot_damage_percent,
+	}
+
+func get_alt_dot_config() -> Dictionary:
+	if not can_apply_dot:
+		return { "tag": "", "duration": 0.0, "tick_interval": 0.0, "damage_percent": 0.0 }
+	return {
+		"tag": alt_dot_tag,
+		"duration": alt_dot_duration,
+		"tick_interval": alt_dot_tick_interval,
+		"damage_percent": alt_dot_damage_percent,
 	}
 
 func validate_dot_tag() -> void:
-	if can_apply_dot and not StatusEffectComponent.is_known_effect(dot_tag):
-		push_warning(weapon_name + ": dot_tag '" + dot_tag + "' does not match any entry in StatusEffectComponent.EFFECT_REGISTRY.")
+	if not can_apply_dot:
+		return
+	if main_dot_tag != "" and not StatusEffectComponent.is_known_effect(main_dot_tag):
+		push_warning(weapon_name + ": main_dot_tag '" + main_dot_tag + "' does not match any entry in StatusEffectComponent.EFFECT_REGISTRY.")
+	if alt_dot_tag != "" and not StatusEffectComponent.is_known_effect(alt_dot_tag):
+		push_warning(weapon_name + ": alt_dot_tag '" + alt_dot_tag + "' does not match any entry in StatusEffectComponent.EFFECT_REGISTRY.")
