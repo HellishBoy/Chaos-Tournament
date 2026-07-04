@@ -140,6 +140,7 @@ func _respawn(character: Node, spawn: Marker2D) -> void:
 
 	character.velocity = Vector2.ZERO
 	character.impact_component.reset()
+	character.status_effect_component.clear_all()
 
 	character.current_weapon = null
 	character._update_weapon_visuals()

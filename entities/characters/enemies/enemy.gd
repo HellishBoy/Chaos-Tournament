@@ -28,6 +28,7 @@ class_name Enemy
 
 @export var is_careful: bool = false
 @export var is_healthy: bool = false
+@export var is_greedy: bool = false
 
 @export var is_scared: bool = false
 @export var is_aggressive: bool = false
@@ -266,7 +267,7 @@ func _update_ai_state() -> void:
 			_item_target = null
 			
 	# Scan for heal item — highest priority when scared and low HP
-	_item_target = _scan_for_heal_item()
+	_item_target = _scan_for_beneficial_item()
 	if _item_target != null:
 		ai_state = AIState.SEEK_ITEM
 		main_attack_held = false
@@ -605,24 +606,38 @@ func _scan_for_better_weapon() -> Node:
 			best = pickup
 	return best
 
-func _scan_for_heal_item() -> Node:
-	if not is_careful and not is_healthy:
-		return null
+func _scan_for_beneficial_item() -> Node:
 	var hp_percent := float(health.current_hp) / float(health.max_hp)
-	if is_careful and hp_percent > LOW_HP_THRESHOLD:
+	var wants_heal := (is_careful and hp_percent <= LOW_HP_THRESHOLD) or (is_healthy and hp_percent < 1.0)
+	var wants_buff := is_greedy
+
+	if not wants_heal and not wants_buff:
 		return null
-	if is_healthy and hp_percent >= 1.0:
-		return null
+
 	var effective_range := _get_effective_weapon_range()
 	var best: Node = null
 	var best_dist: float = INF
+
 	for pickup in get_tree().get_nodes_in_group("item_pickup"):
 		if not is_instance_valid(pickup):
 			continue
 		if pickup._was_picked_up:
 			continue
-		if pickup.item_data == null or pickup.item_data.effect != ItemData.ItemEffect.HEAL:
+		if pickup.item_data == null:
 			continue
+
+		var qualifies := false
+		if wants_heal and pickup.item_data.effect == ItemData.ItemEffect.HEAL:
+			qualifies = true
+		elif wants_buff and pickup.item_data.effect == ItemData.ItemEffect.STATUS_EFFECT:
+			var is_buff_effect := StatusEffectComponent.is_buff(pickup.item_data.status_effect_name)
+			var already_has_it := status_effect_component.has_effect(pickup.item_data.status_effect_name)
+			if is_buff_effect and not already_has_it:
+				qualifies = true
+
+		if not qualifies:
+			continue
+
 		var dist := global_position.distance_to(pickup.global_position)
 		if dist <= effective_range and dist < best_dist:
 			best_dist = dist
