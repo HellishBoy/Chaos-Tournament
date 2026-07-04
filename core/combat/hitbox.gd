@@ -16,6 +16,7 @@ class_name Hitbox
 var damage: int = 0
 
 var knockback_tier: String = "none"
+var flinch_tier: String = "none"
 var knockback_facing: bool = false  # false = away from attacker, true = attacker's facing dir
 var attacker: Node2D = null         # set to the player node so we know position and facing
 
@@ -29,18 +30,19 @@ func _on_area_entered(area: Area2D) -> void:
 		var health := parent.get_node("HealthComponent") as HealthComponent
 		health.take_damage(damage)
 
-	if parent.has_node("KnockbackComponent") and attacker != null:
-		var knockback := parent.get_node("KnockbackComponent") as KnockbackComponent
-		var direction: Vector2
-		if knockback_facing:
-			# Push in attacker's facing direction (homerun hit)
-			direction = Vector2.RIGHT.rotated(attacker.rotation)
-		else:
-			# Push away from attacker
-			direction = (parent.global_position - attacker.global_position).normalized()
-		knockback.apply(knockback_tier, direction)
-		
-	# Decrement durability
+	if parent.has_node("ImpactComponent") and attacker != null:
+		var impact := parent.get_node("ImpactComponent") as ImpactComponent
+		if knockback_tier != "none":
+			var direction: Vector2
+			if knockback_facing:
+				direction = Vector2.RIGHT.rotated(attacker.rotation)
+			else:
+				direction = (parent.global_position - attacker.global_position).normalized()
+			impact.apply_knockback(knockback_tier, direction)
+		elif flinch_tier != "none":
+			var resistance: float = parent.stats.flinch_resistance if parent is Character else 0.0
+			impact.apply_flinch(flinch_tier, resistance)
+
 	if attacker != null and attacker is Character:
 		var weapon: WeaponData = attacker.get_active_weapon()
 		if weapon.durability_current > 0:

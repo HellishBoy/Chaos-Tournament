@@ -31,11 +31,17 @@ class_name WeaponData
 @export var damage_alt: int = 5
 @export_enum("none", "low", "medium", "high") var main_knockback: String = "none"
 @export_enum("none", "low", "medium", "high") var alt_knockback: String = "none"
+@export_enum("none", "low", "medium", "high") var main_flinch: String = "none"
+@export_enum("none", "low", "medium", "high") var alt_flinch: String = "none"
 @export var has_combo: bool = false
 
 # false = push away from attacker, true = push in attacker's facing direction
 @export var knockback_main_facing: bool = false
 @export var knockback_alt_facing: bool = false
+
+@export_group("Impact")
+@export var can_knockback: bool = false
+@export var can_flinch: bool = false
 
 @export_group("Durability")
 @export_enum("none", "low", "medium", "high", "infinite") var durability: String = "infinite"
@@ -77,3 +83,23 @@ class_name WeaponData
 @export var ai_alt_attack_range: float = 24.0
 
 @export var requires_line_of_sight: bool = false
+
+# ── Impact Tier Getters ──────────────────────────────────────────
+# Gate the raw tier behind the safety flag, so a weapon can't
+# accidentally apply an effect nobody toggled on.
+
+func get_main_knockback_tier() -> String:
+	return main_knockback if can_knockback else "none"
+
+func get_alt_knockback_tier() -> String:
+	return alt_knockback if can_knockback else "none"
+
+func get_main_flinch_tier() -> String:
+	return main_flinch if can_flinch else "none"
+
+func get_alt_flinch_tier() -> String:
+	return alt_flinch if can_flinch else "none"
+
+func validate_impact_flags() -> void:
+	if can_knockback and can_flinch:
+		push_warning(weapon_name + ": can_knockback and can_flinch cannot both be true — a weapon must use only one impact effect.")

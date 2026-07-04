@@ -20,6 +20,7 @@ damage_alt = 10
 main_knockback = "low"
 alt_knockback = "low"
 has_combo = true
+can_knockback = true
 durability = "high"
 durability_current = 6
 weapon_sprite_right = ExtResource("2_t8t18")

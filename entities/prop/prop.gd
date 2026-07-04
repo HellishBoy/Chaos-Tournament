@@ -19,7 +19,7 @@ class_name Prop
 
 @onready var health: HealthComponent = $HealthComponent
 @onready var hurtbox: Area2D = $Hurtbox
-@onready var knockback_component: KnockbackComponent = $KnockbackComponent
+@onready var impact_component: ImpactComponent = $ImpactComponent
 
 # ── Ready ────────────────────────────────────────────────────────
 
@@ -50,21 +50,21 @@ func _on_hurtbox_area_entered(area: Area2D) -> void:
 			direction = Vector2.RIGHT.rotated(area.attacker.rotation)
 		else:
 			direction = (global_position - area.attacker.global_position).normalized()
-		knockback_component.apply(area.knockback_tier, direction)
+		impact_component.apply_knockback(area.knockback_tier, direction)
 
 # ── Physics Process ──────────────────────────────────────────────
 
 func _physics_process(delta: float) -> void:
-	if knockback_component.is_active() and not knockback_immune:
-		var tier := knockback_component.get_tier()
-		var dir := knockback_component.get_direction()
-		var push_speed: float = KnockbackComponent.TIER_SPEEDS.get(tier, 0.0)
-		var mult := knockback_component.get_speed_multiplier()
+	if impact_component.is_knockback_active() and not knockback_immune:
+		var tier := impact_component.get_knockback_tier()
+		var dir := impact_component.get_knockback_direction()
+		var push_speed: float = ImpactComponent.KNOCKBACK_TIER_SPEEDS.get(tier, 0.0)
+		var mult := impact_component.get_knockback_multiplier()
 		velocity = dir * push_speed * mult
 		var collision := move_and_collide(velocity * delta)
 		if collision:
 			velocity = velocity.bounce(collision.get_normal())
-			knockback_component._direction = velocity.normalized()
+			impact_component._kb_direction = velocity.normalized()
 	else:
 		velocity = Vector2.ZERO
 

@@ -5,6 +5,7 @@ extends Area2D
 @export var pierce: int = 0
 @export var damage: int = 10
 @export var knockback_tier: String = "none"
+@export var flinch_tier: String = "none"
 
 var _direction: Vector2 = Vector2.RIGHT
 var _distance_traveled: float = 0.0
@@ -15,13 +16,14 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	body_entered.connect(_on_body_entered)
 
-func setup(dir: Vector2, bullet_speed: float, bullet_range: float, bullet_pierce: int, bullet_damage: int, bullet_knockback: String) -> void:
+func setup(dir: Vector2, bullet_speed: float, bullet_range: float, bullet_pierce: int, bullet_damage: int, bullet_knockback: String, bullet_flinch: String) -> void:
 	_direction = dir.normalized()
 	speed = bullet_speed
 	range_max = bullet_range
 	pierce = bullet_pierce
 	damage = bullet_damage
 	knockback_tier = bullet_knockback
+	flinch_tier = bullet_flinch
 	rotation = _direction.angle()
 
 func _physics_process(delta: float) -> void:
@@ -37,10 +39,13 @@ func _on_area_entered(area: Area2D) -> void:
 		var health := parent.get_node("HealthComponent") as HealthComponent
 		health.take_damage(damage)
 
-	if parent.has_node("KnockbackComponent"):
-		var knockback := parent.get_node("KnockbackComponent") as KnockbackComponent
-		# Bullets always push away from direction of travel
-		knockback.apply(knockback_tier, _direction)
+	if parent.has_node("ImpactComponent"):
+		var impact := parent.get_node("ImpactComponent") as ImpactComponent
+		if knockback_tier != "none":
+			impact.apply_knockback(knockback_tier, _direction)
+		elif flinch_tier != "none":
+			var resistance: float = parent.stats.flinch_resistance if parent is Character else 0.0
+			impact.apply_flinch(flinch_tier, resistance)
 
 	_hit_count += 1
 	if pierce >= 0 and _hit_count > pierce:

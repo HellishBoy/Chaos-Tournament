@@ -7,11 +7,11 @@
 [ext_resource type="Script" uid="uid://c1aaiueu5rvpq" path="res://entities/characters/player/camera_2d.gd" id="5_qlg0r"]
 [ext_resource type="Texture2D" uid="uid://djew2yyvks34y" path="res://entities/characters/skins/dodge_windfx.png" id="5_tuyoq"]
 [ext_resource type="Texture2D" uid="uid://2t57yhwngo7m" path="res://entities/characters/skins/skin-default.png" id="5_y4r1p"]
-[ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/health_component.gd" id="7_fjrip"]
+[ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="7_fjrip"]
 [ext_resource type="AnimationLibrary" uid="uid://dj7tuc120561t" path="res://entities/characters/animations/.tres" id="8_3v2ag"]
 [ext_resource type="AnimationLibrary" uid="uid://c5nbhs05ohaok" path="res://entities/characters/animations/.res" id="8_jej6c"]
-[ext_resource type="Script" uid="uid://dt84g0ubdrtye" path="res://core/hitbox.gd" id="8_smehm"]
-[ext_resource type="Script" uid="uid://demapwlf5uqw4" path="res://core/knockback_component.gd" id="9_ur7pv"]
+[ext_resource type="Script" uid="uid://dt84g0ubdrtye" path="res://core/combat/hitbox.gd" id="8_smehm"]
+[ext_resource type="Script" uid="uid://emy3cu5poau2" path="res://core/combat/impact_component.gd" id="12_0s3gd"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_smehm"]
 
@@ -198,5 +198,5 @@ shape = SubResource("CircleShape2D_fjrip")
 script = ExtResource("7_fjrip")
 health_bar_visibility = 2
 
-[node name="KnockbackComponent" type="Node2D" parent="." unique_id=687752596]
-script = ExtResource("9_ur7pv")
+[node name="ImpactComponent" type="Node2D" parent="." unique_id=687752596]
+script = ExtResource("12_0s3gd")

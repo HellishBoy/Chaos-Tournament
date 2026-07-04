@@ -6,12 +6,12 @@
 [ext_resource type="Resource" uid="uid://cxoiv5ap1cj22" path="res://weapons/_melee/fists.tres" id="3_wtq4b"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/weapon_pickup.tscn" id="4_u5q8g"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="4_vk8x8"]
-[ext_resource type="Script" uid="uid://dt84g0ubdrtye" path="res://core/hitbox.gd" id="6_s1ycm"]
+[ext_resource type="Script" uid="uid://dt84g0ubdrtye" path="res://core/combat/hitbox.gd" id="6_s1ycm"]
 [ext_resource type="AnimationLibrary" uid="uid://dj7tuc120561t" path="res://entities/characters/animations/.tres" id="7_8qclf"]
 [ext_resource type="Texture2D" uid="uid://djew2yyvks34y" path="res://entities/characters/skins/dodge_windfx.png" id="7_shcg2"]
 [ext_resource type="AnimationLibrary" uid="uid://c5nbhs05ohaok" path="res://entities/characters/animations/.res" id="8_8qclf"]
-[ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/health_component.gd" id="10_2pwtc"]
-[ext_resource type="Script" uid="uid://demapwlf5uqw4" path="res://core/knockback_component.gd" id="11_rogs8"]
+[ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="10_2pwtc"]
+[ext_resource type="Script" uid="uid://emy3cu5poau2" path="res://core/combat/impact_component.gd" id="12_u5q8g"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_smehm"]
 
@@ -184,8 +184,8 @@ shape = SubResource("CircleShape2D_fjrip")
 script = ExtResource("10_2pwtc")
 health_bar_visibility = 2
 
-[node name="KnockbackComponent" type="Node2D" parent="." unique_id=687752596]
-script = ExtResource("11_rogs8")
+[node name="ImpactComponent" type="Node2D" parent="." unique_id=687752596]
+script = ExtResource("12_u5q8g")
 
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1409583353]
 collision_layer = 0

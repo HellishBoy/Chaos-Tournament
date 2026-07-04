@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://c2wnmcrni2e3l" path="res://entities/prop/prop.gd" id="1_lhe3x"]
 [ext_resource type="Texture2D" uid="uid://bpu7jrt5wcdgw" path="res://entities/prop/dummy/dummy.png" id="2_k5f3b"]
-[ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/health_component.gd" id="3_6m2ry"]
+[ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="3_6m2ry"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="4_aaw26"]
-[ext_resource type="Script" uid="uid://demapwlf5uqw4" path="res://core/knockback_component.gd" id="4_w4gkx"]
+[ext_resource type="Script" uid="uid://emy3cu5poau2" path="res://core/combat/impact_component.gd" id="5_r7jy7"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6m2ry"]
 radius = 7.0
@@ -40,5 +40,5 @@ max_hp = 150
 current_hp = 150
 health_bar_visibility = 2
 
-[node name="KnockbackComponent" type="Node2D" parent="." unique_id=40310016]
-script = ExtResource("4_w4gkx")
+[node name="ImpactComponent" type="Node2D" parent="." unique_id=40310016]
+script = ExtResource("5_r7jy7")

@@ -38,7 +38,7 @@ class_name Character
 
 @onready var health: HealthComponent = $HealthComponent
 @onready var hurtbox: Area2D = $Hurtbox
-@onready var knockback_component: KnockbackComponent = $KnockbackComponent
+@onready var impact_component: ImpactComponent = $ImpactComponent
 
 # ── State ────────────────────────────────────────────────────────
 
@@ -83,7 +83,9 @@ func _ready() -> void:
 	_stamina = stats.stamina_max
 	set_invincible(false)
 
-	knockback_component.immune = stats.knockback_immune
+	fists.validate_impact_flags()
+	if current_weapon:
+		current_weapon.validate_impact_flags()
 	
 	_update_weapon_visuals()
 	
@@ -133,6 +135,7 @@ func try_pickup(pickup_node: Node) -> void:
 	var data: WeaponData = pickup_node.weapon_data.duplicate()
 	pickup_node.queue_free()
 	current_weapon = data
+	current_weapon.validate_impact_flags()
 	# Only initialize durability if not already set
 	if data.durability_current == -1:
 		match data.durability:
@@ -245,12 +248,15 @@ func _on_hurtbox_area_entered(area: Area2D) -> void:
 		return
 	health.take_damage(area.damage)
 	if area.attacker != null:
-		var direction: Vector2
-		if area.knockback_facing:
-			direction = Vector2.RIGHT.rotated(area.attacker.rotation)
-		else:
-			direction = (global_position - area.attacker.global_position).normalized()
-		knockback_component.apply(area.knockback_tier, direction)
+		if area.knockback_tier != "none":
+			var direction: Vector2
+			if area.knockback_facing:
+				direction = Vector2.RIGHT.rotated(area.attacker.rotation)
+			else:
+				direction = (global_position - area.attacker.global_position).normalized()
+			impact_component.apply_knockback(area.knockback_tier, direction)
+		elif area.flinch_tier != "none":
+			impact_component.apply_flinch(area.flinch_tier, stats.flinch_resistance)
 
 # ── Health Callbacks — override in subclass for visual feedback ──
 
@@ -302,8 +308,10 @@ func _setup_hitboxes_main() -> void:
 	var weapon := get_active_weapon()
 	hitbox_right.damage           = weapon.damage_main
 	hitbox_left.damage            = weapon.damage_main
-	hitbox_right.knockback_tier   = weapon.main_knockback
-	hitbox_left.knockback_tier    = weapon.main_knockback
+	hitbox_right.knockback_tier   = weapon.get_main_knockback_tier()
+	hitbox_left.knockback_tier    = weapon.get_main_knockback_tier()
+	hitbox_right.flinch_tier      = weapon.get_main_flinch_tier()
+	hitbox_left.flinch_tier       = weapon.get_main_flinch_tier()
 	hitbox_right.knockback_facing = weapon.knockback_main_facing
 	hitbox_left.knockback_facing  = weapon.knockback_main_facing
 	hitbox_right.attacker         = self
@@ -313,8 +321,10 @@ func _setup_hitboxes_alt() -> void:
 	var weapon := get_active_weapon()
 	hitbox_right.damage           = weapon.damage_alt
 	hitbox_left.damage            = weapon.damage_alt
-	hitbox_right.knockback_tier   = weapon.alt_knockback
-	hitbox_left.knockback_tier    = weapon.alt_knockback
+	hitbox_right.knockback_tier   = weapon.get_alt_knockback_tier()
+	hitbox_left.knockback_tier    = weapon.get_alt_knockback_tier()
+	hitbox_right.flinch_tier      = weapon.get_alt_flinch_tier()
+	hitbox_left.flinch_tier       = weapon.get_alt_flinch_tier()
 	hitbox_right.knockback_facing = weapon.knockback_alt_facing
 	hitbox_left.knockback_facing  = weapon.knockback_alt_facing
 	hitbox_right.attacker         = self
@@ -353,14 +363,12 @@ func _is_attacking() -> bool:
 
 # ── Movement (shared base) ───────────────────────────────────────
 
-# Applies velocity with knockback factored in and calls move_and_slide.
-# Pass in the desired movement vector (already scaled by speed/penalty).
 func _apply_movement(desired_velocity: Vector2) -> void:
-	if knockback_component.is_active() and not stats.knockback_immune:
-		var tier := knockback_component.get_tier()
-		var dir := knockback_component.get_direction()
-		var push_speed: float = KnockbackComponent.TIER_SPEEDS.get(tier, 0.0)
-		var mult := knockback_component.get_speed_multiplier()
+	if impact_component.is_knockback_active():
+		var tier := impact_component.get_knockback_tier()
+		var dir := impact_component.get_knockback_direction()
+		var push_speed: float = ImpactComponent.KNOCKBACK_TIER_SPEEDS.get(tier, 0.0)
+		var mult := impact_component.get_knockback_multiplier()
 		var resistance := 1.0 - stats.knockback_resistance
 		velocity = desired_velocity + dir * push_speed * mult * resistance
 	else:
@@ -441,7 +449,8 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 		weapon.bullet_range,
 		weapon.bullet_pierce,
 		weapon.damage_main,
-		weapon.main_knockback
+		weapon.get_main_knockback_tier(),
+		weapon.get_main_flinch_tier()
 	)
 	
 	# Decrement ammo
