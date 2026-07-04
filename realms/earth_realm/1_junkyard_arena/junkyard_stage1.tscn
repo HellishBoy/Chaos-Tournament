@@ -104,7 +104,6 @@ script = ExtResource("4_ah1uk")
 move_speed = 110.0
 damage_multiplier = 0.1
 attack_speed_multiplier = 1.2
-max_hp = 300
 knockback_resistance = 0.3
 flinch_resistance = 0.3
 metadata/_custom_type_script = "uid://cuf0jjkwlmjfm"

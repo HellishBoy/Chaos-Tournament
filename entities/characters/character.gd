@@ -86,6 +86,7 @@ func _ready() -> void:
 	health.damaged.connect(_on_damaged)
 	health.died.connect(_on_died)
 	status_effect_component.effect_ticked.connect(_on_status_effect_ticked)
+	status_effect_component.effect_applied.connect(_on_status_effect_applied)
 
 	_stamina = stats.stamina_max
 	set_invincible(false)
@@ -328,7 +329,8 @@ func _setup_hitboxes_main() -> void:
 	hitbox_left.flinch_tier       = weapon.get_main_flinch_tier()
 	hitbox_right.knockback_facing = weapon.knockback_main_facing
 	hitbox_left.knockback_facing  = weapon.knockback_main_facing
-	_apply_dot_config(weapon)
+	_apply_dot_config(weapon.get_main_dot_config())
+	_apply_root_config(weapon.get_main_root_type(), weapon.main_root_duration)
 	hitbox_right.attacker         = self
 	hitbox_left.attacker          = self
 
@@ -342,12 +344,12 @@ func _setup_hitboxes_alt() -> void:
 	hitbox_left.flinch_tier       = weapon.get_alt_flinch_tier()
 	hitbox_right.knockback_facing = weapon.knockback_alt_facing
 	hitbox_left.knockback_facing  = weapon.knockback_alt_facing
-	_apply_dot_config(weapon)
+	_apply_dot_config(weapon.get_alt_dot_config())
+	_apply_root_config(weapon.get_alt_root_type(), weapon.alt_root_duration)
 	hitbox_right.attacker         = self
 	hitbox_left.attacker          = self
 	
-func _apply_dot_config(weapon: WeaponData) -> void:
-	var dot_config := weapon.get_dot_config()
+func _apply_dot_config(dot_config: Dictionary) -> void:
 	hitbox_right.dot_tag             = dot_config["tag"]
 	hitbox_right.dot_duration        = dot_config["duration"]
 	hitbox_right.dot_tick_interval   = dot_config["tick_interval"]
@@ -356,6 +358,12 @@ func _apply_dot_config(weapon: WeaponData) -> void:
 	hitbox_left.dot_duration         = dot_config["duration"]
 	hitbox_left.dot_tick_interval    = dot_config["tick_interval"]
 	hitbox_left.dot_damage_percent   = dot_config["damage_percent"]
+
+func _apply_root_config(root_type: String, root_duration: float) -> void:
+	hitbox_right.root_type     = root_type
+	hitbox_right.root_duration = root_duration
+	hitbox_left.root_type       = root_type
+	hitbox_left.root_duration   = root_duration
 
 func _play_main_attack() -> void:
 	var anims := get_active_weapon().main_attack_animations
@@ -367,6 +375,7 @@ func _play_main_attack() -> void:
 	main_combo_timer = 0.0
 	anim_upper.speed_scale = get_active_weapon().main_attack_speed * stats.attack_speed_multiplier
 	_setup_hitboxes_main()
+	_apply_recoil(get_active_weapon().get_main_recoil_tier())
 	anim_upper.play(anims[main_combo_index])
 	main_combo_index += 1
 
@@ -380,8 +389,17 @@ func _play_alt_attack() -> void:
 	alt_combo_timer = 0.0
 	anim_upper.speed_scale = get_active_weapon().alt_attack_speed * stats.attack_speed_multiplier
 	_setup_hitboxes_alt()
+	_apply_recoil(get_active_weapon().get_alt_recoil_tier())
 	anim_upper.play(anims[alt_combo_index])
 	alt_combo_index += 1
+	
+func _apply_recoil(tier: String) -> void:
+	if tier == "none":
+		return
+	if status_effect_component.has_effect("steadfast"):
+		return
+	var direction := Vector2.LEFT.rotated(rotation)  # opposite of facing
+	impact_component.apply_knockback(tier, direction)
 
 # ── State Helpers ────────────────────────────────────────────────
 
@@ -391,6 +409,16 @@ func _is_attacking() -> bool:
 # ── Movement (shared base) ───────────────────────────────────────
 
 func _apply_movement(desired_velocity: Vector2) -> void:
+	if status_effect_component.has_effect("anchored"):
+		# Fully locked — no self movement, immune to knockback push too.
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
+
+	if status_effect_component.has_effect("frozen"):
+		# No self movement, but still an inert object — knockback can push it.
+		desired_velocity = Vector2.ZERO
+	
 	if impact_component.is_knockback_active():
 		var tier := impact_component.get_knockback_tier()
 		var dir := impact_component.get_knockback_direction()
@@ -419,6 +447,8 @@ func set_invincible(state: bool) -> void:
 
 func try_dodge(direction: Vector2) -> void:
 	if is_dodging or cooldown_timer > 0 or _stamina < stats.stamina_per_dodge:
+		return
+	if status_effect_component.has_effect("anchored") or status_effect_component.has_effect("frozen"):
 		return
 	dodge_direction = direction if direction.length() > 0 else last_direction
 	is_dodging = true
@@ -449,6 +479,27 @@ func _tick_dodge(delta: float) -> void:
 func _tick_stamina(delta: float) -> void:
 	if _stamina < stats.stamina_max:
 		_stamina = min(_stamina + stats.stamina_regen * delta, stats.stamina_max)
+		
+# Clamps a combined speed multiplier so it never drops below this
+# character's floor, no matter how many slowing effects are stacked.
+func _apply_speed_floor(multiplier: float) -> float:
+	return max(multiplier, stats.min_speed_multiplier)
+
+func _is_petrified() -> bool:
+	return status_effect_component.has_effect("petrified")
+
+func _on_status_effect_applied(effect_name: String, _duration: float) -> void:
+	if effect_name != "petrified":
+		return
+	call_deferred("_snap_to_idle_for_petrify")
+	
+func _snap_to_idle_for_petrify() -> void:
+	if is_dodging:
+		is_dodging = false
+		set_invincible(false)
+	is_tossing = false
+	_cancel_into_idle()
+	anim_lower.stop()
 
 # ── Bullets ──────────────────────────────────────────────────────
 
@@ -478,7 +529,9 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 		weapon.damage_main,
 		weapon.get_main_knockback_tier(),
 		weapon.get_main_flinch_tier(),
-		weapon.get_dot_config()
+		weapon.get_main_dot_config(),
+		weapon.get_main_root_type(),
+		weapon.main_root_duration
 	)
 	
 	# Decrement ammo

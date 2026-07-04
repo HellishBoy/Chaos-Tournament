@@ -13,6 +13,9 @@ extends Area2D
 @export var dot_tick_interval: float = 0.0
 @export var dot_damage_percent: float = 0.0
 
+@export var root_type: String = "none"
+@export var root_duration: float = 0.0
+
 var _direction: Vector2 = Vector2.RIGHT
 var _distance_traveled: float = 0.0
 var _hit_count: int = 0
@@ -22,7 +25,7 @@ func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	body_entered.connect(_on_body_entered)
 
-func setup(dir: Vector2, bullet_speed: float, bullet_range: float, bullet_pierce: int, bullet_damage: int, bullet_knockback: String, bullet_flinch: String, bullet_dot: Dictionary = {}) -> void:
+func setup(dir: Vector2, bullet_speed: float, bullet_range: float, bullet_pierce: int, bullet_damage: int, bullet_knockback: String, bullet_flinch: String, bullet_dot: Dictionary = {}, bullet_root_type: String = "none", bullet_root_duration: float = 0.0) -> void:
 	_direction = dir.normalized()
 	speed = bullet_speed
 	range_max = bullet_range
@@ -35,6 +38,8 @@ func setup(dir: Vector2, bullet_speed: float, bullet_range: float, bullet_pierce
 		dot_duration = bullet_dot.get("duration", 0.0)
 		dot_tick_interval = bullet_dot.get("tick_interval", 0.0)
 		dot_damage_percent = bullet_dot.get("damage_percent", 0.0)
+	root_type = bullet_root_type
+	root_duration = bullet_root_duration
 	rotation = _direction.angle()
 
 func _physics_process(delta: float) -> void:
@@ -63,6 +68,11 @@ func _on_area_entered(area: Area2D) -> void:
 
 	if dot_tag != "" and status != null:
 		status.apply_effect(dot_tag, dot_duration, dot_tick_interval, dot_damage_percent)
+
+	if root_type != "none" and status != null:
+		var root_resist: float = parent.stats.root_resistance if parent is Character else 0.0
+		var effective_duration: float = root_duration * (1.0 - root_resist)
+		status.apply_effect(root_type, effective_duration)
 
 	_hit_count += 1
 	if pierce >= 0 and _hit_count > pierce:

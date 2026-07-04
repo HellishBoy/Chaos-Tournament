@@ -19,6 +19,9 @@ const EFFECT_REGISTRY: Dictionary = {
 	"steadfast": Category.BUFF,
 	"bleed":     Category.DEBUFF,
 	"poison":    Category.DEBUFF,
+	"anchored":  Category.DEBUFF,
+	"petrified":    Category.DEBUFF,
+	"disarm":     Category.DEBUFF,
 }
 
 # Effect name (String) -> Dictionary {remaining, tick_interval, tick_timer, tick_damage_percent}

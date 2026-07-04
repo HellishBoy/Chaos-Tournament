@@ -25,6 +25,9 @@ var dot_duration: float = 0.0
 var dot_tick_interval: float = 0.0
 var dot_damage_percent: float = 0.0
 
+var root_type: String = "none"
+var root_duration: float = 0.0
+
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
 	$CollisionShape2D.disabled = true
@@ -53,6 +56,11 @@ func _on_area_entered(area: Area2D) -> void:
 
 	if dot_tag != "" and status != null:
 		status.apply_effect(dot_tag, dot_duration, dot_tick_interval, dot_damage_percent)
+		
+	if root_type != "none" and status != null:
+		var root_resist: float = parent.stats.root_resistance if parent is Character else 0.0
+		var effective_duration: float = root_duration * (1.0 - root_resist)
+		status.apply_effect(root_type, effective_duration)
 
 	if attacker != null and attacker is Character:
 		var weapon: WeaponData = attacker.get_active_weapon()
