@@ -304,13 +304,13 @@ func _update_ai_state() -> void:
 
 	ai_state = AIState.ACTIVE
 
-
 # ── Physics Process ──────────────────────────────────────────────
 
 func _physics_process(delta: float) -> void:
 	var knock_mult := impact_component.get_control_speed_multiplier(stats.knockback_resistance)
 	var weight_mult := get_active_weapon().get_weight_multiplier()
-	var combined_mult := _apply_speed_floor(weight_mult * knock_mult)
+	var slow_mult := _get_slow_multiplier()
+	var combined_mult := _apply_speed_floor(weight_mult * knock_mult * slow_mult)
 	
 	if _is_petrified():
 		_apply_movement(Vector2.ZERO)

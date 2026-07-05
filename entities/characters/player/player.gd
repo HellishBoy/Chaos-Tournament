@@ -183,11 +183,12 @@ func _physics_process(delta: float) -> void:
 		var direction := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		var knock_mult := impact_component.get_control_speed_multiplier(stats.knockback_resistance)
 		var weight_mult := get_active_weapon().get_weight_multiplier()
+		var slow_mult := _get_slow_multiplier()
 		if _is_attacking():
-			var combined := _apply_speed_floor(get_active_weapon().movement_penalty * weight_mult * knock_mult)
+			var combined := _apply_speed_floor(get_active_weapon().movement_penalty * weight_mult * knock_mult * slow_mult)
 			_apply_movement(direction * stats.move_speed * combined)
 		else:
-			var combined := _apply_speed_floor(weight_mult * knock_mult)
+			var combined := _apply_speed_floor(weight_mult * knock_mult * slow_mult)
 			_apply_movement(direction * stats.move_speed * combined)
 		if direction.length() > 0:
 			last_direction = direction

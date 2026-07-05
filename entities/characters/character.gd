@@ -93,9 +93,11 @@ func _ready() -> void:
 
 	fists.validate_impact_flags()
 	fists.validate_dot_tag()
+	_initialize_durability(fists)
 	if current_weapon:
 		current_weapon.validate_impact_flags()
 		current_weapon.validate_dot_tag()
+		_initialize_durability(current_weapon)
 
 	_update_weapon_visuals()
 	call_deferred("_setup_health_bar")
@@ -139,6 +141,20 @@ func _apply_alive_state() -> void:
 func get_active_weapon() -> WeaponData:
 	return current_weapon if current_weapon else fists
 
+# ── Durability ───────────────────────────────────────────────────
+# Converts a durability tier into an actual usage count, but only if
+# it hasn't been initialized yet (durability_current == -1 is the
+# "uninitialized" sentinel). Called both when a weapon is picked up
+# AND at spawn time, so pre-assigned weapons (set directly in the
+# Inspector, never passing through try_pickup) don't end up stuck
+# at -1 — which hitbox.gd reads as "never breaks."
+func _initialize_durability(weapon: WeaponData) -> void:
+	if weapon.durability_current == -1:
+		match weapon.durability:
+			"low":    weapon.durability_current = 3
+			"medium": weapon.durability_current = 5
+			"high":   weapon.durability_current = 8
+
 # ── Pickup ───────────────────────────────────────────────────────
 
 func try_pickup(pickup_node: Node) -> void:
@@ -151,12 +167,7 @@ func try_pickup(pickup_node: Node) -> void:
 	current_weapon = data
 	current_weapon.validate_impact_flags()
 	current_weapon.validate_dot_tag()
-	# Only initialize durability if not already set
-	if data.durability_current == -1:
-		match data.durability:
-			"low":    data.durability_current = 3
-			"medium": data.durability_current = 5
-			"high":   data.durability_current = 8
+	_initialize_durability(data)
 	_update_weapon_visuals()
 	var hud := get_tree().get_first_node_in_group("hud") as HUD
 	if hud:
@@ -329,8 +340,10 @@ func _setup_hitboxes_main() -> void:
 	hitbox_left.flinch_tier       = weapon.get_main_flinch_tier()
 	hitbox_right.knockback_facing = weapon.knockback_main_facing
 	hitbox_left.knockback_facing  = weapon.knockback_main_facing
-	_apply_dot_config(weapon.get_main_dot_config())
-	_apply_root_config(weapon.get_main_root_type(), weapon.main_root_duration)
+	_apply_dot_config(weapon)
+	_apply_root_config(weapon)
+	_apply_disarm_config(weapon)
+	_apply_slow_config(weapon)
 	hitbox_right.attacker         = self
 	hitbox_left.attacker          = self
 
@@ -344,30 +357,62 @@ func _setup_hitboxes_alt() -> void:
 	hitbox_left.flinch_tier       = weapon.get_alt_flinch_tier()
 	hitbox_right.knockback_facing = weapon.knockback_alt_facing
 	hitbox_left.knockback_facing  = weapon.knockback_alt_facing
-	_apply_dot_config(weapon.get_alt_dot_config())
-	_apply_root_config(weapon.get_alt_root_type(), weapon.alt_root_duration)
+	_apply_dot_config(weapon)
+	_apply_root_config(weapon)
+	_apply_disarm_config(weapon)
+	_apply_slow_config(weapon)
 	hitbox_right.attacker         = self
 	hitbox_left.attacker          = self
 	
-func _apply_dot_config(dot_config: Dictionary) -> void:
+func _apply_dot_config(weapon: WeaponData) -> void:
+	var dot_config := weapon.get_dot_config()
 	hitbox_right.dot_tag             = dot_config["tag"]
 	hitbox_right.dot_duration        = dot_config["duration"]
 	hitbox_right.dot_tick_interval   = dot_config["tick_interval"]
 	hitbox_right.dot_damage_percent  = dot_config["damage_percent"]
+	hitbox_right.dot_chance          = dot_config["chance"]
 	hitbox_left.dot_tag              = dot_config["tag"]
 	hitbox_left.dot_duration         = dot_config["duration"]
 	hitbox_left.dot_tick_interval    = dot_config["tick_interval"]
 	hitbox_left.dot_damage_percent   = dot_config["damage_percent"]
+	hitbox_left.dot_chance           = dot_config["chance"]
 
-func _apply_root_config(root_type: String, root_duration: float) -> void:
-	hitbox_right.root_type     = root_type
-	hitbox_right.root_duration = root_duration
-	hitbox_left.root_type       = root_type
-	hitbox_left.root_duration   = root_duration
+func _apply_root_config(weapon: WeaponData) -> void:
+	var root_config := weapon.get_root_config()
+	hitbox_right.root_type     = root_config["type"]
+	hitbox_right.root_tag      = root_config["tag"]
+	hitbox_right.root_duration = root_config["duration"]
+	hitbox_right.root_chance   = root_config["chance"]
+	hitbox_left.root_type       = root_config["type"]
+	hitbox_left.root_tag        = root_config["tag"]
+	hitbox_left.root_duration   = root_config["duration"]
+	hitbox_left.root_chance     = root_config["chance"]
+
+func _apply_disarm_config(weapon: WeaponData) -> void:
+	var disarm_config := weapon.get_disarm_config()
+	hitbox_right.disarm_tag      = disarm_config["tag"]
+	hitbox_right.disarm_duration = disarm_config["duration"]
+	hitbox_right.disarm_chance   = disarm_config["chance"]
+	hitbox_left.disarm_tag       = disarm_config["tag"]
+	hitbox_left.disarm_duration  = disarm_config["duration"]
+	hitbox_left.disarm_chance    = disarm_config["chance"]
+
+func _apply_slow_config(weapon: WeaponData) -> void:
+	var slow_config := weapon.get_slow_config()
+	hitbox_right.slow_tag      = slow_config["tag"]
+	hitbox_right.slow_duration = slow_config["duration"]
+	hitbox_right.slow_percent  = slow_config["percent"]
+	hitbox_right.slow_chance   = slow_config["chance"]
+	hitbox_left.slow_tag       = slow_config["tag"]
+	hitbox_left.slow_duration  = slow_config["duration"]
+	hitbox_left.slow_percent   = slow_config["percent"]
+	hitbox_left.slow_chance    = slow_config["chance"]
 
 func _play_main_attack() -> void:
 	var anims := get_active_weapon().main_attack_animations
 	if anims.is_empty():
+		return
+	if status_effect_component.has_effect("disarm"):
 		return
 	main_combo_index = main_combo_index % anims.size()
 	is_main_attacking = true
@@ -382,6 +427,8 @@ func _play_main_attack() -> void:
 func _play_alt_attack() -> void:
 	var anims := get_active_weapon().alt_attack_animations
 	if anims.is_empty():
+		return
+	if status_effect_component.has_effect("disarm"):
 		return
 	alt_combo_index = alt_combo_index % anims.size()
 	is_alt_attacking = true
@@ -415,7 +462,7 @@ func _apply_movement(desired_velocity: Vector2) -> void:
 		move_and_slide()
 		return
 
-	if status_effect_component.has_effect("frozen"):
+	if status_effect_component.has_effect("petrified"):
 		# No self movement, but still an inert object — knockback can push it.
 		desired_velocity = Vector2.ZERO
 	
@@ -448,7 +495,7 @@ func set_invincible(state: bool) -> void:
 func try_dodge(direction: Vector2) -> void:
 	if is_dodging or cooldown_timer > 0 or _stamina < stats.stamina_per_dodge:
 		return
-	if status_effect_component.has_effect("anchored") or status_effect_component.has_effect("frozen"):
+	if status_effect_component.has_effect("anchored") or status_effect_component.has_effect("petrified"):
 		return
 	dodge_direction = direction if direction.length() > 0 else last_direction
 	is_dodging = true
@@ -484,6 +531,11 @@ func _tick_stamina(delta: float) -> void:
 # character's floor, no matter how many slowing effects are stacked.
 func _apply_speed_floor(multiplier: float) -> float:
 	return max(multiplier, stats.min_speed_multiplier)
+	
+func _get_slow_multiplier() -> float:
+	if status_effect_component.has_effect("slow"):
+		return 1.0 - status_effect_component.get_magnitude("slow")
+	return 1.0
 
 func _is_petrified() -> bool:
 	return status_effect_component.has_effect("petrified")
@@ -529,9 +581,10 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 		weapon.damage_main,
 		weapon.get_main_knockback_tier(),
 		weapon.get_main_flinch_tier(),
-		weapon.get_main_dot_config(),
-		weapon.get_main_root_type(),
-		weapon.main_root_duration
+		weapon.get_dot_config(),
+		weapon.get_root_config(),
+		weapon.get_disarm_config(),
+		weapon.get_slow_config()
 	)
 	
 	# Decrement ammo

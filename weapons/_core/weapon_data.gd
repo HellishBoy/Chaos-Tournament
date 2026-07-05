@@ -29,9 +29,9 @@ class_name WeaponData
 
 const WEIGHT_TIERS: Dictionary = {
 	"none":   0.0,
-	"low":    0.10,
-	"medium": 0.30,
-	"high":   0.55,
+	"light":    0.10,
+	"medium": 0.20,
+	"heavy":   0.45,
 }
 
 func get_weight_multiplier() -> float:
@@ -66,10 +66,6 @@ func get_weight_multiplier() -> float:
 @export_enum("none", "low", "medium", "high", "infinite") var durability: String = "infinite"
 @export var durability_current: int = -1  # -1 = not applicable
 
-@export_group("Ammo")
-@export var ammo: int = -1      # -1 = not applicable
-@export var quantity: int = -1  # -1 = not applicable
-
 @export_group("Toss")
 @export var can_toss: bool = true
 
@@ -77,32 +73,64 @@ func get_weight_multiplier() -> float:
 @export var main_attack_charge: bool = false
 @export var alt_attack_charge: bool = false
 
-@export_group("Bullet | Projectile")
+@export_group("Melee")
+# Reserved for melee-only fields (attack reach/arc, block/parry data,
+# swing sound, etc.) — nothing here yet, since every current combat
+# field (damage, knockback, flinch, combo, charge, recoil, weight,
+# status effects) already applies equally to melee and ranged weapons.
+
+@export_group("Ranged")
+@export_subgroup("Bullet")
 @export var bullet_scene: PackedScene
 @export var bullet_speed: float = 300.0
 @export var bullet_range: float = -1.0  # -1 = infinite
 @export var bullet_pierce: int = 0      # 0 = no pierce, -1 = infinite
 @export var bullet_spread: float = 0.0  # degrees
 
-@export_group("Damage Over Time")
+@export_subgroup("Ammo")
+@export var ammo: int = -1      # -1 = not applicable
+@export var quantity: int = -1  # -1 = not applicable
+
+@export_subgroup("Targeting")
+@export var requires_line_of_sight: bool = false
+
+@export_group("Status Effects")
+@export_subgroup("Damage Over Time")
 @export var can_apply_dot: bool = false
 # Cosmetic identity only — "bleed", "poison", "burn", etc. All tags share
 # the exact same tick mechanic; VFX/behavior differences are purely visual.
-@export var main_dot_tag: String = ""
-@export var main_dot_duration: float = 0.0
-@export var main_dot_tick_interval: float = 1.0
-@export var main_dot_damage_percent: float = 0.0 # percent of target's max HP, per tick
-@export var alt_dot_tag: String = ""
-@export var alt_dot_duration: float = 0.0
-@export var alt_dot_tick_interval: float = 1.0
-@export var alt_dot_damage_percent: float = 0.0 # percent of target's max HP, per tick
+@export_enum("none", "bleed", "burn", "poison", "frostbite") var dot_tag: String = "none"
+@export var dot_duration: float = 0.0
+@export var dot_tick_interval: float = 1.0
+@export var dot_damage_percent: float = 0.0 # percent of target's max HP, per tick
+# 1.0 = always applies on hit, 0.3 = 30% chance per hit
+@export_range(0.0, 1.0) var dot_chance: float = 1.0
 
-@export_group("Root")
+@export_subgroup("Root")
 @export var can_root: bool = false
-@export_enum("none", "anchored", "petrified") var main_root_type: String = "none"
-@export var main_root_duration: float = 0.0
-@export_enum("none", "anchored", "petrified") var alt_root_type: String = "none"
-@export var alt_root_duration: float = 0.0
+@export_enum("none", "anchored", "petrified") var root_type: String = "none"
+@export_enum("none", "ensnared", "zapped") var root_tag: String = "none"
+@export var root_duration: float = 0.0
+# 1.0 = always applies on hit, 0.3 = 30% chance per hit
+@export_range(0.0, 1.0) var root_chance: float = 1.0
+
+@export_subgroup("Disarm")
+@export var can_disarm: bool = false
+# Reserved for future disarm variants — only "disarm" exists for now.
+@export_enum("disarm") var disarm_tag: String = "disarm"
+@export var disarm_duration: float = 0.0
+# 1.0 = always applies on hit, 0.3 = 30% chance per hit
+@export_range(0.0, 1.0) var disarm_chance: float = 1.0
+
+@export_subgroup("Slow")
+@export var can_slow: bool = false
+# Reserved for future slow variants — only "slow" exists for now.
+@export_enum("slow") var slow_tag: String = "slow"
+@export var slow_duration: float = 0.0
+# Fixed movement speed reduction while active (0.3 = 30% slower)
+@export_range(0.0, 1.0) var slow_percent: float = 0.0
+# 1.0 = always applies on hit, 0.3 = 30% chance per hit
+@export_range(0.0, 1.0) var slow_chance: float = 1.0
 
 @export_group("Sprites")
 @export var weapon_sprite_ground: Texture2D
@@ -115,8 +143,6 @@ func get_weight_multiplier() -> float:
 
 @export_enum("TAP", "HOLD") var ai_alt_attack_mode: String = "TAP"
 @export var ai_alt_attack_range: float = 24.0
-
-@export var requires_line_of_sight: bool = false
 
 # ── Impact Tier Getters ──────────────────────────────────────────
 # Gate the raw tier behind the safety flag, so a weapon can't
@@ -140,11 +166,20 @@ func get_main_recoil_tier() -> String:
 func get_alt_recoil_tier() -> String:
 	return alt_recoil if can_recoil else "none"
 	
-func get_main_root_type() -> String:
-	return main_root_type if can_root else "none"
+func get_root_config() -> Dictionary:
+	if not can_root:
+		return { "type": "none", "tag": "none", "duration": 0.0, "chance": 0.0 }
+	return { "type": root_type, "tag": root_tag, "duration": root_duration, "chance": root_chance }
+	
+func get_disarm_config() -> Dictionary:
+	if not can_disarm:
+		return { "tag": "", "duration": 0.0, "chance": 0.0 }
+	return { "tag": disarm_tag, "duration": disarm_duration, "chance": disarm_chance }
 
-func get_alt_root_type() -> String:
-	return alt_root_type if can_root else "none"
+func get_slow_config() -> Dictionary:
+	if not can_slow:
+		return { "tag": "", "duration": 0.0, "percent": 0.0, "chance": 0.0 }
+	return { "tag": slow_tag, "duration": slow_duration, "percent": slow_percent, "chance": slow_chance }
 
 func validate_impact_flags() -> void:
 	if can_knockback and can_flinch:
@@ -152,30 +187,17 @@ func validate_impact_flags() -> void:
 
 # ── Damage Over Time ──────────────────────────────────────────
 
-func get_main_dot_config() -> Dictionary:
-	if not can_apply_dot:
-		return { "tag": "", "duration": 0.0, "tick_interval": 0.0, "damage_percent": 0.0 }
+func get_dot_config() -> Dictionary:
+	if not can_apply_dot or dot_tag == "none":
+		return { "tag": "", "duration": 0.0, "tick_interval": 0.0, "damage_percent": 0.0, "chance": 0.0 }
 	return {
-		"tag": main_dot_tag,
-		"duration": main_dot_duration,
-		"tick_interval": main_dot_tick_interval,
-		"damage_percent": main_dot_damage_percent,
-	}
-
-func get_alt_dot_config() -> Dictionary:
-	if not can_apply_dot:
-		return { "tag": "", "duration": 0.0, "tick_interval": 0.0, "damage_percent": 0.0 }
-	return {
-		"tag": alt_dot_tag,
-		"duration": alt_dot_duration,
-		"tick_interval": alt_dot_tick_interval,
-		"damage_percent": alt_dot_damage_percent,
+		"tag": dot_tag,
+		"duration": dot_duration,
+		"tick_interval": dot_tick_interval,
+		"damage_percent": dot_damage_percent,
+		"chance": dot_chance,
 	}
 
 func validate_dot_tag() -> void:
-	if not can_apply_dot:
-		return
-	if main_dot_tag != "" and not StatusEffectComponent.is_known_effect(main_dot_tag):
-		push_warning(weapon_name + ": main_dot_tag '" + main_dot_tag + "' does not match any entry in StatusEffectComponent.EFFECT_REGISTRY.")
-	if alt_dot_tag != "" and not StatusEffectComponent.is_known_effect(alt_dot_tag):
-		push_warning(weapon_name + ": alt_dot_tag '" + alt_dot_tag + "' does not match any entry in StatusEffectComponent.EFFECT_REGISTRY.")
+	if can_apply_dot and dot_tag != "none" and not StatusEffectComponent.is_known_effect(dot_tag):
+		push_warning(weapon_name + ": dot_tag '" + dot_tag + "' does not match any entry in StatusEffectComponent.EFFECT_REGISTRY.")

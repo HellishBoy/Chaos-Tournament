@@ -24,9 +24,21 @@ var dot_tag: String = ""
 var dot_duration: float = 0.0
 var dot_tick_interval: float = 0.0
 var dot_damage_percent: float = 0.0
+var dot_chance: float = 1.0
 
 var root_type: String = "none"
+var root_tag: String = "none"
 var root_duration: float = 0.0
+var root_chance: float = 1.0
+
+var disarm_tag: String = ""
+var disarm_duration: float = 0.0
+var disarm_chance: float = 1.0
+
+var slow_tag: String = ""
+var slow_duration: float = 0.0
+var slow_percent: float = 0.0
+var slow_chance: float = 1.0
 
 func _ready() -> void:
 	area_entered.connect(_on_area_entered)
@@ -54,13 +66,19 @@ func _on_area_entered(area: Area2D) -> void:
 			var resistance: float = parent.stats.flinch_resistance if parent is Character else 0.0
 			impact.apply_flinch(flinch_tier, resistance)
 
-	if dot_tag != "" and status != null:
+	if dot_tag != "" and status != null and randf() <= dot_chance:
 		status.apply_effect(dot_tag, dot_duration, dot_tick_interval, dot_damage_percent)
-		
-	if root_type != "none" and status != null:
+
+	if root_type != "none" and status != null and randf() <= root_chance:
 		var root_resist: float = parent.stats.root_resistance if parent is Character else 0.0
 		var effective_duration: float = root_duration * (1.0 - root_resist)
 		status.apply_effect(root_type, effective_duration)
+
+	if disarm_tag != "" and status != null and randf() <= disarm_chance:
+		status.apply_effect(disarm_tag, disarm_duration)
+
+	if slow_tag != "" and status != null and randf() <= slow_chance:
+		status.apply_effect(slow_tag, slow_duration, 0.0, 0.0, slow_percent)
 
 	if attacker != null and attacker is Character:
 		var weapon: WeaponData = attacker.get_active_weapon()
