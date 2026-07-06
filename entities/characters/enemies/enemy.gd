@@ -474,7 +474,9 @@ func _physics_process(delta: float) -> void:
 
 			# ── Hands — attack if in range ────────────────────────
 			if dist <= attack_dist and has_los and not is_tossing:
-				if _main_attack_timer <= 0:
+				if weapon.weapon_category == "grenade":
+					_handle_grenade_attack(weapon, delta)
+				elif _main_attack_timer <= 0:
 					if target != null and not target.is_dead:
 						if _use_alt_attack and get_active_weapon().alt_attack_animations.size() > 0:
 							if weapon.ai_alt_attack_mode == "HOLD":
@@ -683,6 +685,23 @@ func _get_current_attack_range() -> float:
 
 func _reset_combo_switch_timer() -> void:
 	_combo_switch_timer = randf_range(combo_switch_min, combo_switch_max)
+	
+# ── Grenade AI ───────────────────────────────────────────────────
+# Enemies always fully charge (if the weapon supports it) and throw
+# the instant they're in range — no nuanced charge control, matching
+# the "grab and go" chaos philosophy rather than tactical AI.
+func _handle_grenade_attack(weapon: WeaponData, delta: float) -> void:
+	if not is_throwing_grenade:
+		if _main_attack_timer <= 0 and target != null and not target.is_dead:
+			_main_attack_timer = main_attack_cooldown
+			_start_grenade_throw()
+		return
+	if _grenade_stance_reached and not _grenade_thrown:
+		_tick_grenade_charge(delta)
+		if not weapon.main_attack_charge or grenade_charge_time >= weapon.main_charge_time:
+			_release_grenade_throw()
+			
+# ── Appearance ───────────────────────────────────────────────────
 	
 func _apply_appearance() -> void:
 	if sprite_feet_l:

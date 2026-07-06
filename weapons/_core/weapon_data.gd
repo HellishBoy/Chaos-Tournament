@@ -25,13 +25,13 @@ class_name WeaponData
 @export var movement_penalty: float = 0.6
 
 @export_group("Weight")
-@export_enum("none", "low", "medium", "high") var weight: String = "none"
+@export_enum("none", "light", "medium", "heavy") var weight: String = "none"
 
 const WEIGHT_TIERS: Dictionary = {
 	"none":   0.0,
-	"light":    0.10,
+	"light":  0.10,
 	"medium": 0.20,
-	"heavy":   0.45,
+	"heavy":  0.45,
 }
 
 func get_weight_multiplier() -> float:
@@ -72,6 +72,22 @@ func get_weight_multiplier() -> float:
 @export_group("Charge")
 @export var main_attack_charge: bool = false
 @export var alt_attack_charge: bool = false
+@export var main_charge_time: float = 1.0  # seconds to reach full charge
+@export var alt_charge_time: float = 1.0   # reserved for a future alt-charge attack
+
+@export_group("Grenade")
+@export_subgroup("Detonation")
+@export var grenade_scene: PackedScene
+@export var can_impact_detonate: bool = false
+@export var grenade_fuse_time: float = 3.0  # always active — the guaranteed detonation deadline
+@export var grenade_blast_radius: float = 48.0
+@export var grenade_throw_speed_min: float = 150.0
+@export var grenade_throw_speed_max: float = 400.0
+
+@export_subgroup("Lingering Hazard")
+@export var can_linger: bool = false
+@export var linger_duration: float = 3.0        # how long the hazard area persists after explosion
+@export var linger_scan_interval: float = 0.5   # how often it re-applies DOT to anyone standing inside
 
 @export_group("Melee")
 # Reserved for melee-only fields (attack reach/arc, block/parry data,
@@ -80,7 +96,7 @@ func get_weight_multiplier() -> float:
 # status effects) already applies equally to melee and ranged weapons.
 
 @export_group("Ranged")
-@export_subgroup("Bullet")
+@export_subgroup("Bullet & Projectile")
 @export var bullet_scene: PackedScene
 @export var bullet_speed: float = 300.0
 @export var bullet_range: float = -1.0  # -1 = infinite
@@ -88,7 +104,9 @@ func get_weight_multiplier() -> float:
 @export var bullet_spread: float = 0.0  # degrees
 
 @export_subgroup("Ammo")
+# For bullets
 @export var ammo: int = -1      # -1 = not applicable
+# For grenades and projectiles (throwing knives, shurikens)
 @export var quantity: int = -1  # -1 = not applicable
 
 @export_subgroup("Targeting")
@@ -101,7 +119,7 @@ func get_weight_multiplier() -> float:
 # the exact same tick mechanic; VFX/behavior differences are purely visual.
 @export_enum("none", "bleed", "burn", "poison", "frostbite") var dot_tag: String = "none"
 @export var dot_duration: float = 0.0
-@export var dot_tick_interval: float = 1.0
+@export var dot_tick_interval: float = 0.5
 @export var dot_damage_percent: float = 0.0 # percent of target's max HP, per tick
 # 1.0 = always applies on hit, 0.3 = 30% chance per hit
 @export_range(0.0, 1.0) var dot_chance: float = 1.0
@@ -201,3 +219,7 @@ func get_dot_config() -> Dictionary:
 func validate_dot_tag() -> void:
 	if can_apply_dot and dot_tag != "none" and not StatusEffectComponent.is_known_effect(dot_tag):
 		push_warning(weapon_name + ": dot_tag '" + dot_tag + "' does not match any entry in StatusEffectComponent.EFFECT_REGISTRY.")
+		
+func validate_linger() -> void:
+	if can_linger and not can_apply_dot:
+		push_warning(weapon_name + ": can_linger is true but can_apply_dot is false — the lingering hazard has no DOT effect to apply.")

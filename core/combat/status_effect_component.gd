@@ -19,6 +19,8 @@ const EFFECT_REGISTRY: Dictionary = {
 	"steadfast":  Category.BUFF,
 	"bleed":      Category.DEBUFF,
 	"poison":     Category.DEBUFF,
+	"burn":       Category.DEBUFF,
+	"frostbite":  Category.DEBUFF,
 	"anchored":   Category.DEBUFF,
 	"petrified":  Category.DEBUFF,
 	"disarm":     Category.DEBUFF,
@@ -65,10 +67,19 @@ func apply_effect(effect_name: String, duration: float, tick_interval: float = 0
 		return
 	if not is_known_effect(effect_name):
 		push_warning("StatusEffectComponent: '" + effect_name + "' is not in EFFECT_REGISTRY — check for a typo.")
+
+	# If this effect is already active, preserve its current tick countdown
+	# instead of resetting it — otherwise repeated re-application (e.g. a
+	# lingering hazard scanning faster than the tick interval) can keep
+	# pushing the next tick out forever, and damage never actually lands.
+	var existing_tick_timer: float = tick_interval
+	if _active_effects.has(effect_name):
+		existing_tick_timer = _active_effects[effect_name].get("tick_timer", tick_interval)
+
 	_active_effects[effect_name] = {
 		"remaining": duration,
 		"tick_interval": tick_interval,
-		"tick_timer": tick_interval,
+		"tick_timer": existing_tick_timer,
 		"tick_damage_percent": tick_damage_percent,
 		"magnitude": magnitude,
 	}

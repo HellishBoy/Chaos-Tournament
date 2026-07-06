@@ -167,6 +167,7 @@ libraries/ = ExtResource("8_jej6c")
 libraries/ = ExtResource("8_3v2ag")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1720594936]
+visible = false
 shape = SubResource("CircleShape2D_qhqgy")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=1247681980]

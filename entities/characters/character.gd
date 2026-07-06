@@ -66,6 +66,14 @@ var alt_attack_held: bool = false
 
 var _buffered_attack: String = ""
 
+var is_throwing_grenade: bool = false
+var grenade_charge_time: float = 0.0
+var grenade_charge_held: bool = false
+var _grenade_stance_reached: bool = false
+var _grenade_thrown: bool = false
+var _grenade_throw_speed: float = 0.0
+var _grenade_weapon: WeaponData = null
+
 # ── Ready ────────────────────────────────────────────────────────
 
 func _ready() -> void:
@@ -93,10 +101,12 @@ func _ready() -> void:
 
 	fists.validate_impact_flags()
 	fists.validate_dot_tag()
+	fists.validate_linger()
 	_initialize_durability(fists)
 	if current_weapon:
 		current_weapon.validate_impact_flags()
 		current_weapon.validate_dot_tag()
+		current_weapon.validate_linger()
 		_initialize_durability(current_weapon)
 
 	_update_weapon_visuals()
@@ -167,6 +177,7 @@ func try_pickup(pickup_node: Node) -> void:
 	current_weapon = data
 	current_weapon.validate_impact_flags()
 	current_weapon.validate_dot_tag()
+	current_weapon.validate_linger()
 	_initialize_durability(data)
 	_update_weapon_visuals()
 	var hud := get_tree().get_first_node_in_group("hud") as HUD
@@ -221,6 +232,86 @@ func _toss_weapon_data(data: WeaponData) -> void:
 	var hud := get_tree().get_first_node_in_group("hud") as HUD
 	if hud:
 		hud.refresh()
+		
+# ── Grenade Throw ──────────────────────────────────────────────
+
+func _start_grenade_throw() -> void:
+	if get_active_weapon().weapon_category != "grenade":
+		return
+	if status_effect_component.has_effect("disarm"):
+		return
+	_cancel_into_idle()
+	is_throwing_grenade = true
+	_grenade_stance_reached = false
+	_grenade_thrown = false
+	grenade_charge_time = 0.0
+	grenade_charge_held = true
+	anim_upper.play("attack_hand_throw")
+
+# Called via a Call Method track in the throw animation, at the frame
+# representing the "throwing stance" pose (frame 4 in your 24-frame anim).
+func _on_grenade_stance_reached() -> void:
+	_grenade_stance_reached = true
+	var weapon := get_active_weapon()
+	if not weapon.main_attack_charge:
+		# No meter on this weapon — always releases immediately at the
+		# stance pose, regardless of hold duration.
+		_release_grenade_throw()
+		return
+	if grenade_charge_held:
+		anim_upper.speed_scale = 0.0  # freeze here while charging
+	else:
+		_release_grenade_throw()  # quick tap — throw at minimum charge
+
+func _tick_grenade_charge(delta: float) -> void:
+	if not is_throwing_grenade or not _grenade_stance_reached or _grenade_thrown:
+		return
+	var weapon := get_active_weapon()
+	if not weapon.main_attack_charge:
+		return
+	if grenade_charge_held:
+		grenade_charge_time = min(grenade_charge_time + delta, weapon.main_charge_time)
+
+func _release_grenade_throw() -> void:
+	if not is_throwing_grenade or _grenade_thrown:
+		return
+	_grenade_thrown = true
+	var weapon := get_active_weapon()
+	var charge_percent := 0.0
+	if weapon.main_attack_charge and weapon.main_charge_time > 0.0:
+		charge_percent = clamp(grenade_charge_time / weapon.main_charge_time, 0.0, 1.0)
+	_grenade_throw_speed = lerp(weapon.grenade_throw_speed_min, weapon.grenade_throw_speed_max, charge_percent) if weapon.main_attack_charge else weapon.grenade_throw_speed_max
+	_grenade_weapon = weapon
+	anim_upper.speed_scale = 1.0
+	grenade_charge_held = false
+
+# Called via a SECOND Call Method track in the throw animation, at
+# frame 12 — the point where the hand actually releases the grenade.
+# Kept separate from _release_grenade_throw() so the charge DECISION
+# and the visual spawn moment can land at different points in time.
+func _on_grenade_release_frame() -> void:
+	if _grenade_weapon == null:
+		return
+	_spawn_grenade(_grenade_weapon, _grenade_throw_speed)
+	_grenade_weapon = null
+
+func _spawn_grenade(weapon: WeaponData, throw_speed: float) -> void:
+	if weapon.grenade_scene == null:
+		push_warning(name + ": grenade_scene not assigned on weapon " + weapon.weapon_name)
+		return
+	var grenade := weapon.grenade_scene.instantiate()
+	var direction := Vector2.RIGHT.rotated(rotation)
+	grenade.global_position = global_position + direction * 18.0
+	get_parent().add_child(grenade)
+	grenade.setup(weapon, self, direction, throw_speed)
+
+	if weapon.quantity > 0:
+		weapon.quantity -= 1
+		var hud := get_tree().get_first_node_in_group("hud") as HUD
+		if hud:
+			hud.refresh()
+		if weapon.quantity == 0:
+			break_weapon()
 
 # ── Weapon Visuals ───────────────────────────────────────────────
 
@@ -257,6 +348,7 @@ func _reset_attacks() -> void:
 
 func _cancel_into_idle() -> void:
 	_reset_attacks()
+	_cancel_grenade_throw()
 	anim_upper.speed_scale = 1.0
 	anim_upper.stop()
 	anim_upper.play("RESET")
@@ -265,6 +357,14 @@ func _cancel_into_idle() -> void:
 	var idle := get_active_weapon().idle_animation
 	if idle != "":
 		anim_upper.play(idle)
+
+func _cancel_grenade_throw() -> void:
+	is_throwing_grenade = false
+	_grenade_stance_reached = false
+	_grenade_thrown = false
+	grenade_charge_held = false
+	grenade_charge_time = 0.0
+	_grenade_weapon = null
 
 # ── Hurtbox — receives incoming damage ───────────────────────────
 
@@ -303,6 +403,11 @@ func _on_animation_finished(anim_name: StringName) -> void:
 			_play_alt_attack()
 		else:
 			_snap_to_idle()
+		return
+
+	if anim_name == "attack_hand_throw":
+		_cancel_grenade_throw()
+		_snap_to_idle()
 		return
 
 	if is_main_attacking:
@@ -451,7 +556,7 @@ func _apply_recoil(tier: String) -> void:
 # ── State Helpers ────────────────────────────────────────────────
 
 func _is_attacking() -> bool:
-	return is_main_attacking or is_alt_attacking
+	return is_main_attacking or is_alt_attacking or is_throwing_grenade
 
 # ── Movement (shared base) ───────────────────────────────────────
 
@@ -516,7 +621,12 @@ func _tick_dodge(delta: float) -> void:
 		if dodge_traveled >= stats.dodge_distance:
 			is_dodging = false
 			set_invincible(false)
-			if main_attack_held:
+			if get_active_weapon().weapon_category == "grenade":
+				if main_attack_held:
+					_start_grenade_throw()
+				else:
+					_snap_to_idle()
+			elif main_attack_held:
 				_play_main_attack()
 			elif alt_attack_held:
 				_play_alt_attack()

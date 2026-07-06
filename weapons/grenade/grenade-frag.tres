@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://buqfils5e7ehu"]
+
+[ext_resource type="PackedScene" uid="uid://dpxok4b8k2dxf" path="res://weapons/grenade/grenade-frag.tscn" id="1_jgqq4"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="1_s0odo"]
+[ext_resource type="Texture2D" uid="uid://4vi5psw4ddyh" path="res://weapons/grenade/grenade-frag.png" id="3_cd5m6"]
+
+[resource]
+script = ExtResource("1_s0odo")
+weapon_name = "Frag"
+weapon_category = "grenade"
+power = 7
+idle_animation = "idle_melee_1h"
+walk_animation = "walk_melee_1h"
+main_attack_animations = Array[String](["attack_hand_throw"])
+peek_distance_aim = 32.0
+damage_main = 120
+main_knockback = "high"
+can_knockback = true
+main_attack_charge = true
+main_charge_time = 0.6
+grenade_scene = ExtResource("1_jgqq4")
+can_impact_detonate = true
+grenade_fuse_time = 1.2
+grenade_blast_radius = 75.0
+grenade_throw_speed_min = 100.0
+grenade_throw_speed_max = 450.0
+quantity = 10
+requires_line_of_sight = true
+can_apply_dot = true
+dot_tag = "burn"
+dot_duration = 2.0
+dot_damage_percent = 0.01
+weapon_sprite_right = ExtResource("3_cd5m6")
+ai_main_attack_range = 100.0
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"
