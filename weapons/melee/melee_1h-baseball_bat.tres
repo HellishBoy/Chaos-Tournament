@@ -6,17 +6,17 @@
 [resource]
 script = ExtResource("1_wudb1")
 weapon_name = "Baseball Bat"
-weapon_category = "melee_1h"
+weapon_category = "melee"
 idle_animation = "idle_melee_1h"
 walk_animation = "walk_melee_1h"
 main_attack_animations = Array[String](["attack_melee_1h_cleave_a", "attack_melee_1h_cleave_b"])
 alt_attack_animations = Array[String](["attack_melee_2h_2_sweep"])
-movement_penalty = 0.7
+durability = "medium"
 alt_attack_speed = 0.5
 main_knockback = "low"
 alt_knockback = "high"
 has_combo = true
+movement_penalty = 0.7
 can_knockback = true
-durability = "medium"
 weapon_sprite_right = ExtResource("2_0be63")
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"

@@ -7,7 +7,7 @@
 [resource]
 script = ExtResource("2_st5pi")
 weapon_name = "Nail Gun"
-weapon_category = "ranged_1h"
+weapon_category = "ranged"
 power = 7
 idle_animation = "idle_ranged_1h"
 walk_animation = "walk_ranged_1h"

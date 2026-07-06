@@ -6,16 +6,16 @@
 [resource]
 script = ExtResource("1_ugt80")
 weapon_name = "Lollipop"
-weapon_category = "melee_1h"
+weapon_category = "melee"
 idle_animation = "idle_melee_1h"
 walk_animation = "walk_melee_1h"
 main_attack_animations = Array[String](["attack_melee_1h_cleave_a", "attack_melee_1h_cleave_b"])
 alt_attack_animations = Array[String](["attack_melee_1h_thrust"])
+durability = "low"
 main_knockback = "low"
 alt_knockback = "low"
 has_combo = true
 can_knockback = true
-durability = "low"
 can_disarm = true
 disarm_duration = 3.0
 weapon_sprite_right = ExtResource("2_pfj7o")

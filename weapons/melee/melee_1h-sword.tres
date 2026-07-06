@@ -6,13 +6,13 @@
 [resource]
 script = ExtResource("1_t8t18")
 weapon_name = "Sword"
-weapon_category = "melee_1h"
+weapon_category = "melee"
 power = 3
 idle_animation = "idle_melee_1h"
 walk_animation = "walk_melee_1h"
 main_attack_animations = Array[String](["attack_melee_1h_cleave_a", "attack_melee_1h_cleave_b"])
 alt_attack_animations = Array[String](["attack_melee_1h_thrust"])
-movement_penalty = 0.7
+durability = "high"
 main_attack_speed = 0.85
 alt_attack_speed = 0.55
 damage_main = 20
@@ -21,7 +21,7 @@ main_knockback = "low"
 alt_knockback = "low"
 has_combo = true
 can_knockback = true
-durability = "high"
+movement_penalty = 0.7
 can_apply_dot = true
 dot_tag = "bleed"
 dot_duration = 2.0

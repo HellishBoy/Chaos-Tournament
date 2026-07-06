@@ -3,9 +3,7 @@ class_name WeaponData
 
 @export_group("Identity")
 @export var weapon_name: String = "Fists"
-@export_enum("none", "melee_1h", "melee_2h", "melee_dual",
-			 "ranged_1h", "ranged_2h", "ranged_dual",
-			 "projectile", "grenade") var weapon_category: String = "none"
+@export_enum("none", "melee", "ranged", "projectile", "grenade") var weapon_category: String = "none"
 @export var power: int = 1
 
 @export_group("Animations")
@@ -61,21 +59,21 @@ func get_weight_multiplier() -> float:
 @export var knockback_main_facing: bool = false
 @export var knockback_alt_facing: bool = false
 
-@export_subgroup("Movement")
-@export var movement_penalty: float = 0.6
-
 @export_subgroup("Impact")
 @export var can_knockback: bool = false
 @export var can_flinch: bool = false
 
-@export_subgroup("Toss")
-@export var can_toss: bool = true
+@export_subgroup("Movement")
+@export var movement_penalty: float = 0.6
 
 @export_subgroup("Charge")
 @export var main_attack_charge: bool = false
 @export var alt_attack_charge: bool = false
 @export var main_charge_time: float = 1.0  # seconds to reach full charge
 @export var alt_charge_time: float = 1.0   # reserved for a future alt-charge attack
+
+@export_subgroup("Toss")
+@export var can_toss: bool = true
 
 @export_subgroup("Melee")
 # Reserved for melee-only fields (attack reach/arc, block/parry data,

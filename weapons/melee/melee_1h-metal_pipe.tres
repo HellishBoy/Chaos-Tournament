@@ -6,17 +6,17 @@
 [resource]
 script = ExtResource("1_cd3j6")
 weapon_name = "Metal Pipe"
-weapon_category = "melee_1h"
+weapon_category = "melee"
 idle_animation = "idle_melee_1h"
 walk_animation = "walk_melee_1h"
 main_attack_animations = Array[String](["attack_melee_1h_cleave_a", "attack_melee_1h_cleave_b"])
 alt_attack_animations = Array[String](["attack_melee_1h_sweep"])
+durability = "low"
 alt_attack_speed = 0.7
 main_knockback = "low"
 alt_knockback = "medium"
 has_combo = true
 can_knockback = true
-durability = "low"
 can_root = true
 root_duration = 1.5
 weapon_sprite_right = ExtResource("2_ko34i")

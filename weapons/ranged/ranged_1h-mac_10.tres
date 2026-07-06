@@ -7,7 +7,7 @@
 [resource]
 script = ExtResource("2_020wf")
 weapon_name = "Dual MAC-10"
-weapon_category = "ranged_dual"
+weapon_category = "ranged"
 power = 5
 idle_animation = "idle_ranged_dual"
 walk_animation = "walk_ranged_dual"

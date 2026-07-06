@@ -6,14 +6,14 @@
 [resource]
 script = ExtResource("1_j53w5")
 weapon_name = "Battle Axe"
-weapon_category = "melee_2h"
+weapon_category = "melee"
 power = 4
 idle_animation = "idle_melee_2h_1"
 walk_animation = "walk_melee_2h_1"
 main_attack_animations = Array[String](["attack_melee_2h_1_cleave_a", "attack_melee_2h_1_cleave_b"])
 alt_attack_animations = Array[String](["attack_melee_2h_1_sweep"])
-movement_penalty = 0.5
 weight = "medium"
+durability = "medium"
 main_attack_speed = 0.45
 alt_attack_speed = 0.35
 damage_main = 30
@@ -22,7 +22,7 @@ main_knockback = "medium"
 alt_knockback = "high"
 has_combo = true
 can_knockback = true
-durability = "medium"
+movement_penalty = 0.5
 can_apply_dot = true
 dot_tag = "bleed"
 dot_duration = 3.0
