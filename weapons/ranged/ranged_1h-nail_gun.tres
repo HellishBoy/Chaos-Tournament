@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://cm8ewcb3xswx5"]
 
-[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/ranged/bullets/bullet_prot.tscn" id="1_6senr"]
+[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/ranged/bullets/bullet_projectile0.tscn" id="1_eh5x7"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="2_st5pi"]
 [ext_resource type="Texture2D" uid="uid://cxu4eumkk4e7q" path="res://weapons/ranged/ranged_1h-nail_gun.png" id="3_63b1t"]
 
@@ -20,7 +20,7 @@ main_flinch = "low"
 can_recoil = true
 alt_recoil = "high"
 can_flinch = true
-bullet_scene = ExtResource("1_6senr")
+bullet_scene = ExtResource("1_eh5x7")
 bullet_speed = 1000.0
 bullet_range = 60.0
 bullet_pierce = 2

@@ -163,18 +163,28 @@ func _physics_process(delta: float) -> void:
 
 	# ── Priority 3: Attacks ──────────────────────────────────────
 	if not is_dodging and not is_tossing:
-		if Input.is_action_just_pressed("attack_main"):
-			if not is_alt_attacking and not is_main_attacking:
-				_play_main_attack()
-			elif is_alt_attacking:
-				_buffered_attack = "main"
+		if get_active_weapon().weapon_category == "grenade":
+			if Input.is_action_just_pressed("attack_main") and not is_throwing_grenade:
+				_start_grenade_throw()
+			if Input.is_action_pressed("attack_main"):
+				_tick_grenade_charge(delta)
+			if Input.is_action_just_released("attack_main") and is_throwing_grenade:
+				grenade_charge_held = false
+				if _grenade_stance_reached:
+					_release_grenade_throw()
+		else:
+			if Input.is_action_just_pressed("attack_main"):
+				if not is_alt_attacking and not is_main_attacking:
+					_play_main_attack()
+				elif is_alt_attacking:
+					_buffered_attack = "main"
 
-		if Input.is_action_just_pressed("attack_alt"):
-			if get_active_weapon().alt_attack_animations.size() > 0:
-				if not is_main_attacking and not is_alt_attacking:
-					_play_alt_attack()
-				elif is_main_attacking:
-					_buffered_attack = "alt"
+			if Input.is_action_just_pressed("attack_alt"):
+				if get_active_weapon().alt_attack_animations.size() > 0:
+					if not is_main_attacking and not is_alt_attacking:
+						_play_alt_attack()
+					elif is_main_attacking:
+						_buffered_attack = "alt"
 
 	# ── Movement ─────────────────────────────────────────────────
 	if is_dodging:
@@ -201,6 +211,7 @@ func _physics_process(delta: float) -> void:
 # ── Process (Facing / Animation) ─────────────────────────────────
 
 func _process(_delta: float) -> void:
+	queue_redraw()
 	if _is_petrified():
 		return
 
@@ -241,3 +252,14 @@ func _process(_delta: float) -> void:
 			anim_lower.play("feet_slow" if _is_attacking() else "feet_normal")
 		else:
 			anim_lower.stop()
+			
+# ── Misc. ────────────────────────────────────────────
+
+func _draw() -> void:
+	if is_throwing_grenade and _grenade_stance_reached and not _grenade_thrown:
+		var weapon := get_active_weapon()
+		var percent := 1.0
+		if weapon.main_attack_charge and weapon.main_charge_time > 0.0:
+			percent = clamp(grenade_charge_time / weapon.main_charge_time, 0.0, 1.0)
+		var length := 48.0 * percent
+		draw_line(Vector2.ZERO, Vector2.RIGHT * length, Color.WHITE, 2.0)

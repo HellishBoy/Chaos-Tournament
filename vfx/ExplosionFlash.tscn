@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dr57r17wx1g2r"]
+
+[ext_resource type="Script" uid="uid://pq6ryedr5ivc" path="res://vfx/explosion_flash.gd" id="1_xoecb"]
+
+[node name="ExplosionFlash" type="Node2D" unique_id=892591564]
+script = ExtResource("1_xoecb")
