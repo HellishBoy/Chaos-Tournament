@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://cuf0jjkwlmjfm" path="res://entities/characters/character_stats.gd" id="4_ah1uk"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="5_ipurl"]
 [ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://entities/prop/dummy/dummy.tscn" id="6_ah1uk"]
-[ext_resource type="Resource" uid="uid://buqfils5e7ehu" path="res://weapons/grenade/grenade-frag.tres" id="6_ryemf"]
+[ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/ranged/ranged_1h-nail_gun.tres" id="6_ryemf"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="7_ryemf"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="13_qtryu"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="15_1dd6p"]

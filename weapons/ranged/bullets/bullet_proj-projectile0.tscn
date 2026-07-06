@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://duxpffpsdqh4o"]
 
 [ext_resource type="Script" uid="uid://pojtig2a2rhx" path="res://weapons/_core/bullet.gd" id="1_xws4a"]
-[ext_resource type="Texture2D" uid="uid://gox580pybrq3" path="res://weapons/ranged/bullets/bullet_projectile0.png" id="2_s00f6"]
+[ext_resource type="Texture2D" uid="uid://gox580pybrq3" path="res://weapons/ranged/bullets/bullet_proj-projectile0.png" id="2_s00f6"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_yx0gm"]
 radius = 4.0

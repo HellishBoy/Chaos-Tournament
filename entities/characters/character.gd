@@ -675,6 +675,22 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 	var weapon := get_active_weapon()
 	if weapon == fists:
 		return
+
+	if weapon.projectile_type == "grenade":
+		_fire_grenade_from_muzzle(weapon, muzzle)
+	else:
+		_fire_bullet_from_muzzle(weapon, muzzle)
+
+	# Decrement ammo — shared between bullet and grenade-firing ranged weapons
+	if weapon.ammo > 0:
+		weapon.ammo -= 1
+		var hud := get_tree().get_first_node_in_group("hud") as HUD
+		if hud:
+			hud.refresh()
+		if weapon.ammo == 0:
+			break_weapon()
+
+func _fire_bullet_from_muzzle(weapon: WeaponData, muzzle: Marker2D) -> void:
 	if weapon.bullet_scene == null:
 		push_warning("spawn_bullet: no bullet_scene assigned on %s" % weapon.weapon_name)
 		return
@@ -696,15 +712,16 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 		weapon.get_disarm_config(),
 		weapon.get_slow_config()
 	)
-	
-	# Decrement ammo
-	if weapon.ammo > 0:
-		weapon.ammo -= 1
-		var hud := get_tree().get_first_node_in_group("hud") as HUD
-		if hud:
-			hud.refresh()
-		if weapon.ammo == 0:
-			break_weapon()
+
+func _fire_grenade_from_muzzle(weapon: WeaponData, muzzle: Marker2D) -> void:
+	if weapon.grenade_scene == null:
+		push_warning("spawn_bullet: no grenade_scene assigned on %s" % weapon.weapon_name)
+		return
+	var grenade := weapon.grenade_scene.instantiate()
+	grenade.global_position = muzzle.global_position
+	get_parent().add_child(grenade)
+	var direction := Vector2.RIGHT.rotated(rotation)  # no spread — straight shot
+	grenade.setup(weapon, self, direction, weapon.grenade_throw_speed_max)
 
 # ── Weapon break ──────────────────────────────────────────────────────
 

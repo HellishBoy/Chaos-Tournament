@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://4vi5psw4ddyh"
-path="res://.godot/imported/grenade-frag.png-c5c9f031beef738c1180113830ffecb3.ctex"
+uid="uid://d0es1lwpfadd7"
+path="res://.godot/imported/bullet_proj-projectile0_dissapate_1.png-b5e255941df9f8382aff1a69f0186e94.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/grenade/grenade-frag.png"
-dest_files=["res://.godot/imported/grenade-frag.png-c5c9f031beef738c1180113830ffecb3.ctex"]
+source_file="res://weapons/ranged/bullets/bullet_proj-projectile0_dissapate_1.png"
+dest_files=["res://.godot/imported/bullet_proj-projectile0_dissapate_1.png-b5e255941df9f8382aff1a69f0186e94.ctex"]
 
 [params]
 
