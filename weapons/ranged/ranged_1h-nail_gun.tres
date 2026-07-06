@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://cm8ewcb3xswx5"]
 
-[ext_resource type="PackedScene" uid="uid://dpxok4b8k2dxf" path="res://weapons/grenade/grenade_timer-frag.tscn" id="1_eh5x7"]
+[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/ranged/bullets/bullet_proj-projectile0.tscn" id="1_eh5x7"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="2_st5pi"]
 [ext_resource type="Texture2D" uid="uid://cxu4eumkk4e7q" path="res://weapons/ranged/ranged_1h-nail_gun.png" id="3_63b1t"]
 
@@ -14,26 +14,17 @@ walk_animation = "walk_ranged_1h"
 main_attack_animations = Array[String](["attack_ranged_1h_fire"])
 alt_attack_animations = Array[String](["attack_ranged_1h_fire"])
 peek_distance_aim = 40.0
-weight = "heavy"
-can_recoil = true
-main_recoil = "high"
-alt_recoil = "high"
-main_attack_speed = 0.5
+weight = "light"
 damage_main = 120
 damage_alt = 10
 main_knockback = "high"
 main_flinch = "low"
 movement_penalty = 0.7
-can_knockback = true
-projectile_type = "grenade"
+bullet_scene = ExtResource("1_eh5x7")
 bullet_speed = 1000.0
-bullet_range = 60.0
+bullet_range = 200.0
 bullet_pierce = 2
-grenade_scene = ExtResource("1_eh5x7")
-can_impact_detonate = true
-grenade_blast_radius = 70.0
-can_linger = true
-ammo = 5
+ammo = 10
 requires_line_of_sight = true
 can_apply_dot = true
 dot_tag = "bleed"

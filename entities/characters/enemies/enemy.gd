@@ -24,23 +24,35 @@ class_name Enemy
 @export var idle_wander_speed: float = 0.0
 
 @export_group("Intelligence")
-@export var weapon_detection_range: float = 100.0
+# Shared baseline range used by Detection Range, Finding Weapons, and
+# Health scanning below — not specific to any one subgroup.
+@export var perception_range: float = 100.0
 
+@export_subgroup("Health")
 @export var is_careful: bool = false
 @export var is_healthy: bool = false
 @export var is_greedy: bool = false
 
+@export_subgroup("Detection Range")
 @export var is_scared: bool = false
 @export var is_aggressive: bool = false
 
+@export_subgroup("Finding Weapons")
 @export var is_picky: bool = false
 @export var is_desperate: bool = false
 
+@export_subgroup("Dodging")
 @export var is_swift: bool = false
 @export var is_panic: bool = false
 @export var dodge_interval_min: float = 1.0
 @export var dodge_interval_max: float = 3.0
 
+@export_subgroup("Evasive")
+@export var is_sharp: bool = false
+@export var is_alert: bool = false
+@export var evasion_hit_width: float = 24.0
+
+@export_subgroup("Combat Range")
 @export var is_tactical: bool = false
 @export var is_strafing: bool = false
 @export var tactical_strafe_min: float = 1.5
@@ -93,6 +105,9 @@ var _toss_cooldown_timer: float = 0.0
 const TOSS_COOLDOWN: float = 0.8
 
 const LOW_HP_THRESHOLD: float = 0.35
+const EVASION_RANGE_FACTOR: float = 0.75
+
+const HAZARD_ESCAPE_MARGIN: float = 16.0
 
 # ── State ────────────────────────────────────────────────────────
 
@@ -195,6 +210,18 @@ func _find_player_target() -> void:
 	else:
 		target = null
 		ai_state = AIState.IDLE
+		
+func _find_hazard_to_escape() -> Node:
+	var best: Node = null
+	var best_dist: float = INF
+	for hazard in get_tree().get_nodes_in_group("lingering_hazard"):
+		if not is_instance_valid(hazard):
+			continue
+		var dist := global_position.distance_to(hazard.global_position)
+		if dist <= hazard.get_radius() + HAZARD_ESCAPE_MARGIN and dist < best_dist:
+			best_dist = dist
+			best = hazard
+	return best
 
 func try_pickup(pickup_node: Node) -> void:
 	if current_weapon != null:
@@ -310,7 +337,8 @@ func _physics_process(delta: float) -> void:
 	var knock_mult := impact_component.get_control_speed_multiplier(stats.knockback_resistance)
 	var weight_mult := get_active_weapon().get_weight_multiplier()
 	var slow_mult := _get_slow_multiplier()
-	var combined_mult := _apply_speed_floor(weight_mult * knock_mult * slow_mult)
+	var attack_penalty: float = get_active_weapon().movement_penalty if _is_attacking() else 1.0
+	var combined_mult := _apply_speed_floor(weight_mult * knock_mult * slow_mult * attack_penalty)
 	
 	if _is_petrified():
 		_apply_movement(Vector2.ZERO)
@@ -343,6 +371,13 @@ func _physics_process(delta: float) -> void:
 			_use_alt_attack = not _use_alt_attack
 		
 	var hp_percent := float(health.current_hp) / float(health.max_hp)
+	
+	var evasive_active := (is_sharp and hp_percent > LOW_HP_THRESHOLD) or (is_alert and hp_percent <= LOW_HP_THRESHOLD)
+	if evasive_active and can_dodge and not is_dodging and cooldown_timer <= 0 and _stamina >= stats.stamina_per_dodge and ai_state != AIState.IDLE:
+		var threat_direction := _check_incoming_threat()
+		if threat_direction != Vector2.ZERO:
+			try_dodge(threat_direction)
+	
 	var should_dodge := (is_swift and hp_percent > LOW_HP_THRESHOLD) or (is_panic and hp_percent <= LOW_HP_THRESHOLD)
 	
 	# If scared, only allow dodging during SEEK_WEAPON or SEEK_ITEM states
@@ -368,11 +403,40 @@ func _physics_process(delta: float) -> void:
 	targets_in_range = targets_in_range.filter(func(t): return is_instance_valid(t))
 	if target and not is_instance_valid(target):
 		target = _get_nearest_target()
-	
+
+	# Safety net: if a throw was in progress and the target died or vanished
+	# before the throw naturally resolved (e.g. the grenade that killed them
+	# was the last action, flipping ai_state to IDLE before anything else
+	# could clean up), cancel it instead of leaving the animation stuck.
+	if is_throwing_grenade and (target == null or not is_instance_valid(target) or target.is_dead):
+		_cancel_into_idle()
+		
 	_update_ai_state()
 
 	match ai_state:
 		AIState.IDLE:
+			if is_careful or is_healthy:
+				var hazard := _find_hazard_to_escape()
+				if hazard != null:
+					var away_dir: Vector2 = (global_position - hazard.global_position).normalized()
+					if away_dir == Vector2.ZERO:
+						away_dir = Vector2.RIGHT  # standing exactly on the center — pick any direction out
+					var escape_target: Vector2 = hazard.global_position + away_dir * (hazard.get_radius() + HAZARD_ESCAPE_MARGIN)
+					nav_agent.target_position = escape_target
+					var next_pos := nav_agent.get_next_path_position()
+					var dir := (next_pos - global_position).normalized()
+					last_direction = dir
+					rotation = dir.angle()
+					_apply_movement(dir * stats.move_speed * combined_mult)
+					if not _is_attacking():
+						var walk := get_active_weapon().walk_animation
+						if walk != "":
+							anim_upper.play(walk)
+					if velocity.length() > 0:
+						anim_lower.play("feet_normal")
+					else:
+						anim_lower.stop()
+					return
 			_apply_movement(Vector2.ZERO)
 			if not _is_attacking():
 				_snap_to_idle()
@@ -505,6 +569,8 @@ func _physics_process(delta: float) -> void:
 			else:
 				main_attack_held = false
 				alt_attack_held = false
+				if weapon.weapon_category == "grenade" and is_throwing_grenade:
+					_cancel_into_idle()
 
 # ── Facing on start ──────────────────────────────────────────────
 
@@ -537,7 +603,7 @@ func _has_line_of_sight() -> bool:
 		return true
 	return result["collider"] == target
 	
-func _get_effective_weapon_range() -> float:
+func _get_effective_perception_range() -> float:
 	if is_aggressive and target != null:
 		var target_hp_percent := float(target.health.current_hp) / float(target.health.max_hp)
 		if target_hp_percent <= 0.1:
@@ -548,12 +614,12 @@ func _get_effective_weapon_range() -> float:
 			return 225.0
 		elif hp_percent <= LOW_HP_THRESHOLD:
 			return 175.0
-	return weapon_detection_range
+	return perception_range
 
 func _scan_for_weapon() -> Node:
 	if not can_find_weapons or current_weapon != null:
 		return null
-	var effective_range := _get_effective_weapon_range()
+	var effective_range := _get_effective_perception_range()
 	var hp_percent := float(health.current_hp) / float(health.max_hp)
 	var use_picky := is_picky and hp_percent > LOW_HP_THRESHOLD
 	var use_desperate := is_desperate and hp_percent <= LOW_HP_THRESHOLD
@@ -595,7 +661,7 @@ func _scan_for_better_weapon() -> Node:
 		return null
 	if is_desperate and not is_picky and hp_percent > LOW_HP_THRESHOLD:
 		return null
-	var effective_range := _get_effective_weapon_range()
+	var effective_range := _get_effective_perception_range()
 	var best: Node = null
 	var best_power: int = current_weapon.power # only beat what we have
 	for pickup in get_tree().get_nodes_in_group("weapon_pickup"):
@@ -622,7 +688,7 @@ func _scan_for_beneficial_item() -> Node:
 	if not wants_heal and not wants_buff:
 		return null
 
-	var effective_range := _get_effective_weapon_range()
+	var effective_range := _get_effective_perception_range()
 	var best: Node = null
 	var best_dist: float = INF
 
@@ -668,7 +734,47 @@ func _on_animation_finished(anim_name: StringName) -> void:
 		_snap_to_idle()
 		return
 	super._on_animation_finished(anim_name)
-	
+
+# ── Evasive Dodge ──────────────────────────────────────────────
+# Reactive, threat-based dodging — distinct from is_swift/is_panic's
+# periodic timer. Checked first every frame; if it fires, is_dodging
+# becomes true immediately, which naturally skips the periodic dodge
+# check below for that frame (no extra flag needed).
+func _check_incoming_threat() -> Vector2:
+	# Priority 1: opponent is mid-swing with a melee weapon, in range.
+	if target != null and is_instance_valid(target) and not target.is_dead:
+		var target_weapon: WeaponData = target.get_active_weapon()
+		if target_weapon.weapon_category == "melee" and (target.is_main_attacking or target.is_alt_attacking):
+			var melee_dist := global_position.distance_to(target.global_position)
+			if melee_dist <= target_weapon.ai_main_attack_range:
+				return Vector2.LEFT.rotated(rotation)  # straight back — always facing target
+
+	# Priority 2: any live projectile on a collision course.
+	var evasion_range: float = detection_range * EVASION_RANGE_FACTOR
+	for projectile in get_tree().get_nodes_in_group("projectile"):
+		if not is_instance_valid(projectile):
+			continue
+		if projectile is Grenade and not projectile.can_impact_detonate:
+			continue  # a pure-timer grenade isn't an immediate threat
+
+		var proj_pos: Vector2 = projectile.global_position
+		var proj_dir: Vector2 = projectile.get_direction() if projectile is Bullet else projectile.velocity.normalized()
+		if proj_dir == Vector2.ZERO:
+			continue
+
+		var to_self := global_position - proj_pos
+		var t := to_self.dot(proj_dir)
+		if t <= 0.0 or t > evasion_range:
+			continue  # already past us, or still too far out to react to
+
+		var closest_point := proj_pos + proj_dir * t
+		var perp_dist := global_position.distance_to(closest_point)
+		if perp_dist <= evasion_hit_width:
+			var side := 1.0 if randf() < 0.5 else -1.0
+			return proj_dir.rotated(PI / 2.0 * side)
+
+	return Vector2.ZERO
+
 func _reset_dodge_timer() -> void:
 	_dodge_timer = randf_range(dodge_interval_min, dodge_interval_max)
 	

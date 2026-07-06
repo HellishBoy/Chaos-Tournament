@@ -13,6 +13,12 @@ var _radius: float = 48.0
 var _duration_timer: float = 0.0
 var _scan_timer: float = 0.0
 
+func _ready() -> void:
+	add_to_group("lingering_hazard")
+
+func get_radius() -> float:
+	return _radius
+
 func setup(weapon: WeaponData) -> void:
 	weapon_data = weapon
 	_radius = weapon.grenade_blast_radius

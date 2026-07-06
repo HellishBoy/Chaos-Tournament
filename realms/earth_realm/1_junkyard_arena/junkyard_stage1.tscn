@@ -7,7 +7,7 @@
 [ext_resource type="Script" uid="uid://cuf0jjkwlmjfm" path="res://entities/characters/character_stats.gd" id="4_ah1uk"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="5_ipurl"]
 [ext_resource type="PackedScene" uid="uid://ditfqjukkn0i5" path="res://entities/prop/dummy/dummy.tscn" id="6_ah1uk"]
-[ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/ranged/ranged_1h-nail_gun.tres" id="6_ryemf"]
+[ext_resource type="Resource" uid="uid://buqfils5e7ehu" path="res://weapons/grenade/grenade_timer-frag.tres" id="6_ryemf"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="7_ryemf"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="13_qtryu"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="15_1dd6p"]
@@ -149,14 +149,15 @@ can_double_dodge = true
 lives = 2
 is_main_enemy = true
 spawn_point = NodePath("../../SpawnPoints/EnemySpawn1")
+is_careful = true
 is_healthy = true
 is_greedy = true
 is_scared = true
 is_aggressive = true
 is_picky = true
 is_desperate = true
-is_swift = true
-is_panic = true
+is_sharp = true
+is_alert = true
 is_tactical = true
 main_attack_cooldown = 0.4
 alt_attack_cooldown = 0.5
@@ -171,10 +172,13 @@ can_double_dodge = true
 lives = 2
 spawn_point = NodePath("../../SpawnPoints/EnemySpawn2")
 is_careful = true
+is_healthy = true
 is_scared = true
 is_desperate = true
-is_swift = true
-is_panic = true
+is_sharp = true
+is_alert = true
+is_tactical = true
+is_strafing = true
 main_attack_cooldown = 0.4
 alt_attack_cooldown = 0.5
 can_combo = true
