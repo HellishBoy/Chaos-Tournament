@@ -14,13 +14,16 @@ var weapon_data: WeaponData
 var attacker: Node2D = null
 
 var _fuse_timer: float = 0.0
-var _can_impact_detonate: bool = false
+var can_impact_detonate: bool = false
 var _has_detonated: bool = false
+
+func _ready() -> void:
+	add_to_group("projectile")
 
 func setup(weapon: WeaponData, throw_attacker: Node2D, direction: Vector2, throw_speed: float) -> void:
 	weapon_data = weapon
 	attacker = throw_attacker
-	_can_impact_detonate = weapon.can_impact_detonate
+	can_impact_detonate = weapon.can_impact_detonate
 	_fuse_timer = weapon.grenade_fuse_time
 	velocity = direction.normalized() * throw_speed
 	rotation = direction.angle()
@@ -38,7 +41,7 @@ func _physics_process(delta: float) -> void:
 
 	var collision := move_and_collide(velocity * delta)
 	if collision:
-		if _can_impact_detonate:
+		if can_impact_detonate:
 			_detonate()
 			return
 		velocity = velocity.bounce(collision.get_normal()) * bounce_damping

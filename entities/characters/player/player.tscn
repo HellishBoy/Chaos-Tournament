@@ -104,7 +104,7 @@ region_rect = Rect2(1, 33, 14, 14)
 
 [node name="WeaponLeft" type="Sprite2D" parent="Body/Hands/HandLeft" unique_id=1758970770]
 show_behind_parent = true
-position = Vector2(10, 0)
+position = Vector2(7, 0)
 flip_v = true
 region_rect = Rect2(76, 222, 80, 7)
 
@@ -129,7 +129,7 @@ region_rect = Rect2(1, 49, 14, 14)
 
 [node name="WeaponRight" type="Sprite2D" parent="Body/Hands/HandRight" unique_id=2043371655]
 show_behind_parent = true
-position = Vector2(10, 0)
+position = Vector2(7, 0)
 
 [node name="Muzzle_R" type="Marker2D" parent="Body/Hands/HandRight" unique_id=499555375]
 show_behind_parent = true

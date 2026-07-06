@@ -1,4 +1,5 @@
 extends Area2D
+class_name Bullet
 
 @export var speed: float = 300.0
 @export var range_max: float = -1.0
@@ -34,8 +35,12 @@ var _hit_count: int = 0
 
 func _ready() -> void:
 	z_index = -1 # always renders behind characters
+	add_to_group("projectile")
 	area_entered.connect(_on_area_entered)
 	body_entered.connect(_on_body_entered)
+
+func get_direction() -> Vector2:
+	return _direction
 
 func setup(dir: Vector2, bullet_speed: float, bullet_range: float, bullet_pierce: int, bullet_damage: int, bullet_knockback: String, bullet_flinch: String, bullet_dot: Dictionary = {}, bullet_root: Dictionary = {}, bullet_disarm: Dictionary = {}, bullet_slow: Dictionary = {}) -> void:
 	_direction = dir.normalized()
