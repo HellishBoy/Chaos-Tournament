@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://buqfils5e7ehu"]
 
-[ext_resource type="PackedScene" uid="uid://dpxok4b8k2dxf" path="res://weapons/grenade/grenade-frag.tscn" id="1_jgqq4"]
+[ext_resource type="PackedScene" uid="uid://dpxok4b8k2dxf" path="res://weapons/grenade/grenade_timer-frag.tscn" id="1_jgqq4"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="1_s0odo"]
-[ext_resource type="Texture2D" uid="uid://4vi5psw4ddyh" path="res://weapons/grenade/grenade-frag.png" id="3_cd5m6"]
+[ext_resource type="Texture2D" uid="uid://4vi5psw4ddyh" path="res://weapons/grenade/grenade_timer-frag.png" id="3_cd5m6"]
 
 [resource]
 script = ExtResource("1_s0odo")

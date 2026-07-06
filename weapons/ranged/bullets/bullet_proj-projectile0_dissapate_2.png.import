@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://uhgbtaxgwnfg"
-path="res://.godot/imported/bullet_projectile0_dissapate_2.png-c6dc41646ba7b144473880026c7e7786.ctex"
+path="res://.godot/imported/bullet_proj-projectile0_dissapate_2.png-3141f20c487388b68f45cf6357c4c495.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/ranged/bullets/bullet_projectile0_dissapate_2.png"
-dest_files=["res://.godot/imported/bullet_projectile0_dissapate_2.png-c6dc41646ba7b144473880026c7e7786.ctex"]
+source_file="res://weapons/ranged/bullets/bullet_proj-projectile0_dissapate_2.png"
+dest_files=["res://.godot/imported/bullet_proj-projectile0_dissapate_2.png-3141f20c487388b68f45cf6357c4c495.ctex"]
 
 [params]
 

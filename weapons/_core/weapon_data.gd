@@ -17,14 +17,12 @@ class_name WeaponData
 @export_group("Drop")
 @export var despawn_timer: float = 8.0  # -1 = never despawn
 
-@export_group("Camera")
+@export_group("Weapon Property")
+@export_subgroup("Camera")
 @export var peek_distance_aim: float = 0.0
 @export var peek_distance_lockon: float = 0.0
 
-@export_group("Movement")
-@export var movement_penalty: float = 0.6
-
-@export_group("Weight")
+@export_subgroup("Weight")
 @export_enum("none", "light", "medium", "heavy") var weight: String = "none"
 
 const WEIGHT_TIERS: Dictionary = {
@@ -37,8 +35,18 @@ const WEIGHT_TIERS: Dictionary = {
 func get_weight_multiplier() -> float:
 	var penalty: float = WEIGHT_TIERS.get(weight, 0.0)
 	return 1.0 - penalty
+	
+@export_subgroup("Durability")
+@export_enum("none", "low", "medium", "high", "infinite") var durability: String = "infinite"
+@export var durability_current: int = -1  # -1 = not applicable
 
-@export_group("Combat")
+@export_subgroup("Recoil")
+@export var can_recoil: bool = false
+@export_enum("none", "low", "medium", "high") var main_recoil: String = "none"
+@export_enum("none", "low", "medium", "high") var alt_recoil: String = "none"
+
+@export_group("Combat Property")
+@export_subgroup("Combat")
 @export var main_attack_speed: float = 1.0
 @export var alt_attack_speed: float = 1.0
 @export var damage_main: int = 10
@@ -53,55 +61,47 @@ func get_weight_multiplier() -> float:
 @export var knockback_main_facing: bool = false
 @export var knockback_alt_facing: bool = false
 
-@export_group("Recoil")
-@export var can_recoil: bool = false
-@export_enum("none", "low", "medium", "high") var main_recoil: String = "none"
-@export_enum("none", "low", "medium", "high") var alt_recoil: String = "none"
+@export_subgroup("Movement")
+@export var movement_penalty: float = 0.6
 
-@export_group("Impact")
+@export_subgroup("Impact")
 @export var can_knockback: bool = false
 @export var can_flinch: bool = false
 
-@export_group("Durability")
-@export_enum("none", "low", "medium", "high", "infinite") var durability: String = "infinite"
-@export var durability_current: int = -1  # -1 = not applicable
-
-@export_group("Toss")
+@export_subgroup("Toss")
 @export var can_toss: bool = true
 
-@export_group("Charge")
+@export_subgroup("Charge")
 @export var main_attack_charge: bool = false
 @export var alt_attack_charge: bool = false
 @export var main_charge_time: float = 1.0  # seconds to reach full charge
 @export var alt_charge_time: float = 1.0   # reserved for a future alt-charge attack
 
-@export_group("Grenade")
-@export_subgroup("Detonation")
-@export var grenade_scene: PackedScene
-@export var can_impact_detonate: bool = false
-@export var grenade_fuse_time: float = 3.0  # always active — the guaranteed detonation deadline
-@export var grenade_blast_radius: float = 48.0
-@export var grenade_throw_speed_min: float = 150.0
-@export var grenade_throw_speed_max: float = 400.0
-
-@export_subgroup("Lingering Hazard")
-@export var can_linger: bool = false
-@export var linger_duration: float = 3.0        # how long the hazard area persists after explosion
-@export var linger_scan_interval: float = 0.5   # how often it re-applies DOT to anyone standing inside
-
-@export_group("Melee")
+@export_subgroup("Melee")
 # Reserved for melee-only fields (attack reach/arc, block/parry data,
 # swing sound, etc.) — nothing here yet, since every current combat
 # field (damage, knockback, flinch, combo, charge, recoil, weight,
 # status effects) already applies equally to melee and ranged weapons.
 
-@export_group("Ranged")
-@export_subgroup("Bullet & Projectile")
+@export_group("Projectile")
+@export_enum("bullet", "grenade") var projectile_type: String = "bullet"
+@export_subgroup("Bullet")
 @export var bullet_scene: PackedScene
 @export var bullet_speed: float = 300.0
 @export var bullet_range: float = -1.0  # -1 = infinite
 @export var bullet_pierce: int = 0      # 0 = no pierce, -1 = infinite
 @export var bullet_spread: float = 0.0  # degrees
+
+@export_subgroup("Grenade")
+@export var grenade_scene: PackedScene
+@export var can_impact_detonate: bool = false
+@export var grenade_fuse_time: float = 2.0  # always active — the guaranteed detonation deadline
+@export var grenade_blast_radius: float = 48.0
+@export var grenade_throw_speed_min: float = 150.0
+@export var grenade_throw_speed_max: float = 400.0
+@export var can_linger: bool = false
+@export var linger_duration: float = 3.0        # how long the hazard area persists after explosion
+@export var linger_scan_interval: float = 0.5   # how often it re-applies DOT to anyone standing inside
 
 @export_subgroup("Ammo")
 # For bullets
