@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://2t57yhwngo7m"
-path="res://.godot/imported/skin-default.png-e40141b538c152fb1d904951cc8a8a6c.ctex"
+uid="uid://c6fofauin5f5d"
+path="res://.godot/imported/skin-ally_default.png-5298be70bc4cf208be00e05dfcff9b59.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://entities/characters/skins/skin-default.png"
-dest_files=["res://.godot/imported/skin-default.png-e40141b538c152fb1d904951cc8a8a6c.ctex"]
+source_file="res://entities/characters/_core/skins/default_skin/skin-ally_default.png"
+dest_files=["res://.godot/imported/skin-ally_default.png-5298be70bc4cf208be00e05dfcff9b59.ctex"]
 
 [params]
 

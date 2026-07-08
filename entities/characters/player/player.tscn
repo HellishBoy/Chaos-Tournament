@@ -1,15 +1,15 @@
 [gd_scene format=3 uid="uid://b0ndyxegjc6xh"]
 
 [ext_resource type="Script" uid="uid://yw2gkwrge557" path="res://entities/characters/player/player.gd" id="1_g2els"]
-[ext_resource type="Resource" uid="uid://cxoiv5ap1cj22" path="res://weapons/melee/fists.tres" id="2_qlg0r"]
+[ext_resource type="Resource" uid="uid://cxoiv5ap1cj22" path="res://weapons/fists.tres" id="2_qlg0r"]
 [ext_resource type="Resource" uid="uid://bbb2h613c5vq3" path="res://entities/characters/player/player_stats.tres" id="2_y4r1p"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="3_fjrip"]
 [ext_resource type="Script" uid="uid://c1aaiueu5rvpq" path="res://entities/characters/player/camera_2d.gd" id="5_qlg0r"]
-[ext_resource type="Texture2D" uid="uid://djew2yyvks34y" path="res://entities/characters/skins/dodge_windfx.png" id="5_tuyoq"]
-[ext_resource type="Texture2D" uid="uid://2t57yhwngo7m" path="res://entities/characters/skins/skin-default.png" id="5_y4r1p"]
+[ext_resource type="Texture2D" uid="uid://djew2yyvks34y" path="res://entities/characters/_core/skins/dodge_windfx.png" id="5_tuyoq"]
+[ext_resource type="Texture2D" uid="uid://2t57yhwngo7m" path="res://entities/characters/_core/skins/default_skin/skin-player_default.png" id="5_y4r1p"]
 [ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="7_fjrip"]
-[ext_resource type="AnimationLibrary" uid="uid://dj7tuc120561t" path="res://entities/characters/animations/.tres" id="8_3v2ag"]
-[ext_resource type="AnimationLibrary" uid="uid://c5nbhs05ohaok" path="res://entities/characters/animations/.res" id="8_jej6c"]
+[ext_resource type="AnimationLibrary" uid="uid://dj7tuc120561t" path="res://entities/characters/_core/animations/.tres" id="8_3v2ag"]
+[ext_resource type="AnimationLibrary" uid="uid://c5nbhs05ohaok" path="res://entities/characters/_core/animations/.res" id="8_jej6c"]
 [ext_resource type="Script" uid="uid://dt84g0ubdrtye" path="res://core/combat/hitbox.gd" id="8_smehm"]
 [ext_resource type="Script" uid="uid://emy3cu5poau2" path="res://core/combat/impact_component.gd" id="12_0s3gd"]
 [ext_resource type="Script" uid="uid://di3sej0r6kjqg" path="res://core/combat/status_effect_component.gd" id="13_2jd2e"]
@@ -65,7 +65,6 @@ animations = [{
 radius = 6.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tuyoq"]
-radius = 100.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_fjrip"]
 radius = 6.0
@@ -151,7 +150,6 @@ region_rect = Rect2(1, 1, 30, 30)
 
 [node name="HeadDown" type="Sprite2D" parent="Body" unique_id=730706233]
 visible = false
-position = Vector2(1, 0)
 texture = ExtResource("5_y4r1p")
 region_enabled = true
 region_rect = Rect2(33, 1, 30, 30)
@@ -175,7 +173,7 @@ visible = false
 collision_layer = 0
 collision_mask = 4
 
-[node name="Lock-on Range" type="CollisionShape2D" parent="Area2D" unique_id=1747429451]
+[node name="LockonRange" type="CollisionShape2D" parent="Area2D" unique_id=1747429451]
 shape = SubResource("CircleShape2D_tuyoq")
 debug_color = Color(0, 0.645647, 0.2622566, 0.41960785)
 

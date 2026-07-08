@@ -1,8 +1,10 @@
 extends Node2D
 class_name HealthBar
 
-const COLOR_NORMAL: Color = Color(0.2, 0.8, 0.2, 1.0)
+const COLOR_PLAYER: Color = Color(0.2, 0.8, 0.2, 1.0)
 const COLOR_ENEMY: Color = Color(0.8, 0.0, 0.0, 1.0)
+const COLOR_ALLY: Color = Color(0.2, 0.4, 0.9, 1.0)
+const COLOR_CHAOS: Color = Color(0.9, 0.8, 0.0, 1.0)
 const COLOR_IMMORTAL: Color = Color(0.6, 0.0, 0.8, 1.0)
 
 @export var bar_width: float = 32.0
@@ -46,8 +48,14 @@ func setup(health: HealthComponent, follow_target: Node2D) -> void:
 		fill.color = COLOR_IMMORTAL
 	elif follow_target is Enemy:
 		fill.color = COLOR_ENEMY
+	elif follow_target is Ally:
+		fill.color = COLOR_ALLY
+	elif follow_target is Chaos:
+		fill.color = COLOR_CHAOS
+	elif follow_target is Player:
+		fill.color = COLOR_PLAYER
 	else:
-		fill.color = COLOR_NORMAL
+		fill.color = COLOR_PLAYER
 	_update_visibility()
 
 func _update_visibility() -> void:

@@ -10,8 +10,8 @@
 [sub_resource type="Resource" id="Resource_1vh8a"]
 script = ExtResource("1_utmmb")
 weapon_data = ExtResource("4_2ju0k")
-drop_weight = 4.0
-allowed_groups = Array[String](["Left Area"])
+drop_weight = 6.0
+allowed_groups = Array[String](["Area"])
 max_concurrent = 6
 metadata/_custom_type_script = "uid://dwlwg725t31ip"
 
@@ -19,7 +19,7 @@ metadata/_custom_type_script = "uid://dwlwg725t31ip"
 script = ExtResource("1_utmmb")
 weapon_data = ExtResource("7_bi3hl")
 drop_weight = 2.0
-allowed_groups = Array[String](["Left Area"])
+allowed_groups = Array[String](["Area"])
 max_concurrent = 4
 metadata/_custom_type_script = "uid://dwlwg725t31ip"
 
@@ -27,7 +27,7 @@ metadata/_custom_type_script = "uid://dwlwg725t31ip"
 script = ExtResource("1_utmmb")
 weapon_data = ExtResource("3_8brk3")
 drop_weight = 4.0
-allowed_groups = Array[String](["Left Area"])
+allowed_groups = Array[String](["Area"])
 max_concurrent = 6
 metadata/_custom_type_script = "uid://dwlwg725t31ip"
 
@@ -35,7 +35,7 @@ metadata/_custom_type_script = "uid://dwlwg725t31ip"
 script = ExtResource("1_utmmb")
 weapon_data = ExtResource("4_dnax7")
 drop_weight = 3.0
-allowed_groups = Array[String](["Left Area"])
+allowed_groups = Array[String](["Area"])
 max_concurrent = 5
 metadata/_custom_type_script = "uid://dwlwg725t31ip"
 

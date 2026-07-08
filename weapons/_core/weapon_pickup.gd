@@ -96,13 +96,13 @@ func _check_player_overlap() -> void:
 	var query := PhysicsShapeQueryParameters2D.new()
 	query.shape = shape
 	query.transform = $CollisionShape2D.global_transform
-	query.collision_mask = (1 << 1) | (1 << 2)  # Layer 2 and Layer 3
+	query.collision_mask = (1 << 1) | (1 << 2) | (1 << 3) | (1 << 5)  # Player, Enemy, Ally, Chaos
 	var results := space.intersect_shape(query)
 	for result in results:
 		var body: Object = result["collider"]
 		if body.has_method("try_pickup"):
-			# Check if it's an enemy that isn't allowed to pick up weapons
-			if body is Enemy and not body.can_pick_up_weapons:
+			# Check if it's an AI that isn't allowed to pick up weapons
+			if body is AICharacter and not body.can_pick_up_weapons:
 				continue
 			_was_picked_up = true
 			emit_signal("picked_up")

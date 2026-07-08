@@ -1,41 +1,41 @@
-[gd_scene format=3 uid="uid://8hlejmutuawv"]
+[gd_scene format=3 uid="uid://ckyh8rvblv3jx"]
 
-[ext_resource type="Script" uid="uid://c3ifw0ywkwp50" path="res://entities/characters/enemies/enemy.gd" id="1_7p1mj"]
-[ext_resource type="Resource" uid="uid://cxoiv5ap1cj22" path="res://weapons/fists.tres" id="2_haleb"]
-[ext_resource type="Resource" uid="uid://b4i311rbgiym7" path="res://entities/characters/enemies/enemy_template.tres" id="2_ipns3"]
-[ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="4_u5q8g"]
-[ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="4_vk8x8"]
-[ext_resource type="Texture2D" uid="uid://dnb4awwk4lptf" path="res://entities/characters/_core/skins/default_skin/skin-enemy_default.png" id="6_jwbx2"]
-[ext_resource type="Script" uid="uid://dt84g0ubdrtye" path="res://core/combat/hitbox.gd" id="6_s1ycm"]
-[ext_resource type="AnimationLibrary" uid="uid://dj7tuc120561t" path="res://entities/characters/_core/animations/.tres" id="7_8qclf"]
-[ext_resource type="Texture2D" uid="uid://djew2yyvks34y" path="res://entities/characters/_core/skins/dodge_windfx.png" id="7_shcg2"]
-[ext_resource type="AnimationLibrary" uid="uid://c5nbhs05ohaok" path="res://entities/characters/_core/animations/.res" id="8_8qclf"]
-[ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="10_2pwtc"]
-[ext_resource type="Script" uid="uid://emy3cu5poau2" path="res://core/combat/impact_component.gd" id="12_u5q8g"]
-[ext_resource type="Script" uid="uid://di3sej0r6kjqg" path="res://core/combat/status_effect_component.gd" id="13_jwbx2"]
+[ext_resource type="Script" uid="uid://c2qt1txu5k22q" path="res://entities/characters/chaos/chaos.gd" id="1_qs3lv"]
+[ext_resource type="Resource" uid="uid://1uyxukgoq4ho" path="res://entities/characters/chaos/chaos_template.tres" id="2_tqk6x"]
+[ext_resource type="Resource" uid="uid://cxoiv5ap1cj22" path="res://weapons/fists.tres" id="3_yw5vy"]
+[ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="4_ukdib"]
+[ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="5_6icv6"]
+[ext_resource type="Texture2D" uid="uid://c2mvgo0rwfo20" path="res://entities/characters/_core/skins/default_skin/skin-chaos_default.png" id="6_tqk6x"]
+[ext_resource type="Script" uid="uid://dt84g0ubdrtye" path="res://core/combat/hitbox.gd" id="7_ejumw"]
+[ext_resource type="Texture2D" uid="uid://djew2yyvks34y" path="res://entities/characters/_core/skins/dodge_windfx.png" id="8_7tffl"]
+[ext_resource type="AnimationLibrary" uid="uid://c5nbhs05ohaok" path="res://entities/characters/_core/animations/.res" id="9_1tjs7"]
+[ext_resource type="AnimationLibrary" uid="uid://dj7tuc120561t" path="res://entities/characters/_core/animations/.tres" id="10_8dpxk"]
+[ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="11_yuhpw"]
+[ext_resource type="Script" uid="uid://emy3cu5poau2" path="res://core/combat/impact_component.gd" id="12_gwv6a"]
+[ext_resource type="Script" uid="uid://di3sej0r6kjqg" path="res://core/combat/status_effect_component.gd" id="13_fvosk"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_smehm"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ur7pv"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fjrip"]
-atlas = ExtResource("7_shcg2")
+atlas = ExtResource("8_7tffl")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_smehm"]
-atlas = ExtResource("7_shcg2")
+atlas = ExtResource("8_7tffl")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ur7pv"]
-atlas = ExtResource("7_shcg2")
+atlas = ExtResource("8_7tffl")
 region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y4r1p"]
-atlas = ExtResource("7_shcg2")
+atlas = ExtResource("8_7tffl")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_d2wvv"]
-atlas = ExtResource("7_shcg2")
+atlas = ExtResource("8_7tffl")
 region = Rect2(128, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_31cv2"]
@@ -69,29 +69,31 @@ radius = 6.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_u5q8g"]
 
-[node name="Enemy" type="CharacterBody2D" unique_id=390347379 groups=["enemy"]]
-collision_layer = 4
+[node name="Chaos" type="CharacterBody2D" unique_id=390347379 groups=["chaos"]]
+collision_layer = 32
 collision_mask = 63
 motion_mode = 1
 wall_min_slide_angle = 0.0
-script = ExtResource("1_7p1mj")
-collision_layer_index = 3
-stats = ExtResource("2_ipns3")
-fists = ExtResource("2_haleb")
-weapon_pickup_scene = ExtResource("4_u5q8g")
-health_bar_scene = ExtResource("4_vk8x8")
+script = ExtResource("1_qs3lv")
+lives = -1
+target_hold_time = 5.0
+collision_layer_index = 6
+stats = ExtResource("2_tqk6x")
+fists = ExtResource("3_yw5vy")
+weapon_pickup_scene = ExtResource("4_ukdib")
+health_bar_scene = ExtResource("5_6icv6")
 
 [node name="Body" type="Node2D" parent="." unique_id=180073333]
 
 [node name="FeetL" type="Sprite2D" parent="Body" unique_id=421417487]
 position = Vector2(3, -4)
-texture = ExtResource("6_jwbx2")
+texture = ExtResource("6_tqk6x")
 region_enabled = true
 region_rect = Rect2(17, 33, 14, 14)
 
 [node name="FeetR" type="Sprite2D" parent="Body" unique_id=1775195621]
 position = Vector2(2, 4)
-texture = ExtResource("6_jwbx2")
+texture = ExtResource("6_tqk6x")
 region_enabled = true
 region_rect = Rect2(17, 49, 14, 14)
 
@@ -99,7 +101,7 @@ region_rect = Rect2(17, 49, 14, 14)
 
 [node name="HandLeft" type="Sprite2D" parent="Body/Hands" unique_id=1876246524]
 position = Vector2(1, -6)
-texture = ExtResource("6_jwbx2")
+texture = ExtResource("6_tqk6x")
 region_enabled = true
 region_rect = Rect2(1, 33, 14, 14)
 
@@ -116,7 +118,7 @@ position = Vector2(-1, 3)
 [node name="HitboxLeft" type="Area2D" parent="Body/Hands/HandLeft" unique_id=462773800]
 collision_layer = 128
 collision_mask = 64
-script = ExtResource("6_s1ycm")
+script = ExtResource("7_ejumw")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body/Hands/HandLeft/HitboxLeft" unique_id=917595213]
 shape = SubResource("CapsuleShape2D_smehm")
@@ -124,7 +126,7 @@ disabled = true
 
 [node name="HandRight" type="Sprite2D" parent="Body/Hands" unique_id=1958873911]
 position = Vector2(1, 6)
-texture = ExtResource("6_jwbx2")
+texture = ExtResource("6_tqk6x")
 region_enabled = true
 region_rect = Rect2(1, 49, 14, 14)
 
@@ -139,20 +141,21 @@ position = Vector2(-1, -3)
 [node name="HitboxRight" type="Area2D" parent="Body/Hands/HandRight" unique_id=1457903818]
 collision_layer = 128
 collision_mask = 64
-script = ExtResource("6_s1ycm")
+script = ExtResource("7_ejumw")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body/Hands/HandRight/HitboxRight" unique_id=493798252]
 shape = SubResource("CapsuleShape2D_ur7pv")
 disabled = true
 
 [node name="Head" type="Sprite2D" parent="Body" unique_id=1272286143]
-texture = ExtResource("6_jwbx2")
+texture = ExtResource("6_tqk6x")
 region_enabled = true
 region_rect = Rect2(1, 1, 30, 30)
 
 [node name="HeadDown" type="Sprite2D" parent="Body" unique_id=730706233]
 visible = false
-texture = ExtResource("6_jwbx2")
+light_mask = 0
+texture = ExtResource("6_tqk6x")
 region_enabled = true
 region_rect = Rect2(33, 1, 30, 30)
 
@@ -161,10 +164,10 @@ sprite_frames = SubResource("SpriteFrames_31cv2")
 animation = &"dodge_wind"
 
 [node name="AnimationPlayerUpper" type="AnimationPlayer" parent="." unique_id=485231814]
-libraries/ = ExtResource("8_8qclf")
+libraries/ = ExtResource("9_1tjs7")
 
 [node name="AnimationPlayerLower" type="AnimationPlayer" parent="." unique_id=1388454235]
-libraries/ = ExtResource("7_8qclf")
+libraries/ = ExtResource("10_8dpxk")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1720594936]
 shape = SubResource("CircleShape2D_qhqgy")
@@ -177,18 +180,18 @@ collision_mask = 1536
 shape = SubResource("CircleShape2D_fjrip")
 
 [node name="HealthComponent" type="Node2D" parent="." unique_id=89315981]
-script = ExtResource("10_2pwtc")
+script = ExtResource("11_yuhpw")
 health_bar_visibility = 2
 
 [node name="ImpactComponent" type="Node2D" parent="." unique_id=687752596]
-script = ExtResource("12_u5q8g")
+script = ExtResource("12_gwv6a")
 
 [node name="StatusEffectComponent" type="Node2D" parent="." unique_id=105194749]
-script = ExtResource("13_jwbx2")
+script = ExtResource("13_fvosk")
 
 [node name="DetectionArea" type="Area2D" parent="." unique_id=1409583353]
 collision_layer = 0
-collision_mask = 42
+collision_mask = 14
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=1220762500]
 shape = SubResource("CircleShape2D_u5q8g")
@@ -198,4 +201,4 @@ path_desired_distance = 5.0
 avoidance_enabled = true
 debug_enabled = true
 debug_use_custom = true
-debug_path_custom_color = Color(0.8980392, 0, 0.2784314, 1)
+debug_path_custom_color = Color(0.98039216, 0.8862745, 0.05490196, 1)

@@ -7,10 +7,12 @@ class_name Player
 # ── Exports ──────────────────────────────────────────────────────
 
 @export var lock_on_toggle_mode: bool = false
+@export var lock_on_range: float = 100.0
 
 # ── Node References ──────────────────────────────────────────────
 
 @onready var lock_on_area: Area2D = $Area2D
+@onready var lock_on_radius: CollisionShape2D = $"Area2D/LockonRange"
 @onready var camera: Camera2D = $Camera2D
 
 # ── State ────────────────────────────────────────────────────────
@@ -27,6 +29,14 @@ func _ready() -> void:
 	super()
 	lock_on_area.body_entered.connect(_on_enemy_entered)
 	lock_on_area.body_exited.connect(_on_enemy_exited)
+	
+	# Check if the shape exists and is actually a circle
+	if lock_on_radius.shape is CircleShape2D:
+		# Access the radius and store it in your variable
+		lock_on_radius.shape.radius = lock_on_range
+		print("Lock-on radius is: ", lock_on_range)
+	else:
+		push_warning("The assigned shape is not a CircleShape2D.")
 
 # ── Health Callbacks ─────────────────────────────────────────────
 
@@ -37,11 +47,7 @@ func _on_damaged(_amount: int, _remaining: int) -> void:
 
 func _on_died() -> void:
 	
-	# Clear enemy targets
-	for enemy in get_tree().get_nodes_in_group("enemy"):
-		if enemy.target == self:
-			enemy.target = null
-			enemy.ai_state = Enemy.AIState.IDLE
+	_clear_as_target_for_others()
 			
 	# Drop weapon
 	if current_weapon != null:
@@ -55,7 +61,6 @@ func _on_died() -> void:
 	tween.tween_interval(0.1)
 	tween.tween_callback(func():
 		_apply_death_state()
-		set_physics_process(false)
 		set_process(false)
 	)
 
@@ -139,6 +144,9 @@ func _physics_process(delta: float) -> void:
 	var hud := get_tree().get_first_node_in_group("hud") as HUD
 	if hud:
 		hud.refresh_dodge(_stamina, stats.stamina_max, stats.stamina_per_dodge)
+		
+	if is_dead:
+		return
 		
 	if _is_petrified():
 		_apply_movement(Vector2.ZERO)
