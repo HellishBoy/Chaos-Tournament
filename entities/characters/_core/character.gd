@@ -80,6 +80,8 @@ func _ready() -> void:
 	assert(fists != null, str(name) + ": fists WeaponData must be assigned in the Inspector.")
 	assert(stats != null, str(name) + ": CharacterStats must be assigned in the Inspector.")
 
+	add_to_group("contestant")
+
 	stats = stats.duplicate()
 	fists = fists.duplicate()
 	if current_weapon:
@@ -246,7 +248,7 @@ func _start_grenade_throw() -> void:
 	_grenade_thrown = false
 	grenade_charge_time = 0.0
 	grenade_charge_held = true
-	anim_upper.play("attack_hand_throw")
+	anim_upper.play("attack_grenade_throw")
 
 # Called via a Call Method track in the throw animation, at the frame
 # representing the "throwing stance" pose (frame 4 in your 24-frame anim).
@@ -405,7 +407,7 @@ func _on_animation_finished(anim_name: StringName) -> void:
 			_snap_to_idle()
 		return
 
-	if anim_name == "attack_hand_throw":
+	if anim_name == "attack_grenade_throw":
 		_cancel_grenade_throw()
 		_snap_to_idle()
 		return
@@ -557,6 +559,15 @@ func _apply_recoil(tier: String) -> void:
 
 func _is_attacking() -> bool:
 	return is_main_attacking or is_alt_attacking or is_throwing_grenade
+	
+# Clears this character as any AI's current target — called on death so
+# nobody keeps chasing a corpse. Works for Player, Enemy, or Ally alike,
+# since any of them can be a valid target for some other team.
+func _clear_as_target_for_others() -> void:
+	for ai in get_tree().get_nodes_in_group("contestant"):
+		if ai is AICharacter and ai.target == self:
+			ai.target = null
+			ai.ai_state = AICharacter.AIState.IDLE
 
 # ── Movement (shared base) ───────────────────────────────────────
 
@@ -583,16 +594,17 @@ func _apply_movement(desired_velocity: Vector2) -> void:
 	move_and_slide()
 
 func set_invincible(state: bool) -> void:
-	set_collision_mask_value(2, not state)
-	set_collision_mask_value(3, not state)
-	set_collision_mask_value(4, not state)
-	set_collision_mask_value(5, not state)
-	set_collision_mask_value(6, not state)
+	set_collision_mask_value(2, not state)   # Player
+	set_collision_mask_value(3, not state)   # Enemy
+	set_collision_mask_value(4, not state)   # Ally
+	set_collision_mask_value(5, not state)   # Prop
+	set_collision_mask_value(6, not state)   # Chaos
+	set_collision_mask_value(7, not state)   # Hurtbox
+	set_collision_mask_value(10, not state)  # Bullet
+	set_collision_mask_value(11, not state)  # Grenade
 	hurtbox.set_deferred("monitorable", not state)
 	# Tell all other characters to drop this character's layer from their mask
-	var all_characters := get_tree().get_nodes_in_group("player") + \
-		get_tree().get_nodes_in_group("enemy")
-	for character in all_characters:
+	for character in get_tree().get_nodes_in_group("contestant"):
 		if character == self:
 			continue
 		character.set_collision_mask_value(collision_layer_index, not state)
@@ -603,6 +615,8 @@ func try_dodge(direction: Vector2) -> void:
 	if status_effect_component.has_effect("anchored") or status_effect_component.has_effect("petrified"):
 		return
 	dodge_direction = direction if direction.length() > 0 else last_direction
+	#last_direction = dodge_direction # new
+	#rotation = dodge_direction.angle() # new
 	is_dodging = true
 	dodge_traveled = 0.0
 	cooldown_timer = stats.dodge_cooldown

@@ -10,5 +10,4 @@ walk_animation = "walk_melee_1h"
 main_attack_animations = Array[String](["attack_melee_fists_a", "attack_melee_fists_b"])
 movement_penalty = 0.8
 ai_main_attack_mode = "HOLD"
-ai_main_attack_range = 20.0
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"

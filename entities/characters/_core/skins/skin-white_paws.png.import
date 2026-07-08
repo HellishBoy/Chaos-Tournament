@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://djew2yyvks34y"
-path="res://.godot/imported/dodge_windfx.png-5bfb520789901a86a1a0d9f9ac00f616.ctex"
+uid="uid://booojuadidfpr"
+path="res://.godot/imported/skin-white_paws.png-4cfca4f40baf852b91c4ec742431b4f2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://entities/characters/skins/dodge_windfx.png"
-dest_files=["res://.godot/imported/dodge_windfx.png-5bfb520789901a86a1a0d9f9ac00f616.ctex"]
+source_file="res://entities/characters/_core/skins/skin-white_paws.png"
+dest_files=["res://.godot/imported/skin-white_paws.png-4cfca4f40baf852b91c4ec742431b4f2.ctex"]
 
 [params]
 

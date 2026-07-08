@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://booojuadidfpr"
-path="res://.godot/imported/skin-white_paws.png-bb6e8c94e98cea016b713ab541fe8589.ctex"
+uid="uid://c2mvgo0rwfo20"
+path="res://.godot/imported/skin-chaos_default.png-52e7a0a1037c2182c4e602f12d3f0ddd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://entities/characters/skins/skin-white_paws.png"
-dest_files=["res://.godot/imported/skin-white_paws.png-bb6e8c94e98cea016b713ab541fe8589.ctex"]
+source_file="res://entities/characters/_core/skins/default_skin/skin-chaos_default.png"
+dest_files=["res://.godot/imported/skin-chaos_default.png-52e7a0a1037c2182c4e602f12d3f0ddd.ctex"]
 
 [params]
 

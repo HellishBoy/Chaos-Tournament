@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 GameState="*uid://bs757l17qm8p0"
 
+[debug]
+
+shapes/navigation/3d/geometry_edge_color=Color(0.5019608, 1, 1, 0.20784314)
+
 [display]
 
 window/size/viewport_width=480

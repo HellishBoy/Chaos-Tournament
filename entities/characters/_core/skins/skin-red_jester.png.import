@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ro2k6f5fjamo"
-path="res://.godot/imported/skin-robot.png-bbb40c0e7a5f5d8ebb8b09fb745c8a7c.ctex"
+uid="uid://bqudt21hedsyy"
+path="res://.godot/imported/skin-red_jester.png-4e245b840b346eb1a027e26d3d0d6ce3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://entities/characters/skins/skin-robot.png"
-dest_files=["res://.godot/imported/skin-robot.png-bbb40c0e7a5f5d8ebb8b09fb745c8a7c.ctex"]
+source_file="res://entities/characters/_core/skins/skin-red_jester.png"
+dest_files=["res://.godot/imported/skin-red_jester.png-4e245b840b346eb1a027e26d3d0d6ce3.ctex"]
 
 [params]
 

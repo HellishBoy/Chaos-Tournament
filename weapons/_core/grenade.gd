@@ -63,7 +63,7 @@ func _spawn_lingering_hazard() -> void:
 	hazard.setup(weapon_data)
 
 func _apply_blast_damage() -> void:
-	var targets: Array = get_tree().get_nodes_in_group("player") + get_tree().get_nodes_in_group("enemy")
+	var targets: Array = get_tree().get_nodes_in_group("contestant")
 	for target in targets:
 		if not is_instance_valid(target):
 			continue

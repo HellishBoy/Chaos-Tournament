@@ -41,7 +41,7 @@ func _apply_dot_to_targets() -> void:
 	var dot_config := weapon_data.get_dot_config()
 	if dot_config.get("tag", "") == "":
 		return
-	var targets: Array = get_tree().get_nodes_in_group("player") + get_tree().get_nodes_in_group("enemy")
+	var targets: Array = get_tree().get_nodes_in_group("contestant")
 	for target in targets:
 		if not is_instance_valid(target):
 			continue

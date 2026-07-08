@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://bcl033s2x7v1y"]
 
-[ext_resource type="Script" uid="uid://dygtfyp4md0or" path="res://items/core/item_data.gd" id="1_jlk21"]
+[ext_resource type="Script" uid="uid://dygtfyp4md0or" path="res://items/_core/item_data.gd" id="1_jlk21"]
 [ext_resource type="Texture2D" uid="uid://bio50cotvv8uc" path="res://items/steadfast_pack.png" id="1_kg71r"]
 
 [resource]
