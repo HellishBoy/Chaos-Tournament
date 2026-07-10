@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://sfws8qx4os6u"]
+
+[ext_resource type="PackedScene" uid="uid://nj81tmkbkumf" path="res://weapons/projectile/projectile_kunai.tscn" id="1_ijeqa"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="2_w7naw"]
+[ext_resource type="Texture2D" uid="uid://blh77brwelwlr" path="res://weapons/projectile/projectile_kunai.png" id="3_ijeqa"]
+
+[resource]
+script = ExtResource("2_w7naw")
+weapon_name = "Kunai"
+weapon_category = "projectile"
+power = 3
+idle_animation = "idle_melee_1h"
+walk_animation = "walk_melee_1h"
+main_attack_animations = Array[String](["attack_projectile_fling"])
+peek_distance_aim = 50.0
+peek_distance_lockon = 50.0
+weight = "light"
+main_attack_speed = 1.25
+damage_main = 30
+movement_penalty = 0.9
+bullet_scene = ExtResource("1_ijeqa")
+bullet_speed = 800.0
+bullet_range = 250.0
+bullet_pierce = 3
+ammo = 10
+requires_line_of_sight = true
+can_apply_dot = true
+dot_tag = "bleed"
+dot_duration = 1.5
+dot_damage_percent = 0.02
+weapon_sprite_right = ExtResource("3_ijeqa")
+ai_main_attack_range = 130.0
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"

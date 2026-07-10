@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://fjgnwhkrfpmg"]
+
+[ext_resource type="Script" uid="uid://daccxxvv3io27" path="res://weapons/_core/grenade.gd" id="1_donhi"]
+[ext_resource type="Texture2D" uid="uid://bmjydhds5c1k5" path="res://weapons/grenade/sticky_bomb/grenade_impact-sticky_bomb-proj.png" id="2_donhi"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_lp85t"]
+radius = 3.0
+height = 14.0
+
+[node name="StickyBomb" type="CharacterBody2D" unique_id=1864885135]
+collision_layer = 1024
+collision_mask = 63
+script = ExtResource("1_donhi")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2046122217]
+texture = ExtResource("2_donhi")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=836416658]
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_lp85t")

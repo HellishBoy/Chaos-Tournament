@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d0es1lwpfadd7"
-path="res://.godot/imported/bullet_proj-projectile0_dissapate_1.png-b5e255941df9f8382aff1a69f0186e94.ctex"
+uid="uid://bqvv24tsdllxr"
+path="res://.godot/imported/melee_1h-baseball_bat.png-62095b0626d72444395b26cadff480ab.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/ranged/bullets/bullet_proj-projectile0_dissapate_1.png"
-dest_files=["res://.godot/imported/bullet_proj-projectile0_dissapate_1.png-b5e255941df9f8382aff1a69f0186e94.ctex"]
+source_file="res://weapons/melee/One-Handed/melee_1h-baseball_bat.png"
+dest_files=["res://.godot/imported/melee_1h-baseball_bat.png-62095b0626d72444395b26cadff480ab.ctex"]
 
 [params]
 

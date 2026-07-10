@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://dm66igsrqucvk"]
+
+[ext_resource type="PackedScene" uid="uid://fjgnwhkrfpmg" path="res://weapons/grenade/sticky_bomb/grenade_impact-sticky_bomb.tscn" id="1_dcw8l"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="2_dcw8l"]
+[ext_resource type="Texture2D" uid="uid://bjcii0v2i7cm2" path="res://weapons/grenade/sticky_bomb/grenade_impact-sticky_bomb-ground.png" id="3_dcw8l"]
+[ext_resource type="Texture2D" uid="uid://n8ejb7s4r1xv" path="res://weapons/grenade/sticky_bomb/grenade_impact-sticky_bomb-hold.png" id="4_ofgyh"]
+
+[resource]
+script = ExtResource("2_dcw8l")
+weapon_name = "Sticky Bomb"
+weapon_category = "grenade"
+power = 7
+idle_animation = "idle_grenade"
+walk_animation = "walk_grenade"
+main_attack_animations = Array[String](["attack_grenade_throw"])
+peek_distance_aim = 32.0
+peek_distance_lockon = 32.0
+damage_main = 120
+main_knockback = "low"
+can_knockback = true
+main_attack_charge = true
+main_charge_time = 0.5
+projectile_type = "grenade"
+grenade_scene = ExtResource("1_dcw8l")
+can_impact_detonate = true
+grenade_fuse_time = 1.2
+grenade_blast_radius = 60.0
+grenade_throw_speed_min = 200.0
+quantity = 5
+requires_line_of_sight = true
+weapon_sprite_ground = ExtResource("3_dcw8l")
+weapon_sprite_right = ExtResource("4_ofgyh")
+ai_main_attack_range = 135.0
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://cm8ewcb3xswx5"]
 
-[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/ranged/bullets/bullet_proj-projectile0.tscn" id="1_eh5x7"]
+[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/bullet_and_projectile/bullet_proj-projectile0.tscn" id="1_eh5x7"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="2_st5pi"]
 [ext_resource type="Texture2D" uid="uid://cxu4eumkk4e7q" path="res://weapons/ranged/ranged_1h-nail_gun.png" id="3_63b1t"]
 
@@ -8,13 +8,16 @@
 script = ExtResource("2_st5pi")
 weapon_name = "Nail Gun"
 weapon_category = "ranged"
-power = 7
+power = 9
 idle_animation = "idle_ranged_1h"
 walk_animation = "walk_ranged_1h"
 main_attack_animations = Array[String](["attack_ranged_1h_fire"])
 alt_attack_animations = Array[String](["attack_projectile_fling"])
 peek_distance_aim = 40.0
 weight = "light"
+can_recoil = true
+main_recoil = "low"
+main_attack_speed = 0.4
 damage_main = 50
 damage_alt = 10
 main_knockback = "high"

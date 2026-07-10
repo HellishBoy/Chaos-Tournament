@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://dpxok4b8k2dxf"]
 
 [ext_resource type="Script" uid="uid://daccxxvv3io27" path="res://weapons/_core/grenade.gd" id="1_0ak4c"]
-[ext_resource type="Texture2D" uid="uid://4vi5psw4ddyh" path="res://weapons/grenade/grenade_timer-frag.png" id="2_7oxn7"]
+[ext_resource type="Texture2D" uid="uid://b3itsvv5hpw6l" path="res://weapons/grenade/frag/grenade_timer-frag-proj.png" id="2_0ak4c"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_id6fj"]
 radius = 4.0
@@ -12,7 +12,7 @@ collision_mask = 63
 script = ExtResource("1_0ak4c")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=2046122217]
-texture = ExtResource("2_7oxn7")
+texture = ExtResource("2_0ak4c")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=836416658]
 shape = SubResource("CircleShape2D_id6fj")

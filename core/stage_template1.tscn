@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://cty3cc0uxscqv"]
 
 [ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="1_l55m1"]
-[ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/ranged/ranged_1h-nail_gun.tres" id="2_a05iw"]
+[ext_resource type="Resource" uid="uid://dm66igsrqucvk" path="res://weapons/grenade/sticky_bomb/grenade_impact-sticky_bomb.tres" id="2_sb63a"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="3_5ubl4"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="8_pn5wg"]
 [ext_resource type="Script" uid="uid://ctrptflhtsjqv" path="res://ui/hud.gd" id="9_ofe1s"]
@@ -12,12 +12,10 @@
 [ext_resource type="Script" uid="uid://clhccd8w6ac47" path="res://items/_core/item_drop_manager.gd" id="14_qxdg6"]
 [ext_resource type="Script" uid="uid://cktqq00sbkh2v" path="res://items/_core/item_drop_entry.gd" id="15_c4y0x"]
 [ext_resource type="PackedScene" uid="uid://dolrqfgx3sw2y" path="res://items/_core/ItemPickup.tscn" id="16_6uebr"]
+[ext_resource type="Resource" uid="uid://buqfils5e7ehu" path="res://weapons/grenade/frag/grenade_timer-frag.tres" id="17_8cmj7"]
 [ext_resource type="Script" uid="uid://byj40y30kigbn" path="res://weapons/_core/drop_zone.gd" id="17_1140t"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="18_52jcs"]
 [ext_resource type="Script" uid="uid://cfeuhjyts30yy" path="res://items/_core/item_drop_config.gd" id="18_bf4gl"]
-[ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/melee/melee_2h-battle_axe.tres" id="19_4orlm"]
-[ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/melee/melee_1h-sword.tres" id="20_tp84q"]
-[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/ranged/ranged_1h-mac_10.tres" id="21_3s0oh"]
 [ext_resource type="Script" uid="uid://dwlwg725t31ip" path="res://weapons/_core/weapon_drop_entry.gd" id="22_41cje"]
 [ext_resource type="Texture2D" uid="uid://dfbvmdyfsg16g" path="res://realms/core_area.png" id="24_rt4s3"]
 
@@ -105,7 +103,7 @@ y_sort_enabled = true
 
 [node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("1_l55m1")]
 position = Vector2(320, 432)
-current_weapon = ExtResource("2_a05iw")
+current_weapon = ExtResource("2_sb63a")
 health_bar_scene = ExtResource("3_5ubl4")
 
 [node name="Props" type="Node2D" parent="Contestants" unique_id=526174102]
@@ -278,7 +276,7 @@ position = Vector2(432, 336)
 script = ExtResource("17_1140t")
 zone_group = "Altar"
 zone_type = 2
-altar_weapons = Array[ExtResource("18_52jcs")]([ExtResource("19_4orlm"), ExtResource("20_tp84q"), ExtResource("21_3s0oh")])
+altar_weapons = Array[ExtResource("18_52jcs")]([ExtResource("2_sb63a"), ExtResource("17_8cmj7"), ExtResource("2_sb63a")])
 
 [node name="Marker2D" type="Marker2D" parent="DropZone - Altar" unique_id=169334448]
 position = Vector2(520, 184)

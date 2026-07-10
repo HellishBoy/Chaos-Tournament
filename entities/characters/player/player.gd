@@ -7,7 +7,10 @@ class_name Player
 # ── Exports ──────────────────────────────────────────────────────
 
 @export var lock_on_toggle_mode: bool = false
-@export var lock_on_range: float = 100.0
+@export var lock_on_range: float = 120.0
+
+@export_group("Debug")
+@export var show_lock_on_debug: bool = false
 
 # ── Node References ──────────────────────────────────────────────
 
@@ -23,20 +26,34 @@ var lock_on_active: bool = false
 var lock_on_target: Node2D = null
 var enemies_in_range: Array = []
 
+var _effective_lock_on_range: float = 0.0
+
 # ── Ready ────────────────────────────────────────────────────────
 
 func _ready() -> void:
 	super()
 	lock_on_area.body_entered.connect(_on_enemy_entered)
 	lock_on_area.body_exited.connect(_on_enemy_exited)
-	
-	# Check if the shape exists and is actually a circle
 	if lock_on_radius.shape is CircleShape2D:
-		# Access the radius and store it in your variable
 		lock_on_radius.shape.radius = lock_on_range
-		print("Lock-on radius is: ", lock_on_range)
 	else:
-		push_warning("The assigned shape is not a CircleShape2D.")
+		push_warning(name + ": LockonRange's shape is not a CircleShape2D.")
+		
+# ── Lock-on Radius ───────────────────────────────────────────────
+
+# Effective lock-on range = base range + the current weapon's
+# peek_distance_lockon, so a weapon with more lock-on peek also lets
+# you lock onto targets a bit farther away. Recomputed every physics
+# frame rather than hooked to specific weapon-change call sites, since
+# current_weapon changes from several places (pickup, toss, break,
+# respawn) and polling here guarantees it's never stale.
+func _update_lock_on_radius() -> void:
+	if not (lock_on_radius.shape is CircleShape2D):
+		return
+	var peek_lockon: float = current_weapon.peek_distance_lockon if current_weapon else 0.0
+	_effective_lock_on_range = lock_on_range + peek_lockon
+	if lock_on_radius.shape.radius != _effective_lock_on_range:
+		lock_on_radius.shape.radius = _effective_lock_on_range
 
 # ── Health Callbacks ─────────────────────────────────────────────
 
@@ -145,6 +162,8 @@ func _physics_process(delta: float) -> void:
 	if hud:
 		hud.refresh_dodge(_stamina, stats.stamina_max, stats.stamina_per_dodge)
 		
+	_update_lock_on_radius()
+		
 	if is_dead:
 		return
 		
@@ -220,6 +239,7 @@ func _physics_process(delta: float) -> void:
 
 func _process(_delta: float) -> void:
 	queue_redraw()
+	check_if_cornered()
 	if _is_petrified():
 		return
 
@@ -264,6 +284,10 @@ func _process(_delta: float) -> void:
 # ── Misc. ────────────────────────────────────────────
 
 func _draw() -> void:
+	if show_lock_on_debug:
+		var show_circle := lock_on_active if lock_on_toggle_mode else Input.is_action_pressed("lock_on")
+		if show_circle:
+			draw_arc(Vector2.ZERO, _effective_lock_on_range, 0, TAU, 64, Color.WHITE, 1.0)
 	if is_throwing_grenade and _grenade_stance_reached and not _grenade_thrown:
 		var weapon := get_active_weapon()
 		var percent := 1.0
@@ -271,3 +295,14 @@ func _draw() -> void:
 			percent = clamp(grenade_charge_time / weapon.main_charge_time, 0.0, 1.0)
 		var length := 48.0 * percent
 		draw_line(Vector2.ZERO, Vector2.RIGHT * length, Color.WHITE, 2.0)
+		
+func check_if_cornered() -> bool:
+	var wall_count = 0
+	for i in range(get_slide_collision_count()):
+		var collision = get_slide_collision(i)
+		# A dot product near zero helps detect perpendicular (corner) surfaces
+		if abs(collision.get_normal().dot(Vector2.UP)) < 0.5:
+			wall_count += 1
+	
+	# If they are colliding with more than one wall boundary, it's a corner
+	return wall_count >= 2

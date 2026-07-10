@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://bfxvybi132jdd"]
 
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="1_wudb1"]
-[ext_resource type="Texture2D" uid="uid://bqvv24tsdllxr" path="res://weapons/melee/melee_1h-baseball_bat.png" id="2_0be63"]
+[ext_resource type="Texture2D" uid="uid://bqvv24tsdllxr" path="res://weapons/melee/One-Handed/melee_1h-baseball_bat.png" id="2_0be63"]
 
 [resource]
 script = ExtResource("1_wudb1")

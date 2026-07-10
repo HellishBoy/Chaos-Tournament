@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://dwlwg725t31ip" path="res://weapons/_core/weapon_drop_entry.gd" id="1_utmmb"]
 [ext_resource type="Script" uid="uid://co24hvnc6y0dt" path="res://weapons/_core/weapon_drop_config.gd" id="2_i4xys"]
-[ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://weapons/melee/melee_1h-lollipop.tres" id="3_8brk3"]
-[ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/melee/melee_1h-baseball_bat.tres" id="4_2ju0k"]
-[ext_resource type="Resource" uid="uid://w2sashhtg4jm" path="res://weapons/melee/melee_1h-metal_pipe.tres" id="4_dnax7"]
+[ext_resource type="Resource" uid="uid://dswjgam7nc8og" path="res://weapons/melee/One-Handed/melee_1h-lollipop.tres" id="3_8brk3"]
+[ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/melee/One-Handed/melee_1h-baseball_bat.tres" id="4_2ju0k"]
+[ext_resource type="Resource" uid="uid://w2sashhtg4jm" path="res://weapons/melee/One-Handed/melee_1h-metal_pipe.tres" id="4_dnax7"]
 [ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/ranged/ranged_1h-nail_gun.tres" id="7_bi3hl"]
 
 [sub_resource type="Resource" id="Resource_1vh8a"]

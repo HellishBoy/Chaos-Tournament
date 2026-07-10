@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bqvv24tsdllxr"
-path="res://.godot/imported/melee_1h-baseball_bat.png-f94cc146d6dbaf46ce941a1ded2d9fe0.ctex"
+uid="uid://b3itsvv5hpw6l"
+path="res://.godot/imported/grenade_timer-frag-proj.png-fed7d16e661857f1ddd0627d965df079.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/melee/melee_1h-baseball_bat.png"
-dest_files=["res://.godot/imported/melee_1h-baseball_bat.png-f94cc146d6dbaf46ce941a1ded2d9fe0.ctex"]
+source_file="res://weapons/grenade/frag/grenade_timer-frag-proj.png"
+dest_files=["res://.godot/imported/grenade_timer-frag-proj.png-fed7d16e661857f1ddd0627d965df079.ctex"]
 
 [params]
 

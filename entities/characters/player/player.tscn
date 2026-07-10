@@ -74,6 +74,7 @@ collision_layer = 2
 collision_mask = 61
 motion_mode = 1
 script = ExtResource("1_g2els")
+show_lock_on_debug = true
 collision_layer_index = 2
 stats = ExtResource("2_y4r1p")
 fists = ExtResource("2_qlg0r")
@@ -178,6 +179,7 @@ shape = SubResource("CircleShape2D_tuyoq")
 debug_color = Color(0, 0.645647, 0.2622566, 0.41960785)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=59279071]
+show_behind_parent = true
 process_callback = 0
 limit_left = -1000000
 limit_top = -1000000
