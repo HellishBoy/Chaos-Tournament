@@ -636,10 +636,7 @@ func _tick_dodge(delta: float) -> void:
 			is_dodging = false
 			set_invincible(false)
 			if get_active_weapon().weapon_category == "grenade":
-				if main_attack_held:
-					_start_grenade_throw()
-				else:
-					_snap_to_idle()
+				_snap_to_idle()
 			elif main_attack_held:
 				_play_main_attack()
 			elif alt_attack_held:

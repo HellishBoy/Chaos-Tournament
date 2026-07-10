@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://da2hol5y5g2wr" path="res://realms/earth_realm/1_junkyard_arena/sandbox_tileset.png" id="1_k0qpp"]
 [ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="2_c2yw2"]
-[ext_resource type="Resource" uid="uid://buqfils5e7ehu" path="res://weapons/grenade/grenade_timer-frag.tres" id="3_vmq4a"]
+[ext_resource type="Resource" uid="uid://buqfils5e7ehu" path="res://weapons/grenade/frag/grenade_timer-frag.tres" id="3_vmq4a"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="4_g33yc"]
 [ext_resource type="PackedScene" uid="uid://do2nnibgsaxhh" path="res://entities/characters/allies/ally.tscn" id="5_cbncl"]
 [ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="6_lwj6d"]
@@ -17,8 +17,8 @@
 [ext_resource type="PackedScene" uid="uid://dolrqfgx3sw2y" path="res://items/_core/ItemPickup.tscn" id="15_32wn1"]
 [ext_resource type="Script" uid="uid://byj40y30kigbn" path="res://weapons/_core/drop_zone.gd" id="16_6blmc"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="17_nhluu"]
-[ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/melee/melee_2h-battle_axe.tres" id="18_uc8bo"]
-[ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/melee/melee_1h-sword.tres" id="19_h0tsx"]
+[ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/melee/Two-Handed/melee_2h-battle_axe.tres" id="18_uc8bo"]
+[ext_resource type="Resource" uid="uid://dliaeoj31mupi" path="res://weapons/melee/Two-Handed/melee_2h-sword.tres" id="19_h0tsx"]
 [ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/ranged/ranged_1h-mac_10.tres" id="20_qiks8"]
 [ext_resource type="Script" uid="uid://dwlwg725t31ip" path="res://weapons/_core/weapon_drop_entry.gd" id="21_5plgo"]
 

@@ -26,6 +26,7 @@ class_name AICharacter
 @export_group("AI")
 @export var detection_range: float = 100.0
 @export var idle_wander_speed: float = 0.0
+@export var eye_offset: float = 5.0
 # -1 = hold the current target until it dies/becomes invalid (Enemy/Ally
 # default). A positive value forces a fresh _acquire_target() call after
 # that many seconds, even if the current target is still alive — used
@@ -35,7 +36,7 @@ class_name AICharacter
 @export_group("Intelligence")
 # Shared baseline range used by Detection Range, Finding Weapons, and
 # Health scanning below — not specific to any one subgroup.
-@export var perception_range: float = 100.0
+@export var perception_range: float = 120.0
 
 @export_subgroup("Health")
 @export var is_careful: bool = false
@@ -63,10 +64,6 @@ class_name AICharacter
 
 @export_subgroup("Combat Range")
 @export var is_tactical: bool = false
-@export var melee_strafe_min: float = 1.0
-@export var melee_strafe_max: float = 2.5
-@export var melee_stop_strafe_min: float = 0.2
-@export var melee_stop_strafe_max: float = 0.5
 
 @export_group("Attack")
 @export var main_attack_cooldown: float = 0.6
@@ -82,6 +79,10 @@ class_name AICharacter
 @export var sprite_hand_right: Texture2D
 @export var sprite_head: Texture2D
 @export var sprite_head_down: Texture2D
+
+@export_group("Debug")
+@export var show_state_debug: bool = false
+@export var show_los_debug: bool = false
 
 # ── Node References ──────────────────────────────────────────────
 
@@ -99,19 +100,17 @@ var _use_alt_attack: bool = false
 var _dodge_timer: float = 0.0
 var _pending_dodges: int = 0
 
-enum MeleeStrafeState { STRAFING, STOPPED }
-var _melee_strafe_state: MeleeStrafeState = MeleeStrafeState.STRAFING
-var _melee_strafe_timer: float = 0.0
-var _melee_strafe_direction: float = 1.0
-var _melee_strafe_angle: float = 0.0
-const MELEE_STRAFE_ANGULAR_SPEED: float = 1.5  # radians/sec while circling
+#enum MeleeStrafeState { STRAFING, STOPPED }
+#var _melee_strafe_state: MeleeStrafeState = MeleeStrafeState.STRAFING
+#var _melee_strafe_timer: float = 0.0
+#var _melee_strafe_direction: float = 1.0
+#var _melee_strafe_angle: float = 0.0
+#const MELEE_STRAFE_ANGULAR_SPEED: float = 1.5  # radians/sec while circling
 
-var _seeking_los: bool = false
-var _los_seek_direction: float = 1.0
+#var _seeking_los: bool = false
+#var _los_seek_direction: float = 1.0
 
 var _weapon_target: Node = null  # the pickup node being sought
-var _weapon_scan_timer: float = 0.0
-const WEAPON_SCAN_INTERVAL: float = 0.2  # scan for weapons every 0.2s
 
 var _seeking_better_weapon: bool = false
 
@@ -125,11 +124,23 @@ var _target_hold_timer: float = 0.0
 const LOW_HP_THRESHOLD: float = 0.35
 const EVASION_RANGE_FACTOR: float = 0.75
 
-const LOS_SEEK_ARC: float = PI / 2.0  # sidestep arc when tactical LOS is blocked
-# PI / 3.0 = 60°
-# PI / 2.0 = 90°
-
 const HAZARD_ESCAPE_MARGIN: float = 16.0
+
+const PERCEPTION_SCAN_INTERVAL: float = 0.6   # replaces WEAPON_SCAN_INTERVAL — same timer now drives weapon AND item scanning
+const TARGET_SCAN_INTERVAL: float = 0.3
+var _target_scan_timer: float = 0.0
+
+var _last_eye_left_origin: Vector2 = Vector2.ZERO
+var _last_eye_right_origin: Vector2 = Vector2.ZERO
+var _last_eye_left_end: Vector2 = Vector2.ZERO
+var _last_eye_right_end: Vector2 = Vector2.ZERO
+var _last_has_los: bool = false
+
+const CROWD_PUSH_RADIUS: float = 20.0
+const CROWD_PUSH_INTERVAL: float = 0.4
+
+var _perception_scan_timer: float = 0.0
+var _crowd_push_timer: float = 0.0
 
 # ── State ────────────────────────────────────────────────────────
 
@@ -181,7 +192,6 @@ func _ready() -> void:
 	
 	_acquire_target()
 	_reset_dodge_timer()
-	_reset_melee_strafe_timer()
 	_reset_combo_switch_timer()
 
 # ── Health Callbacks ─────────────────────────────────────────────
@@ -267,14 +277,14 @@ func try_pickup(pickup_node: Node) -> void:
 				await get_tree().physics_frame
 				if is_instance_valid(pickup_node) and not pickup_node._was_picked_up:
 					super.try_pickup(pickup_node)
-				_weapon_scan_timer = 0.0
+				_perception_scan_timer = 0.0
 				_seeking_better_weapon = false
 				_weapon_target = null
 				_use_alt_attack = false
 				_reset_combo_switch_timer()
 				return
 	super.try_pickup(pickup_node)
-	_weapon_scan_timer = 0.0
+	_perception_scan_timer = 0.0
 	_seeking_better_weapon = false
 	_weapon_target = null
 	_use_alt_attack = false
@@ -284,12 +294,10 @@ func _on_target_entered(body: Node2D) -> void:
 	if _is_valid_target(body):
 		if not targets_in_range.has(body):
 			targets_in_range.append(body)
-		target = _get_nearest_target()
 
 func _on_target_exited(body: Node2D) -> void:
 	if _is_valid_target(body):
 		targets_in_range.erase(body)
-		target = _get_nearest_target()
 
 func _get_nearest_target() -> Node2D:
 	return _pick_best_target(targets_in_range)
@@ -327,32 +335,27 @@ func _get_target_priority(_body: Node) -> int:
 # ── AI State Machine ─────────────────────────────────────────────
 
 func _update_ai_state() -> void:
+
 	if _seeking_better_weapon and current_weapon != null and _weapon_target != null:
 		if not is_instance_valid(_weapon_target) or _weapon_target._was_picked_up:
 			_seeking_better_weapon = false
 			_weapon_target = null
-	
-	# Invalidate weapon target if it's gone or picked up
+
 	if _weapon_target != null:
 		if not is_instance_valid(_weapon_target) or _weapon_target._was_picked_up:
 			_weapon_target = null
-			
-	# Invalidate item target if it's gone or picked up		
+
 	if _item_target != null:
 		if not is_instance_valid(_item_target) or _item_target._was_picked_up:
 			_item_target = null
-			
-	# Scan for heal item — highest priority when scared and low HP
-	_item_target = _scan_for_beneficial_item()
-	if _item_target != null:
-		ai_state = AIState.SEEK_ITEM
-		main_attack_held = false
-		return
 
-	# Scan for weapons on interval
-	_weapon_scan_timer -= get_physics_process_delta_time()
-	if _weapon_scan_timer <= 0.0:
-		_weapon_scan_timer = WEAPON_SCAN_INTERVAL
+	# ── Perception sonar — weapon/item scanning share one interval
+	# instead of running every frame. Target detection (DetectionArea
+	# signals) is untouched — stays instant, not gated by this timer.
+	_perception_scan_timer -= get_physics_process_delta_time()
+	if _perception_scan_timer <= 0.0:
+		_perception_scan_timer = PERCEPTION_SCAN_INTERVAL
+		_item_target = _scan_for_beneficial_item()
 		if can_find_weapons:
 			if current_weapon == null:
 				_weapon_target = _scan_for_weapon()
@@ -365,12 +368,15 @@ func _update_ai_state() -> void:
 					_toss_cooldown_timer = TOSS_COOLDOWN
 					call_deferred("_toss_backward_and_seek")
 
-	# Weapon seeking takes priority — check this before target validation
+	if _item_target != null:
+		ai_state = AIState.SEEK_ITEM
+		main_attack_held = false
+		return
+
 	if _weapon_target != null and (current_weapon == null or _seeking_better_weapon):
 		ai_state = AIState.SEEK_WEAPON
 		return
 
-	# No target — try to acquire one
 	if target == null or not is_instance_valid(target) or target.is_dead:
 		_acquire_target()
 		if target == null:
@@ -431,7 +437,7 @@ func _physics_process(delta: float) -> void:
 	var hp_percent := float(health.current_hp) / float(health.max_hp)
 	
 	var evasive_active := (is_sharp and hp_percent > LOW_HP_THRESHOLD) or (is_alert and hp_percent <= LOW_HP_THRESHOLD)
-	if evasive_active and can_dodge and not is_dodging and cooldown_timer <= 0 and _stamina >= stats.stamina_per_dodge and ai_state != AIState.IDLE:
+	if evasive_active and can_dodge and not is_dodging and cooldown_timer <= 0 and _stamina >= stats.stamina_per_dodge:
 		var threat_direction := _check_incoming_threat()
 		if threat_direction != Vector2.ZERO:
 			try_dodge(threat_direction)
@@ -462,16 +468,29 @@ func _physics_process(delta: float) -> void:
 	if target and not is_instance_valid(target):
 		target = _get_nearest_target()
 
-	# Safety net: if a throw was in progress and the target died or vanished
-	# before the throw naturally resolved (e.g. the grenade that killed them
-	# was the last action, flipping ai_state to IDLE before anything else
-	# could clean up), cancel it instead of leaving the animation stuck.
-	if is_throwing_grenade and (target == null or not is_instance_valid(target) or target.is_dead):
-		_cancel_into_idle()
-		
+	# Target re-evaluation is throttled — recomputing "who's best" on
+	# every single Area2D enter/exit event caused visible snap-between-
+	# targets jitter. This is the only place `target` gets reassigned
+	# from targets_in_range now.
+	_target_scan_timer -= delta
+	if _target_scan_timer <= 0.0:
+		_target_scan_timer = TARGET_SCAN_INTERVAL
+		if not targets_in_range.is_empty():
+			target = _get_nearest_target()
+
 	_update_ai_state()
 
+	# Cancel any in-progress attack (melee, ranged, or grenade) the
+	# instant we're in a non-combat state — otherwise the AI can keep
+	# swinging/throwing while walking toward a weapon or item pickup.
+	if _is_attacking() and (ai_state == AIState.SEEK_WEAPON or ai_state == AIState.SEEK_ITEM or ai_state == AIState.IDLE):
+		_cancel_into_idle()
+
+	var weapon := get_active_weapon()
+	var attack_dist := _get_current_attack_range()
+
 	match ai_state:
+		#region AIState.IDLE
 		AIState.IDLE:
 			if is_careful or is_healthy:
 				var hazard := _find_hazard_to_escape()
@@ -499,7 +518,9 @@ func _physics_process(delta: float) -> void:
 			if not _is_attacking():
 				_snap_to_idle()
 				anim_lower.stop()
+		#endregion
 
+		#region AIState.SEEK_WEAPON
 		AIState.SEEK_WEAPON:
 			if _weapon_target == null or not is_instance_valid(_weapon_target):
 				ai_state = AIState.ACTIVE
@@ -519,17 +540,20 @@ func _physics_process(delta: float) -> void:
 				else:
 					anim_lower.stop()
 
+		#endregion
+		
+		#region AIState.SEEK_ITEM
 		AIState.SEEK_ITEM:
 			if _item_target == null or not is_instance_valid(_item_target):
 				ai_state = AIState.ACTIVE
 			else:
 				nav_agent.target_position = _item_target.global_position
-	
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
 				rotation = dir.angle()
 				_apply_movement(dir * stats.move_speed * combined_mult)
+				_push_through_crowd(delta)
 				if not _is_attacking():
 					var walk := get_active_weapon().walk_animation
 					if walk != "":
@@ -538,39 +562,22 @@ func _physics_process(delta: float) -> void:
 					anim_lower.play("feet_normal")
 				else:
 					anim_lower.stop()
+					
+		#endregion
 
+		#region AIState.ACTIVE
 		AIState.ACTIVE:
-			var weapon := get_active_weapon()
-			var attack_dist := _get_current_attack_range()
 			var dist := global_position.distance_to(target.global_position)
 			var has_los := _has_line_of_sight() if weapon.requires_line_of_sight else true
 			var is_melee := weapon.weapon_category == "melee"
 
-			if is_tactical and is_melee and target != null and is_instance_valid(target):
-				# ── Tactical melee — cyclic strafe/stop, no LOS concern ──
-				_seeking_los = false
-				_tick_melee_strafe(delta)
-				if _melee_strafe_state == MeleeStrafeState.STRAFING:
-					var angle_to_target := (global_position - target.global_position).angle()
-					var strafe_pos := target.global_position + Vector2.RIGHT.rotated(angle_to_target + _melee_strafe_angle) * (attack_dist * 0.95)
-					nav_agent.target_position = strafe_pos
-					var next_pos := nav_agent.get_next_path_position()
-					var dir := (next_pos - global_position).normalized()
-					last_direction = (target.global_position - global_position).normalized()
-					rotation = last_direction.angle()
-					_apply_movement(dir * stats.move_speed * combined_mult)
-				else:
-					var dir := (target.global_position - global_position).normalized()
-					last_direction = dir
-					rotation = dir.angle()
-					_apply_movement(Vector2.ZERO)
-			elif is_tactical and not is_melee and target != null and is_instance_valid(target) and has_los:
-				# ── Tactical, non-melee, LOS clear — settle at ideal
-				# range and stop strafing entirely; strafing only ever
-				# exists to find LOS, not to wobble while attacking.
-				_seeking_los = false
+			if is_tactical and not is_melee and target != null and is_instance_valid(target) and has_los:
+				# ── Tactical, non-melee — keep to ideal range once LOS
+				# is clear: step back if too close, approach if too far.
+				# No strafing or repositioning — just holds the
+				# straight-line distance to the target.
 				var angle_to_target := (global_position - target.global_position).angle()
-				var ideal_pos := target.global_position + Vector2.RIGHT.rotated(angle_to_target) * (attack_dist * 0.95)
+				var ideal_pos := target.global_position + Vector2.RIGHT.rotated(angle_to_target) * (attack_dist * 0.75)
 				var dist_to_ideal := global_position.distance_to(ideal_pos)
 				if dist_to_ideal > 1.0:
 					nav_agent.target_position = ideal_pos
@@ -584,26 +591,9 @@ func _physics_process(delta: float) -> void:
 					last_direction = dir
 					rotation = dir.angle()
 					_apply_movement(Vector2.ZERO)
-			elif is_tactical and not is_melee and target != null and is_instance_valid(target) and weapon.requires_line_of_sight and not has_los:
-				# ── Tactical, non-melee, LOS blocked — decide a side
-				# (away from the obstruction) and strafe toward it.
-				# Stops the instant LOS is regained (handled by the
-				# branch above taking over next frame).
-				if not _seeking_los:
-					_seeking_los = true
-					_los_seek_direction = _decide_los_strafe_direction()
-				var angle_to_target := (global_position - target.global_position).angle()
-				var seek_angle := angle_to_target + LOS_SEEK_ARC * _los_seek_direction
-				var seek_pos := target.global_position + Vector2.RIGHT.rotated(seek_angle) * (attack_dist * 0.95)
-				nav_agent.target_position = seek_pos
-				var next_pos := nav_agent.get_next_path_position()
-				var dir := (next_pos - global_position).normalized()
-				last_direction = (target.global_position - global_position).normalized()
-				rotation = last_direction.angle()
-				_apply_movement(dir * stats.move_speed * combined_mult)
 			elif dist > attack_dist or (weapon.requires_line_of_sight and not has_los):
-				# ── Standard chase ────────────────────────────────────
-				_seeking_los = false
+				# ── Chase — simple, direct pathfinding straight to the
+				# target. (Non-tactical, melee, or no LOS yet.)
 				nav_agent.target_position = target.global_position
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
@@ -611,7 +601,6 @@ func _physics_process(delta: float) -> void:
 				rotation = dir.angle()
 				_apply_movement(dir * stats.move_speed * combined_mult)
 			else:
-				_seeking_los = false
 				# ── In range — face target and stop ──────────────────
 				var dir := (target.global_position - global_position).normalized()
 				last_direction = dir
@@ -619,7 +608,7 @@ func _physics_process(delta: float) -> void:
 				_apply_movement(Vector2.ZERO)
 
 			if not _is_attacking() and not is_tossing:
-				var walk := get_active_weapon().walk_animation
+				var walk := weapon.walk_animation
 				if walk != "":
 					anim_upper.play(walk)
 			if velocity.length() > 0:
@@ -627,41 +616,8 @@ func _physics_process(delta: float) -> void:
 			else:
 				anim_lower.stop()
 
-			# ── Hands — attack if in range ────────────────────────
-			if dist <= attack_dist and has_los and not is_tossing:
-				if weapon.weapon_category == "grenade":
-					_handle_grenade_attack(weapon, delta)
-				elif _main_attack_timer <= 0:
-					if target != null and not target.is_dead:
-						if _use_alt_attack and get_active_weapon().alt_attack_animations.size() > 0:
-							if weapon.ai_alt_attack_mode == "HOLD":
-								alt_attack_held = true
-								main_attack_held = false
-								if not _is_attacking():
-									_play_alt_attack()
-							else:
-								alt_attack_held = false
-								main_attack_held = false
-								if not _is_attacking():
-									_play_alt_attack()
-									_main_attack_timer = alt_attack_cooldown
-						else:
-							if weapon.ai_main_attack_mode == "HOLD":
-								main_attack_held = true
-								alt_attack_held = false
-								if not _is_attacking():
-									_play_main_attack()
-							else:
-								main_attack_held = false
-								alt_attack_held = false
-								if not _is_attacking():
-									_play_main_attack()
-									_main_attack_timer = main_attack_cooldown
-			else:
-				main_attack_held = false
-				alt_attack_held = false
-				if weapon.weapon_category == "grenade" and is_throwing_grenade:
-					_cancel_into_idle()
+			_handle_combat_actions(weapon, dist, has_los, delta)
+		#endregion
 
 # ── Facing on start ──────────────────────────────────────────────
 
@@ -677,23 +633,70 @@ func _facing_to_vector(facing: FacingDirection) -> Vector2:
 		FacingDirection.UP_LEFT:    return Vector2(-1, -1).normalized()
 	return Vector2(0, 1)
 	
+# ── Debug ──────────────────────────────────────────────────────
+
+func _process(_delta: float) -> void:
+	queue_redraw()
+
+func _draw() -> void:
+	if show_state_debug:
+		var color: Color
+		match ai_state:
+			AIState.IDLE:
+				color = Color.WHITE
+			AIState.SEEK_WEAPON, AIState.SEEK_ITEM:
+				color = Color.GREEN
+			AIState.ACTIVE:
+				color = Color.RED
+			_:
+				color = Color.WHITE
+		draw_arc(Vector2.ZERO, 8.0, 0, TAU, 32, color, 1.0)
+
+	if show_los_debug and target != null and is_instance_valid(target) and get_active_weapon().requires_line_of_sight:
+		var los_color := Color.RED if _last_has_los else Color.GREEN
+		var local_left := to_local(_last_eye_left_origin)
+		var local_right := to_local(_last_eye_right_origin)
+		var local_left_end := to_local(_last_eye_left_end)
+		var local_right_end := to_local(_last_eye_right_end)
+		draw_line(local_left, local_left_end, los_color, 1.0)
+		draw_line(local_right, local_right_end, los_color, 1.0)
+	
 # ── Helpers ──────────────────────────────────────────────
 	
 func _has_line_of_sight() -> bool:
 	if target == null or not is_instance_valid(target):
+		_last_has_los = false
 		return false
+	var to_target := target.global_position - global_position
+	var dist := to_target.length()
+	if dist <= 0.0:
+		_last_has_los = false
+		return false
+	var dir := to_target / dist
+	var perp := dir.rotated(PI / 2.0)
+
+	_last_eye_left_origin = global_position - perp * eye_offset
+	_last_eye_right_origin = global_position + perp * eye_offset
+	_last_eye_left_end = _last_eye_left_origin + dir * dist
+	_last_eye_right_end = _last_eye_right_origin + dir * dist
+
+	var left_clear := _eye_ray_clear(_last_eye_left_origin, _last_eye_left_end)
+	var right_clear := _eye_ray_clear(_last_eye_right_origin, _last_eye_right_end)
+	_last_has_los = left_clear and right_clear
+	return _last_has_los
+
+func _eye_ray_clear(origin: Vector2, end: Vector2) -> bool:
 	var space := get_world_2d().direct_space_state
 	var query := PhysicsRayQueryParameters2D.create(
-		global_position,
-		target.global_position,
-		collision_mask
+		origin,
+		end,
+		1  # Layer 1 (Environment) only — every contestant is transparent
+		   # except walls/obstacles. Both eyes must be clear at once.
 	)
 	query.exclude = [self]
 	var result := space.intersect_ray(query)
-	if result.is_empty():
-		return true
-	return result["collider"] == target
-	
+	return result.is_empty()
+
 func _get_effective_perception_range() -> float:
 	if is_aggressive and target != null:
 		var target_hp_percent := float(target.health.current_hp) / float(target.health.max_hp)
@@ -706,6 +709,24 @@ func _get_effective_perception_range() -> float:
 		elif hp_percent <= LOW_HP_THRESHOLD:
 			return 175.0
 	return perception_range
+	
+func _push_through_crowd(delta: float) -> void:
+	_crowd_push_timer -= delta
+	if _crowd_push_timer > 0.0:
+		return
+	_crowd_push_timer = CROWD_PUSH_INTERVAL
+	for node in get_tree().get_nodes_in_group("contestant"):
+		if node == self or not is_instance_valid(node):
+			continue
+		if node.is_dead:
+			continue
+		var dist := global_position.distance_to(node.global_position)
+		if dist <= CROWD_PUSH_RADIUS and node.has_node("ImpactComponent"):
+			var push_dir: Vector2 = (node.global_position - global_position).normalized()
+			if push_dir == Vector2.ZERO:
+				push_dir = Vector2.RIGHT
+			var their_impact := node.get_node("ImpactComponent") as ImpactComponent
+			their_impact.apply_knockback("low", push_dir)
 
 func _scan_for_weapon() -> Node:
 	if not can_find_weapons or current_weapon != null:
@@ -825,6 +846,43 @@ func _on_animation_finished(anim_name: StringName) -> void:
 		_snap_to_idle()
 		return
 	super._on_animation_finished(anim_name)
+	
+func _handle_combat_actions(weapon: WeaponData, dist: float, has_los: bool, delta: float) -> void:
+	var attack_dist := _get_current_attack_range()
+	if dist <= attack_dist and has_los and not is_tossing:
+		if weapon.weapon_category == "grenade":
+			_handle_grenade_attack(weapon, delta)
+		elif _main_attack_timer <= 0:
+			if target != null and not target.is_dead:
+				if _use_alt_attack and get_active_weapon().alt_attack_animations.size() > 0:
+					if weapon.ai_alt_attack_mode == "HOLD":
+						alt_attack_held = true
+						main_attack_held = false
+						if not _is_attacking():
+							_play_alt_attack()
+					else:
+						alt_attack_held = false
+						main_attack_held = false
+						if not _is_attacking():
+							_play_alt_attack()
+							_main_attack_timer = alt_attack_cooldown
+				else:
+					if weapon.ai_main_attack_mode == "HOLD":
+						main_attack_held = true
+						alt_attack_held = false
+						if not _is_attacking():
+							_play_main_attack()
+					else:
+						main_attack_held = false
+						alt_attack_held = false
+						if not _is_attacking():
+							_play_main_attack()
+							_main_attack_timer = main_attack_cooldown
+	else:
+		main_attack_held = false
+		alt_attack_held = false
+		if weapon.weapon_category == "grenade" and is_throwing_grenade:
+			_cancel_into_idle()
 
 # ── Evasive Dodge ──────────────────────────────────────────────
 # Reactive, threat-based dodging — distinct from is_swift/is_panic's
@@ -868,28 +926,6 @@ func _check_incoming_threat() -> Vector2:
 
 func _reset_dodge_timer() -> void:
 	_dodge_timer = randf_range(dodge_interval_min, dodge_interval_max)
-	
-func _reset_melee_strafe_timer() -> void:
-	_melee_strafe_state = MeleeStrafeState.STRAFING
-	_melee_strafe_direction = 1.0 if randf() > 0.5 else -1.0
-	_melee_strafe_angle = 0.0
-	_melee_strafe_timer = randf_range(melee_strafe_min, melee_strafe_max)
-
-func _tick_melee_strafe(delta: float) -> void:
-	if _melee_strafe_state == MeleeStrafeState.STRAFING:
-		_melee_strafe_angle += delta * MELEE_STRAFE_ANGULAR_SPEED * _melee_strafe_direction
-	_melee_strafe_timer -= delta
-	if _melee_strafe_timer > 0.0:
-		return
-	match _melee_strafe_state:
-		MeleeStrafeState.STRAFING:
-			_melee_strafe_state = MeleeStrafeState.STOPPED
-			_melee_strafe_timer = randf_range(melee_stop_strafe_min, melee_stop_strafe_max)
-		MeleeStrafeState.STOPPED:
-			_melee_strafe_state = MeleeStrafeState.STRAFING
-			_melee_strafe_direction = 1.0 if randf() > 0.5 else -1.0
-			_melee_strafe_angle = 0.0
-			_melee_strafe_timer = randf_range(melee_strafe_min, melee_strafe_max)
 
 # Casts a ray toward the target to find what's blocking line of sight,
 # then strafes toward the side AWAY from that obstruction — a decided

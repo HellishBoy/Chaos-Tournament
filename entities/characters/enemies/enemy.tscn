@@ -73,6 +73,7 @@ radius = 6.0
 collision_layer = 4
 collision_mask = 63
 motion_mode = 1
+slide_on_ceiling = false
 wall_min_slide_angle = 0.0
 script = ExtResource("1_7p1mj")
 collision_layer_index = 3
@@ -195,7 +196,8 @@ shape = SubResource("CircleShape2D_u5q8g")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=449910812]
 path_desired_distance = 5.0
+path_max_distance = 400.0
 avoidance_enabled = true
-debug_enabled = true
+radius = 12.0
 debug_use_custom = true
 debug_path_custom_color = Color(0.8980392, 0, 0.2784314, 1)

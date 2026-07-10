@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cex37gfbw86gu"
-path="res://.godot/imported/melee_1h-metal_pipe.png-fe93d596975a6fd2e208f112ac0c2f11.ctex"
+uid="uid://cy4ng5rnfaaqu"
+path="res://.godot/imported/melee_1h-lollipop.png-be2a160391a16dc6743df567442ccb03.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/melee/melee_1h-metal_pipe.png"
-dest_files=["res://.godot/imported/melee_1h-metal_pipe.png-fe93d596975a6fd2e208f112ac0c2f11.ctex"]
+source_file="res://weapons/melee/One-Handed/melee_1h-lollipop.png"
+dest_files=["res://.godot/imported/melee_1h-lollipop.png-be2a160391a16dc6743df567442ccb03.ctex"]
 
 [params]
 

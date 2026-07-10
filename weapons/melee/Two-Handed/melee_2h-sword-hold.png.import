@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://btr61etwuvw8r"
-path="res://.godot/imported/bullet_proj-copper.png-f1a434ab573d39d79f446f76c188e911.ctex"
+uid="uid://detxf1w06iu1k"
+path="res://.godot/imported/melee_2h-sword-hold.png-8943ca16873c68c1c6ade6b2c76b5479.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/ranged/bullets/bullet_proj-copper.png"
-dest_files=["res://.godot/imported/bullet_proj-copper.png-f1a434ab573d39d79f446f76c188e911.ctex"]
+source_file="res://weapons/melee/Two-Handed/melee_2h-sword-hold.png"
+dest_files=["res://.godot/imported/melee_2h-sword-hold.png-8943ca16873c68c1c6ade6b2c76b5479.ctex"]
 
 [params]
 

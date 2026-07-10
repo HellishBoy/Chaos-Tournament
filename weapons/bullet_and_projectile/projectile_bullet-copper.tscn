@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bja6mpi5lgudj"]
 
-[ext_resource type="Texture2D" uid="uid://btr61etwuvw8r" path="res://weapons/ranged/bullets/bullet_proj-copper.png" id="1_71e3r"]
+[ext_resource type="Texture2D" uid="uid://btr61etwuvw8r" path="res://weapons/bullet_and_projectile/projectile_bullet-copper.png" id="1_71e3r"]
 [ext_resource type="Script" uid="uid://pojtig2a2rhx" path="res://weapons/_core/bullet.gd" id="1_v5tt7"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ltfsc"]

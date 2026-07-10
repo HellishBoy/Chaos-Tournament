@@ -4,7 +4,6 @@
 
 [resource]
 script = ExtResource("1_scv7i")
-weapon_category = "melee"
 idle_animation = "idle_melee_1h"
 walk_animation = "walk_melee_1h"
 main_attack_animations = Array[String](["attack_melee_fists_a", "attack_melee_fists_b"])

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://yvo26t1ogqe1"
-path="res://.godot/imported/melee_1h-sword.png-046811eae87057f9b167bc66e4e0990b.ctex"
+uid="uid://dklh3woy3n640"
+path="res://.godot/imported/melee_2h-sword-ground.png-5ebb41f98a0bd16783ec5a82a2211b35.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/melee/melee_1h-sword.png"
-dest_files=["res://.godot/imported/melee_1h-sword.png-046811eae87057f9b167bc66e4e0990b.ctex"]
+source_file="res://weapons/melee/Two-Handed/melee_2h-sword-ground.png"
+dest_files=["res://.godot/imported/melee_2h-sword-ground.png-5ebb41f98a0bd16783ec5a82a2211b35.ctex"]
 
 [params]
 
