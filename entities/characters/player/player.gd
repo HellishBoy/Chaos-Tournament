@@ -106,6 +106,9 @@ func _input(event: InputEvent) -> void:
 			lock_on_active = false
 			lock_on_target = null
 
+	if event.is_action_pressed("change_target"):
+		_cycle_lock_on_target()
+
 # ── Lock-on ──────────────────────────────────────────────────────
 
 func _on_enemy_entered(body: Node2D) -> void:
@@ -136,6 +139,15 @@ func _get_nearest_enemy() -> Node2D:
 			nearest_dist = dist
 			nearest = enemy
 	return nearest
+	
+func _cycle_lock_on_target() -> void:
+	if not lock_on_active or enemies_in_range.is_empty():
+		return
+	var sorted := enemies_in_range.duplicate()
+	sorted.sort_custom(func(a, b): return global_position.distance_to(a.global_position) < global_position.distance_to(b.global_position))
+	var current_index := sorted.find(lock_on_target)
+	var next_index := (current_index + 1) % sorted.size()
+	lock_on_target = sorted[next_index]
 	
 # ── Physics Process ──────────────────────────────────────────────
 
