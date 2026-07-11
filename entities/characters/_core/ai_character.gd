@@ -61,7 +61,7 @@ class_name AICharacter
 @export var is_sharp: bool = false
 @export var is_alert: bool = false
 @export var evasion_hit_width: float = 24.0
-@export_range(0.0, 1.0) var evasion_chance: float = 1.0
+@export_range(0.0, 1.0) var evasion_chance: float = 0.4
 
 @export_subgroup("Combat Range")
 @export var is_tactical: bool = false

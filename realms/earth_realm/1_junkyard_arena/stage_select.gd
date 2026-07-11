@@ -10,9 +10,7 @@ const STAGES = [
 	{ "label": "Stage 2", "scene": "", "unlocked": false },
 	{ "label": "Stage 3", "scene": "", "unlocked": false },
 	{ "label": "Stage 4", "scene": "", "unlocked": false },
-	{ "label": "Stage 5", "scene": "", "unlocked": false },
-	{ "label": "Stage 6", "scene": "", "unlocked": false },
-	{ "label": "Stage 7", "scene": "", "unlocked": false }
+	{ "label": "Stage 5", "scene": "", "unlocked": false }
 ]
 
 # ── Node References ──────────────────────────────────────────────

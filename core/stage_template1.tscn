@@ -1,6 +1,7 @@
 [gd_scene format=4 uid="uid://cty3cc0uxscqv"]
 
 [ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="1_l55m1"]
+[ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/melee/One-Handed/melee_1h-baseball_bat.tres" id="2_0d30d"]
 [ext_resource type="Resource" uid="uid://dm66igsrqucvk" path="res://weapons/grenade/sticky_bomb/grenade_impact-sticky_bomb.tres" id="2_sb63a"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="3_5ubl4"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="8_pn5wg"]
@@ -103,7 +104,7 @@ y_sort_enabled = true
 
 [node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("1_l55m1")]
 position = Vector2(320, 432)
-current_weapon = ExtResource("2_sb63a")
+current_weapon = ExtResource("2_0d30d")
 health_bar_scene = ExtResource("3_5ubl4")
 
 [node name="Props" type="Node2D" parent="Contestants" unique_id=526174102]

@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dfbvmdyfsg16g" path="res://realms/core_area.png" id="1_2ejke"]
 [ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/ranged/ranged_1h-nail_gun.tres" id="2_2ejke"]
-[ext_resource type="Resource" uid="uid://sfws8qx4os6u" path="res://weapons/projectile/projectile_kunai.tres" id="3_2ejke"]
+[ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/melee/One-Handed/melee_1h-baseball_bat.tres" id="3_2ejke"]
 [ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="3_us766"]
 [ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="4_5ltjn"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="5_ipurl"]
@@ -156,11 +156,14 @@ y_sort_enabled = true
 
 [node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("4_5ltjn")]
 position = Vector2(320, 320)
+rotation = -1.5707964
+lock_on_toggle_mode = true
 current_weapon = ExtResource("3_2ejke")
 health_bar_scene = ExtResource("5_ipurl")
 
 [node name="Enemy1" parent="Contestants" unique_id=390347379 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
 position = Vector2(320, 48)
+rotation = 1.5707964
 is_main_enemy = true
 can_pick_up_weapons = true
 can_toss_weapons = true
@@ -176,7 +179,7 @@ is_picky = true
 is_desperate = true
 is_sharp = true
 is_alert = true
-evasion_chance = 0.2
+evasion_chance = 1.0
 is_tactical = true
 can_combo = true
 sprite_feet_l = ExtResource("7_1xtti")
@@ -185,10 +188,12 @@ sprite_hand_left = ExtResource("7_1xtti")
 sprite_hand_right = ExtResource("7_1xtti")
 sprite_head = ExtResource("7_1xtti")
 sprite_head_down = ExtResource("7_1xtti")
+turn_follow_speed = 0.9
 current_weapon = ExtResource("16_ryemf")
 
 [node name="Enemy2" parent="Contestants" unique_id=613635139 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
 position = Vector2(352, 48)
+rotation = 1.5707964
 can_pick_up_weapons = true
 can_toss_weapons = true
 can_find_weapons = true
@@ -207,6 +212,7 @@ can_combo = true
 
 [node name="Ally" parent="Contestants" unique_id=1428724923 node_paths=PackedStringArray("spawn_point") instance=ExtResource("7_ah1uk")]
 position = Vector2(352, 320)
+rotation = -1.5707964
 can_pick_up_weapons = true
 can_toss_weapons = true
 can_find_weapons = true

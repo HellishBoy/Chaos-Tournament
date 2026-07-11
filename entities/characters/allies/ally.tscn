@@ -75,6 +75,7 @@ collision_mask = 63
 motion_mode = 1
 wall_min_slide_angle = 0.0
 script = ExtResource("1_bhegk")
+initial_facing = 0
 collision_layer_index = 4
 stats = ExtResource("2_axxim")
 fists = ExtResource("3_pkdsc")

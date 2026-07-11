@@ -136,6 +136,7 @@ func _apply_death_state() -> void:
 	is_dead = true
 	
 	current_weapon = null
+	_cancel_grenade_throw()
 	_update_weapon_visuals()
 	status_effect_component.clear_all()
 
@@ -198,6 +199,7 @@ func _do_toss() -> void:
 		return
 	var data := current_weapon
 	current_weapon = null
+	_cancel_grenade_throw()
 	_update_weapon_visuals()
 	if weapon_pickup_scene == null:
 		push_warning(name + ": weapon_pickup_scene not assigned in Inspector.")
@@ -303,6 +305,8 @@ func _on_grenade_release_frame() -> void:
 	_grenade_weapon = null
 
 func _spawn_grenade(weapon: WeaponData, throw_speed: float) -> void:
+	if weapon == fists:
+		return
 	if weapon.grenade_scene == null:
 		push_warning(name + ": grenade_scene not assigned on weapon " + weapon.weapon_name)
 		return
@@ -622,8 +626,6 @@ func try_dodge(direction: Vector2) -> void:
 	if status_effect_component.has_effect("anchored") or status_effect_component.has_effect("petrified"):
 		return
 	dodge_direction = direction if direction.length() > 0 else last_direction
-	#last_direction = dodge_direction # new
-	#rotation = dodge_direction.angle() # new
 	is_dodging = true
 	dodge_traveled = 0.0
 	cooldown_timer = stats.dodge_cooldown
@@ -631,8 +633,28 @@ func try_dodge(direction: Vector2) -> void:
 	set_invincible(true)
 	is_tossing = false
 	_cancel_into_idle()
+	anim_upper.speed_scale = _get_dodge_anim_speed_scale()
 	anim_upper.play("uni_dodge")
 	anim_lower.stop()
+
+# Scales the dodge animation's playback speed so its full length always
+# matches the actual physics duration of the dodge (dodge_distance /
+# dodge_speed) — no matter what those two stats are tuned to. This
+# guarantees every keyframe (including a mid-animation property change,
+# like an alpha dip) always plays out completely, instead of getting cut
+# off early if distance/speed ever drift from what the clip was
+# originally authored against.
+func _get_dodge_anim_speed_scale() -> float:
+	var physics_duration: float = stats.dodge_distance / stats.dodge_speed
+	if physics_duration <= 0.0:
+		return 1.0
+	var anim: Animation = anim_upper.get_animation("uni_dodge")
+	if anim == null:
+		return 1.0
+	var anim_duration: float = anim.length
+	if anim_duration <= 0.0:
+		return 1.0
+	return anim_duration / physics_duration
 
 func _tick_dodge(delta: float) -> void:
 	if is_dodging:

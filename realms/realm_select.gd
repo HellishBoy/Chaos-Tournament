@@ -7,9 +7,10 @@ extends Control
 
 const REALMS = [
 	{ "label": "Earth Realm", "scene": "res://realms/earth_realm/arena_select.tscn", "unlocked": true },
-	{ "label": "???", "scene": "", "unlocked": false },
-	{ "label": "???", "scene": "", "unlocked": false },
-	{ "label": "???", "scene": "", "unlocked": false },
+	{ "label": "Celestial Realm", "scene": "", "unlocked": false },
+	{ "label": "Magic Realm", "scene": "", "unlocked": false },
+	{ "label": "Divine Realm", "scene": "", "unlocked": false },
+	{ "label": "Chaos Realm", "scene": "", "unlocked": false },
 ]
 
 # ── Node References ──────────────────────────────────────────────

@@ -8,7 +8,7 @@ class_name Player
 
 @export var lock_on_toggle_mode: bool = false
 @export var lock_on_range: float = 120.0
-@export var lock_on_follow_speed: float = 0.15  # 0-1 per-frame lerp; 1.0 = instant snap
+@export var lock_on_follow_speed: float = 0.2  # 0-1 per-frame lerp; 1.0 = instant snap
 
 @export_group("Debug")
 @export var show_lock_on_debug: bool = false

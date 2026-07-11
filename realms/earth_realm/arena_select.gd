@@ -6,16 +6,16 @@ extends Control
 # ── Arena Data ───────────────────────────────────────────────────
 
 const ARENAS = [
-	{ "label": "Junkyard Arena", "scene": "res://realms/earth_realm/1_junkyard_arena/stage_select.tscn", "stage_select": "res://realms/earth_realm/1_junkyard_arena/stage_select.tscn", "unlocked": true },
-	{ "label": "City Arena", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Military Arena", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Forest Arena", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Sea Arena", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Desert Arena", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "??? Arena", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Arctic Arena", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Cave Arena", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Volcanic Arena", "scene": "", "stage_select": "", "unlocked": false },
+	{ "label": "Junkyard", "scene": "res://realms/earth_realm/1_junkyard_arena/stage_select.tscn", "stage_select": "res://realms/earth_realm/1_junkyard_arena/stage_select.tscn", "unlocked": true },
+	{ "label": "City", "scene": "", "stage_select": "", "unlocked": false },
+	{ "label": "Military", "scene": "", "stage_select": "", "unlocked": false },
+	{ "label": "Forest", "scene": "", "stage_select": "", "unlocked": false },
+	{ "label": "Sea", "scene": "", "stage_select": "", "unlocked": false },
+	{ "label": "Desert", "scene": "", "stage_select": "", "unlocked": false },
+	{ "label": "Arctic", "scene": "", "stage_select": "", "unlocked": false },
+	{ "label": "Secret Base", "scene": "", "stage_select": "", "unlocked": false },
+	{ "label": "Cave", "scene": "", "stage_select": "", "unlocked": false },
+	{ "label": "Volcanic", "scene": "", "stage_select": "", "unlocked": false },
 ]
 
 # ── Node References ──────────────────────────────────────────────
