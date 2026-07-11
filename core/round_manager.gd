@@ -17,6 +17,7 @@ enum WinCondition {
 @export var win_condition: WinCondition = WinCondition.ELIMINATION
 @export var player_lives: int = 3
 @export var respawn_delay: float = 2.0
+@export var post_respawn_immortality: float = 0.8
 
 @export_group("Spawn Points")
 @export var player_spawn: Marker2D
@@ -153,17 +154,24 @@ func _check_win_condition() -> void:
 # ── Respawn ───────────────────────────────────────────────────────
 
 func _respawn_later(character: Node, spawn: Marker2D) -> void:
-	await get_tree().create_timer(respawn_delay * 0.98).timeout
+	# Stay as a visible black corpse at the death spot for a moment...
+	await get_tree().create_timer(respawn_delay * 0.75).timeout
 	if not is_instance_valid(character):
 		return
-	# Move dead body to spawn after some delay
+	# ...then vanish entirely while "traveling" to the spawn point...
+	character.visible = false
+	await get_tree().create_timer(respawn_delay * 0.20).timeout
+	if not is_instance_valid(character):
+		return
 	character.global_position = spawn.global_position
-	await get_tree().create_timer(respawn_delay * 0.02).timeout
+	# ...then a short beat before popping back into existence, fully alive.
+	await get_tree().create_timer(respawn_delay * 0.05).timeout
 	if not is_instance_valid(character):
 		return
 	_respawn(character, spawn)
 
 func _respawn(character: Node, spawn: Marker2D) -> void:
+	character.visible = true
 	character.global_position = spawn.global_position
 
 	if character is AICharacter:
@@ -205,6 +213,14 @@ func _respawn(character: Node, spawn: Marker2D) -> void:
 
 	if character is AICharacter:
 		character._acquire_target()
+		
+	character.health.immortal = true
+	_end_immortality_later(character)
+
+func _end_immortality_later(character: Node) -> void:
+	await get_tree().create_timer(post_respawn_immortality).timeout
+	if is_instance_valid(character):
+		character.health.immortal = false
 
 # ── Win / Lose ────────────────────────────────────────────────────
 

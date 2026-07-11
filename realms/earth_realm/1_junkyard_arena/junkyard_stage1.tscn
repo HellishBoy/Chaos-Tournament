@@ -136,7 +136,8 @@ metadata/_custom_type_script = "uid://dwlwg725t31ip"
 [sub_resource type="Resource" id="Resource_jqoj8"]
 script = ExtResource("17_1dd6p")
 drop_interval = 4.0
-max_drops_per_interval = 3
+min_drops_per_interval = 3
+max_drops_per_interval = 6
 entries = Array[ExtResource("17_ipurl")]([SubResource("Resource_2ju0k"), SubResource("Resource_2ejke"), SubResource("Resource_1xtti"), SubResource("Resource_3vboy"), SubResource("Resource_r4kar")])
 metadata/_custom_type_script = "uid://co24hvnc6y0dt"
 
@@ -175,6 +176,7 @@ is_picky = true
 is_desperate = true
 is_sharp = true
 is_alert = true
+evasion_chance = 0.2
 is_tactical = true
 can_combo = true
 sprite_feet_l = ExtResource("7_1xtti")
@@ -200,7 +202,6 @@ is_picky = true
 is_desperate = true
 is_swift = true
 is_panic = true
-is_alert = true
 is_tactical = true
 can_combo = true
 
@@ -210,6 +211,7 @@ can_pick_up_weapons = true
 can_toss_weapons = true
 can_find_weapons = true
 can_dodge = true
+lives = 4
 spawn_point = NodePath("../../SpawnPoints/AllySpawn1")
 is_careful = true
 is_healthy = true

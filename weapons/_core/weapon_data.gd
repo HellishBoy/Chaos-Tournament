@@ -102,10 +102,12 @@ func get_weight_multiplier() -> float:
 @export var linger_scan_interval: float = 0.5   # how often it re-applies DOT to anyone standing inside
 
 @export_subgroup("Ammo")
-# For bullets
-@export var ammo: int = -1      # -1 = not applicable
-# For grenades and projectiles (throwing knives, shurikens)
-@export var quantity: int = -1  # -1 = not applicable
+@export_enum("Ammo", "Quantity") var amount_label: String = "Ammo"
+# Shared consumable count for ranged, grenade, and projectile weapons —
+# "Ammo" for guns, "Quantity" for grenades/thrown weapons (e.g. a kunai
+# built on the same ranged/bullet system). amount_label only changes
+# the HUD wording; the underlying gameplay logic is identical either way.
+@export var amount: int = -1  # -1 = not applicable
 
 @export_subgroup("Targeting")
 @export var requires_line_of_sight: bool = false

@@ -61,9 +61,13 @@ class_name AICharacter
 @export var is_sharp: bool = false
 @export var is_alert: bool = false
 @export var evasion_hit_width: float = 24.0
+@export_range(0.0, 1.0) var evasion_chance: float = 1.0
 
 @export_subgroup("Combat Range")
 @export var is_tactical: bool = false
+
+@export_subgroup("Tracking")
+@export var target_follow_speed: float = 0.15  # 0-1 per-frame lerp; 1.0 = instant snap
 
 @export_group("Attack")
 @export var main_attack_cooldown: float = 0.6
@@ -100,16 +104,6 @@ var _use_alt_attack: bool = false
 var _dodge_timer: float = 0.0
 var _pending_dodges: int = 0
 
-#enum MeleeStrafeState { STRAFING, STOPPED }
-#var _melee_strafe_state: MeleeStrafeState = MeleeStrafeState.STRAFING
-#var _melee_strafe_timer: float = 0.0
-#var _melee_strafe_direction: float = 1.0
-#var _melee_strafe_angle: float = 0.0
-#const MELEE_STRAFE_ANGULAR_SPEED: float = 1.5  # radians/sec while circling
-
-#var _seeking_los: bool = false
-#var _los_seek_direction: float = 1.0
-
 var _weapon_target: Node = null  # the pickup node being sought
 
 var _seeking_better_weapon: bool = false
@@ -141,6 +135,8 @@ const CROWD_PUSH_INTERVAL: float = 0.4
 
 var _perception_scan_timer: float = 0.0
 var _crowd_push_timer: float = 0.0
+
+var _last_threat_direction: Vector2 = Vector2.ZERO
 
 # ── State ────────────────────────────────────────────────────────
 
@@ -440,7 +436,13 @@ func _physics_process(delta: float) -> void:
 	if evasive_active and can_dodge and not is_dodging and cooldown_timer <= 0 and _stamina >= stats.stamina_per_dodge:
 		var threat_direction := _check_incoming_threat()
 		if threat_direction != Vector2.ZERO:
-			try_dodge(threat_direction)
+			if _last_threat_direction == Vector2.ZERO and randf() <= evasion_chance:
+				try_dodge(threat_direction)
+			_last_threat_direction = threat_direction
+		else:
+			_last_threat_direction = Vector2.ZERO
+	else:
+		_last_threat_direction = Vector2.ZERO
 	
 	var should_dodge := (is_swift and hp_percent > LOW_HP_THRESHOLD) or (is_panic and hp_percent <= LOW_HP_THRESHOLD)
 	
@@ -503,7 +505,7 @@ func _physics_process(delta: float) -> void:
 					var next_pos := nav_agent.get_next_path_position()
 					var dir := (next_pos - global_position).normalized()
 					last_direction = dir
-					rotation = dir.angle()
+					rotation = lerp_angle(rotation, dir.angle(), turn_follow_speed)
 					_apply_movement(dir * stats.move_speed * combined_mult)
 					if not _is_attacking():
 						var walk := get_active_weapon().walk_animation
@@ -529,7 +531,7 @@ func _physics_process(delta: float) -> void:
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
-				rotation = dir.angle()
+				rotation = lerp_angle(rotation, dir.angle(), turn_follow_speed)
 				_apply_movement(dir * stats.move_speed * combined_mult)
 				if not _is_attacking():
 					var walk := get_active_weapon().walk_animation
@@ -551,7 +553,7 @@ func _physics_process(delta: float) -> void:
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
-				rotation = dir.angle()
+				rotation = lerp_angle(rotation, dir.angle(), turn_follow_speed)
 				_apply_movement(dir * stats.move_speed * combined_mult)
 				_push_through_crowd(delta)
 				if not _is_attacking():
@@ -584,12 +586,12 @@ func _physics_process(delta: float) -> void:
 					var next_pos := nav_agent.get_next_path_position()
 					var dir := (next_pos - global_position).normalized()
 					last_direction = (target.global_position - global_position).normalized()
-					rotation = last_direction.angle()
+					rotation = lerp_angle(rotation, last_direction.angle(), target_follow_speed)
 					_apply_movement(dir * stats.move_speed * combined_mult)
 				else:
 					var dir := (target.global_position - global_position).normalized()
 					last_direction = dir
-					rotation = dir.angle()
+					rotation = lerp_angle(rotation, dir.angle(), target_follow_speed)
 					_apply_movement(Vector2.ZERO)
 			elif dist > attack_dist or (weapon.requires_line_of_sight and not has_los):
 				# ── Chase — simple, direct pathfinding straight to the
@@ -598,13 +600,13 @@ func _physics_process(delta: float) -> void:
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
 				last_direction = dir
-				rotation = dir.angle()
+				rotation = lerp_angle(rotation, dir.angle(), target_follow_speed)
 				_apply_movement(dir * stats.move_speed * combined_mult)
 			else:
 				# ── In range — face target and stop ──────────────────
 				var dir := (target.global_position - global_position).normalized()
 				last_direction = dir
-				rotation = dir.angle()
+				rotation = lerp_angle(rotation, dir.angle(), target_follow_speed)
 				_apply_movement(Vector2.ZERO)
 
 			if not _is_attacking() and not is_tossing:

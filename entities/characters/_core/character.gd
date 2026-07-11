@@ -7,6 +7,9 @@ class_name Character
 # ── Exports ──────────────────────────────────────────────────────
 
 @export var collision_layer_index: int = 0
+@export var turn_follow_speed: float = 0.2
+# 0-1 per-frame lerp; 1.0 = instant snap. General movement-facing speed
+# separate from combat lock-on tracking (lock_on_follow_speed on Player, target_follow_speed on AICharacter).
 
 @export var stats: CharacterStats
 @export var current_weapon: WeaponData
@@ -73,6 +76,8 @@ var _grenade_stance_reached: bool = false
 var _grenade_thrown: bool = false
 var _grenade_throw_speed: float = 0.0
 var _grenade_weapon: WeaponData = null
+
+var _swing_has_hit: bool = false
 
 # ── Ready ────────────────────────────────────────────────────────
 
@@ -307,13 +312,13 @@ func _spawn_grenade(weapon: WeaponData, throw_speed: float) -> void:
 	get_parent().add_child(grenade)
 	grenade.setup(weapon, self, direction, throw_speed)
 
-	if weapon.quantity > 0:
-		weapon.quantity -= 1
+	if weapon.amount > 0:
+		weapon.amount -= 1
 		var hud := get_tree().get_first_node_in_group("hud") as HUD
 		if hud:
 			hud.refresh()
-		if weapon.quantity == 0:
-			break_weapon()
+		if weapon.amount == 0:
+			break_weapon(weapon)
 
 # ── Weapon Visuals ───────────────────────────────────────────────
 
@@ -525,6 +530,7 @@ func _play_main_attack() -> void:
 	is_main_attacking = true
 	is_alt_attacking = false
 	main_combo_timer = 0.0
+	_swing_has_hit = false
 	anim_upper.speed_scale = get_active_weapon().main_attack_speed * stats.attack_speed_multiplier
 	_setup_hitboxes_main()
 	_apply_recoil(get_active_weapon().get_main_recoil_tier())
@@ -541,6 +547,7 @@ func _play_alt_attack() -> void:
 	is_alt_attacking = true
 	is_main_attacking = false
 	alt_combo_timer = 0.0
+	_swing_has_hit = false
 	anim_upper.speed_scale = get_active_weapon().alt_attack_speed * stats.attack_speed_multiplier
 	_setup_hitboxes_alt()
 	_apply_recoil(get_active_weapon().get_alt_recoil_tier())
@@ -692,13 +699,13 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 	else:
 		_fire_bullet_from_muzzle(weapon, muzzle)
 
-	# Decrement ammo — shared between bullet and grenade-firing ranged weapons
-	if weapon.ammo > 0:
-		weapon.ammo -= 1
+# Decrement ammo — shared between bullet and grenade-firing ranged weapons
+	if weapon.amount > 0:
+		weapon.amount -= 1
 		var hud := get_tree().get_first_node_in_group("hud") as HUD
 		if hud:
 			hud.refresh()
-		if weapon.ammo == 0:
+		if weapon.amount == 0:
 			break_weapon()
 
 func _fire_bullet_from_muzzle(weapon: WeaponData, muzzle: Marker2D) -> void:
@@ -736,7 +743,11 @@ func _fire_grenade_from_muzzle(weapon: WeaponData, muzzle: Marker2D) -> void:
 
 # ── Weapon break ──────────────────────────────────────────────────────
 
-func break_weapon() -> void:
+func break_weapon(weapon: WeaponData = null) -> void:
+	if weapon == null:
+		weapon = current_weapon
+	if weapon == null or weapon != current_weapon:
+		return  # already swapped/dropped this weapon — nothing to break
 	var broken_data := current_weapon
 	current_weapon = null
 	_update_weapon_visuals()
@@ -752,7 +763,6 @@ func break_weapon() -> void:
 	var hud := get_tree().get_first_node_in_group("hud") as HUD
 	if hud:
 		hud.refresh()
-	# Notify drop manager that this weapon is gone
 	var manager := get_tree().get_first_node_in_group("weapon_drop_manager") as WeaponDropManager
 	if manager:
 		manager.register_weapon_broken(broken_data)

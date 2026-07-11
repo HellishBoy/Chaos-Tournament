@@ -8,9 +8,14 @@ class_name Player
 
 @export var lock_on_toggle_mode: bool = false
 @export var lock_on_range: float = 120.0
+@export var lock_on_follow_speed: float = 0.15  # 0-1 per-frame lerp; 1.0 = instant snap
 
 @export_group("Debug")
 @export var show_lock_on_debug: bool = false
+
+@export_group("Crosshair")
+@export var crosshair_gap: float = 16.0
+@export var crosshair_arm_length: float = 5.0
 
 # ── Node References ──────────────────────────────────────────────
 
@@ -140,6 +145,18 @@ func _get_nearest_enemy() -> Node2D:
 			nearest = enemy
 	return nearest
 	
+# Draws a small white "+" with a gap at the center, on the locked-on
+# target. Counter-rotated by -rotation so it stays upright on screen
+# regardless of the player's current facing (since _draw() otherwise
+# renders in this node's own rotated local space).
+func _draw_crosshair(local_pos: Vector2) -> void:
+	var right := Vector2.RIGHT.rotated(-rotation)
+	var up := Vector2.UP.rotated(-rotation)
+	draw_line(local_pos + right * crosshair_gap, local_pos + right * (crosshair_gap + crosshair_arm_length), Color.WHITE, 1.5)
+	draw_line(local_pos - right * crosshair_gap, local_pos - right * (crosshair_gap + crosshair_arm_length), Color.WHITE, 1.5)
+	draw_line(local_pos + up * crosshair_gap, local_pos + up * (crosshair_gap + crosshair_arm_length), Color.WHITE, 1.5)
+	draw_line(local_pos - up * crosshair_gap, local_pos - up * (crosshair_gap + crosshair_arm_length), Color.WHITE, 1.5)
+	
 func _cycle_lock_on_target() -> void:
 	if not lock_on_active or enemies_in_range.is_empty():
 		return
@@ -257,22 +274,24 @@ func _process(_delta: float) -> void:
 
 	# ── Facing ───────────────────────────────────────────────────
 	if lock_on_target:
-		look_at(lock_on_target.global_position)
+		var target_angle := (lock_on_target.global_position - global_position).angle()
+		rotation = lerp_angle(rotation, target_angle, lock_on_follow_speed)
 	elif using_controller:
 		var stick := Vector2(
 			Input.get_action_strength("look_right") - Input.get_action_strength("look_left"),
 			Input.get_action_strength("look_down") - Input.get_action_strength("look_up")
 		)
 		if stick.length() > 0.05:
-			rotation = stick.angle()
+			rotation = lerp_angle(rotation, stick.angle(), turn_follow_speed)
 			last_direction = stick
 		else:
-			rotation = last_direction.angle()
+			rotation = lerp_angle(rotation, last_direction.angle(), turn_follow_speed)
 	else:
 		if camera.aim_active:
-			look_at(get_global_mouse_position())
+			var target_angle := (get_global_mouse_position() - global_position).angle()
+			rotation = lerp_angle(rotation, target_angle, turn_follow_speed)
 		else:
-			rotation = last_direction.angle()
+			rotation = lerp_angle(rotation, last_direction.angle(), turn_follow_speed)
 
 	# Body rotates independently during dodge
 	$Body.rotation = dodge_direction.angle() - rotation if is_dodging else 0.0
@@ -307,6 +326,8 @@ func _draw() -> void:
 			percent = clamp(grenade_charge_time / weapon.main_charge_time, 0.0, 1.0)
 		var length := 48.0 * percent
 		draw_line(Vector2.ZERO, Vector2.RIGHT * length, Color.WHITE, 2.0)
+	if lock_on_target and is_instance_valid(lock_on_target):
+		_draw_crosshair(to_local(lock_on_target.global_position))
 		
 func check_if_cornered() -> bool:
 	var wall_count = 0

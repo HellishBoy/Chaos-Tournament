@@ -178,6 +178,8 @@ func _on_weapon_removed(pickup: Node, entry: WeaponDropEntry) -> void:
 	_active_counts[entry] = max(_active_counts.get(entry, 0) - 1, 0)
 	
 func register_weapon_broken(weapon_data: WeaponData) -> void:
+	if weapon_data == null:
+		return
 	# Call this from character.gd's break_weapon() for manager-tracked weapons
 	# Find which entry this weapon belongs to
 	for entry in config.entries:

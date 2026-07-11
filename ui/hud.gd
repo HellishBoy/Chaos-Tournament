@@ -181,19 +181,18 @@ func refresh() -> void:
 		durability_bar.show_percentage = false
 		durability_label.text = "%d / %d" % [weapon.durability_current, max_dur]
 
-	# Ammo
-	if weapon.ammo == -1:
+	# Amount (ammo or quantity, depending on the weapon's display label)
+	if weapon.amount == -1:
 		ammo_label.visible = false
-	else:
-		ammo_label.visible = true
-		ammo_label.text = "Ammo: %d" % weapon.ammo
-
-	# Quantity
-	if weapon.quantity == -1:
 		quantity_label.visible = false
-	else:
+	elif weapon.amount_label == "Quantity":
+		ammo_label.visible = false
 		quantity_label.visible = true
-		quantity_label.text = "x%d" % weapon.quantity
+		quantity_label.text = "x%d" % weapon.amount
+	else:
+		quantity_label.visible = false
+		ammo_label.visible = true
+		ammo_label.text = "Ammo: %d" % weapon.amount
 
 func _get_durability_max(tier: String) -> int:
 	match tier:

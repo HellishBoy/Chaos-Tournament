@@ -66,7 +66,8 @@ func _on_area_entered(area: Area2D) -> void:
 		{ "tag": slow_tag, "duration": slow_duration, "percent": slow_percent, "chance": slow_chance }
 	)
 
-	if attacker != null and attacker is Character:
+	if attacker != null and attacker is Character and not attacker._swing_has_hit:
+		attacker._swing_has_hit = true
 		var weapon: WeaponData = attacker.get_active_weapon()
 		if weapon.durability_current > 0:
 			weapon.durability_current -= 1
