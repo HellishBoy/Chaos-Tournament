@@ -195,6 +195,7 @@ func _ready() -> void:
 	await get_tree().physics_frame
 	
 	_acquire_target()
+	_check_hated_weapon()
 	_reset_dodge_timer()
 	_reset_combo_switch_timer()
 
@@ -286,6 +287,7 @@ func try_pickup(pickup_node: Node) -> void:
 				_weapon_target = null
 				_use_alt_attack = false
 				_reset_combo_switch_timer()
+				_check_hated_weapon()
 				return
 	super.try_pickup(pickup_node)
 	_perception_scan_timer = 0.0
@@ -293,6 +295,7 @@ func try_pickup(pickup_node: Node) -> void:
 	_weapon_target = null
 	_use_alt_attack = false
 	_reset_combo_switch_timer()
+	_check_hated_weapon()
 
 func _on_target_entered(body: Node2D) -> void:
 	if _is_valid_target(body):
@@ -733,6 +736,16 @@ func _get_weapon_preference(weapon_data: WeaponData) -> String:
 		"grenade":
 			return grenade_preference
 	return "None"
+	
+# Immediately tosses the current weapon if its category is Hated —
+# covers a weapon pre-assigned in the Inspector at round start, and
+# any pickup that slips past the normal preference filter (e.g. an AI
+# walking near a hated weapon on the ground triggers WeaponPickup's
+# passive proximity pickup regardless of what it was actually seeking).
+# Deferred since this can run mid-pickup, inside a physics callback.
+func _check_hated_weapon() -> void:
+	if current_weapon != null and _get_weapon_preference(current_weapon) == "Hate":
+		call_deferred("_do_toss")
 	
 func _push_through_crowd(delta: float) -> void:
 	_crowd_push_timer -= delta
