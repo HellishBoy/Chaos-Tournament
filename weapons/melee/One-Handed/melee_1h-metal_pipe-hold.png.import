@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bqvv24tsdllxr"
-path="res://.godot/imported/melee_1h-baseball_bat.png-62095b0626d72444395b26cadff480ab.ctex"
+uid="uid://digdxona34a27"
+path="res://.godot/imported/melee_1h-metal_pipe-hold.png-ec108d28aeccb06b1050223882f57042.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/melee/One-Handed/melee_1h-baseball_bat.png"
-dest_files=["res://.godot/imported/melee_1h-baseball_bat.png-62095b0626d72444395b26cadff480ab.ctex"]
+source_file="res://weapons/melee/One-Handed/melee_1h-metal_pipe-hold.png"
+dest_files=["res://.godot/imported/melee_1h-metal_pipe-hold.png-ec108d28aeccb06b1050223882f57042.ctex"]
 
 [params]
 

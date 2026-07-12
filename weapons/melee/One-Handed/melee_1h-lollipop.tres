@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://dswjgam7nc8og"]
 
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="1_ugt80"]
-[ext_resource type="Texture2D" uid="uid://cy4ng5rnfaaqu" path="res://weapons/melee/One-Handed/melee_1h-lollipop.png" id="2_pfj7o"]
+[ext_resource type="Texture2D" uid="uid://byyhj1ox1m6at" path="res://weapons/melee/One-Handed/melee_1h-lollipop-hold.png" id="2_thbn4"]
 
 [resource]
 script = ExtResource("1_ugt80")
@@ -9,8 +9,9 @@ weapon_name = "Lollipop"
 weapon_category = "melee"
 idle_animation = "idle_melee_1h"
 walk_animation = "walk_melee_1h"
-main_attack_animations = Array[String](["attack_melee_1h_cleave_a", "attack_melee_1h_cleave_b"])
-alt_attack_animations = Array[String](["attack_melee_1h_thrust"])
+main_attack_animations = Array[String](["attack_melee_1h_cleave-a", "attack_melee_1h_cleave-b"])
+alt_attack_animations = Array[String](["attack_melee_1h_thrust-1"])
+despawn_timer = -1.0
 durability = "low"
 main_knockback = "low"
 alt_knockback = "low"
@@ -18,5 +19,5 @@ has_combo = true
 can_knockback = true
 can_disarm = true
 disarm_duration = 3.0
-weapon_sprite_right = ExtResource("2_pfj7o")
+weapon_sprite_right = ExtResource("2_thbn4")
 metadata/_custom_type_script = "uid://4s4a7sc7snjl"

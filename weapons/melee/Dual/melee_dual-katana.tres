@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="WeaponData" format=3 uid="uid://sr834egl1yaw"]
+
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="1_6vnmr"]
+[ext_resource type="Texture2D" uid="uid://b2mm1bpk76t11" path="res://weapons/melee/Dual/melee_dual-dual_katana-ground.png" id="2_neni3"]
+[ext_resource type="Texture2D" uid="uid://c30wtcndjh104" path="res://weapons/melee/Dual/melee_dual-dual_katana-hold.png" id="3_xmncn"]
+
+[resource]
+script = ExtResource("1_6vnmr")
+weapon_name = "Baseball Bat"
+weapon_category = "melee"
+idle_animation = "idle_melee_dual-1"
+walk_animation = "walk_melee_dual-1"
+main_attack_animations = Array[String](["attack_melee_1h_cleave-a", "attack_melee_1h_cleave-b"])
+alt_attack_animations = Array[String](["attack_melee_1h_sweep-1"])
+despawn_timer = -1.0
+durability = "medium"
+alt_attack_speed = 0.5
+main_knockback = "low"
+alt_knockback = "high"
+has_combo = true
+can_knockback = true
+movement_penalty = 0.7
+weapon_sprite_ground = ExtResource("2_neni3")
+weapon_sprite_left = ExtResource("3_xmncn")
+weapon_sprite_right = ExtResource("3_xmncn")
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"

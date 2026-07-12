@@ -8,58 +8,16 @@
 [ext_resource type="Texture2D" uid="uid://dnb4awwk4lptf" path="res://entities/characters/_core/skins/default_skin/skin-enemy_default.png" id="6_jwbx2"]
 [ext_resource type="Script" uid="uid://dt84g0ubdrtye" path="res://core/combat/hitbox.gd" id="6_s1ycm"]
 [ext_resource type="AnimationLibrary" uid="uid://dj7tuc120561t" path="res://entities/characters/_core/animations/.tres" id="7_8qclf"]
-[ext_resource type="Texture2D" uid="uid://djew2yyvks34y" path="res://entities/characters/_core/skins/dodge_windfx.png" id="7_shcg2"]
 [ext_resource type="AnimationLibrary" uid="uid://c5nbhs05ohaok" path="res://entities/characters/_core/animations/.res" id="8_8qclf"]
 [ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="10_2pwtc"]
 [ext_resource type="Script" uid="uid://emy3cu5poau2" path="res://core/combat/impact_component.gd" id="12_u5q8g"]
 [ext_resource type="Script" uid="uid://di3sej0r6kjqg" path="res://core/combat/status_effect_component.gd" id="13_jwbx2"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_smehm"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_jwbx2"]
+size = Vector2(8, 8)
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ur7pv"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fjrip"]
-atlas = ExtResource("7_shcg2")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_smehm"]
-atlas = ExtResource("7_shcg2")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ur7pv"]
-atlas = ExtResource("7_shcg2")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_y4r1p"]
-atlas = ExtResource("7_shcg2")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_d2wvv"]
-atlas = ExtResource("7_shcg2")
-region = Rect2(128, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_31cv2"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fjrip")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_smehm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ur7pv")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_y4r1p")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_d2wvv")
-}],
-"loop": true,
-"name": &"dodge_wind",
-"speed": 5.0
-}]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u5q8g"]
+size = Vector2(8, 8)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qhqgy"]
 radius = 6.0
@@ -97,6 +55,7 @@ region_enabled = true
 region_rect = Rect2(17, 49, 14, 14)
 
 [node name="Hands" type="Node2D" parent="Body" unique_id=141924751]
+show_behind_parent = true
 
 [node name="HandLeft" type="Sprite2D" parent="Body/Hands" unique_id=1876246524]
 position = Vector2(1, -6)
@@ -110,7 +69,7 @@ position = Vector2(7, 0)
 flip_v = true
 region_rect = Rect2(76, 222, 80, 7)
 
-[node name="Muzzle_L" type="Marker2D" parent="Body/Hands/HandLeft" unique_id=1324439912]
+[node name="MuzzleLeft" type="Marker2D" parent="Body/Hands/HandLeft" unique_id=1324439912]
 show_behind_parent = true
 position = Vector2(-1, 3)
 
@@ -120,7 +79,7 @@ collision_mask = 64
 script = ExtResource("6_s1ycm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body/Hands/HandLeft/HitboxLeft" unique_id=917595213]
-shape = SubResource("CapsuleShape2D_smehm")
+shape = SubResource("RectangleShape2D_jwbx2")
 disabled = true
 
 [node name="HandRight" type="Sprite2D" parent="Body/Hands" unique_id=1958873911]
@@ -133,7 +92,7 @@ region_rect = Rect2(1, 49, 14, 14)
 show_behind_parent = true
 position = Vector2(7, 0)
 
-[node name="Muzzle_R" type="Marker2D" parent="Body/Hands/HandRight" unique_id=499555375]
+[node name="MuzzleRight" type="Marker2D" parent="Body/Hands/HandRight" unique_id=499555375]
 show_behind_parent = true
 position = Vector2(-1, -3)
 
@@ -143,7 +102,7 @@ collision_mask = 64
 script = ExtResource("6_s1ycm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Body/Hands/HandRight/HitboxRight" unique_id=493798252]
-shape = SubResource("CapsuleShape2D_ur7pv")
+shape = SubResource("RectangleShape2D_u5q8g")
 disabled = true
 
 [node name="Head" type="Sprite2D" parent="Body" unique_id=1272286143]
@@ -156,10 +115,6 @@ visible = false
 texture = ExtResource("6_jwbx2")
 region_enabled = true
 region_rect = Rect2(33, 1, 30, 30)
-
-[node name="WindTrail" type="AnimatedSprite2D" parent="Body" unique_id=1618101110]
-sprite_frames = SubResource("SpriteFrames_31cv2")
-animation = &"dodge_wind"
 
 [node name="AnimationPlayerUpper" type="AnimationPlayer" parent="." unique_id=485231814]
 libraries/ = ExtResource("8_8qclf")

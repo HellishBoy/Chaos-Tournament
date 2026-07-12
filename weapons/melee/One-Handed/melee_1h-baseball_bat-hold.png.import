@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cy4ng5rnfaaqu"
-path="res://.godot/imported/melee_1h-lollipop.png-be2a160391a16dc6743df567442ccb03.ctex"
+uid="uid://gu3igjyf4oc1"
+path="res://.godot/imported/melee_1h-baseball_bat-hold.png-4df6af6db97e7480fa9941667b69d650.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://weapons/melee/One-Handed/melee_1h-lollipop.png"
-dest_files=["res://.godot/imported/melee_1h-lollipop.png-be2a160391a16dc6743df567442ccb03.ctex"]
+source_file="res://weapons/melee/One-Handed/melee_1h-baseball_bat-hold.png"
+dest_files=["res://.godot/imported/melee_1h-baseball_bat-hold.png-4df6af6db97e7480fa9941667b69d650.ctex"]
 
 [params]
 

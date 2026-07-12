@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dfbvmdyfsg16g" path="res://realms/core_area.png" id="1_2ejke"]
 [ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/ranged/ranged_1h-nail_gun.tres" id="2_2ejke"]
-[ext_resource type="Resource" uid="uid://bfxvybi132jdd" path="res://weapons/melee/One-Handed/melee_1h-baseball_bat.tres" id="3_2ejke"]
+[ext_resource type="Resource" uid="uid://sr834egl1yaw" path="res://weapons/melee/Dual/melee_dual-katana.tres" id="3_2ejke"]
 [ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="3_us766"]
 [ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="4_5ltjn"]
 [ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="5_ipurl"]

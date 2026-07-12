@@ -33,8 +33,8 @@ class_name Character
 @onready var weapon_right: Sprite2D = $Body/Hands/HandRight/WeaponRight
 @onready var weapon_left: Sprite2D  = $Body/Hands/HandLeft/WeaponLeft
 
-@onready var muzzle_right: Marker2D = $Body/Hands/HandRight/Muzzle_R
-@onready var muzzle_left: Marker2D  = $Body/Hands/HandLeft/Muzzle_L
+@onready var muzzle_right: Marker2D = $Body/Hands/HandRight/MuzzleRight
+@onready var muzzle_left: Marker2D  = $Body/Hands/HandLeft/MuzzleLeft
 
 @onready var hitbox_right: Area2D = $Body/Hands/HandRight/HitboxRight
 @onready var hitbox_left: Area2D  = $Body/Hands/HandLeft/HitboxLeft
