@@ -6,20 +6,28 @@
 
 [resource]
 script = ExtResource("1_6vnmr")
-weapon_name = "Baseball Bat"
+weapon_name = "Dual Katana"
 weapon_category = "melee"
+power = 4
 idle_animation = "idle_melee_dual-1"
 walk_animation = "walk_melee_dual-1"
-main_attack_animations = Array[String](["attack_melee_1h_cleave-a", "attack_melee_1h_cleave-b"])
+main_attack_animations = Array[String](["attack_melee_dual-cleave_a"])
 alt_attack_animations = Array[String](["attack_melee_1h_sweep-1"])
 despawn_timer = -1.0
-durability = "medium"
-alt_attack_speed = 0.5
+durability = "high"
+main_attack_speed = 1.3
+damage_main = 25
+damage_alt = 30
 main_knockback = "low"
 alt_knockback = "high"
 has_combo = true
 can_knockback = true
-movement_penalty = 0.7
+movement_penalty = 1.2
+can_apply_dot = true
+dot_tag = "bleed"
+dot_duration = 1.0
+dot_damage_percent = 0.02
+dot_chance = 0.4
 weapon_sprite_ground = ExtResource("2_neni3")
 weapon_sprite_left = ExtResource("3_xmncn")
 weapon_sprite_right = ExtResource("3_xmncn")
