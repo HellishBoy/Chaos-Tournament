@@ -5,7 +5,6 @@
 [ext_resource type="Resource" uid="uid://bbb2h613c5vq3" path="res://entities/characters/player/player_stats.tres" id="2_y4r1p"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="3_fjrip"]
 [ext_resource type="Script" uid="uid://c1aaiueu5rvpq" path="res://entities/characters/player/camera_2d.gd" id="5_qlg0r"]
-[ext_resource type="Texture2D" uid="uid://djew2yyvks34y" path="res://entities/characters/_core/skins/dodge_windfx.png" id="5_tuyoq"]
 [ext_resource type="Texture2D" uid="uid://2t57yhwngo7m" path="res://entities/characters/_core/skins/default_skin/skin-player_default.png" id="5_y4r1p"]
 [ext_resource type="Texture2D" uid="uid://ro2k6f5fjamo" path="res://entities/characters/_core/skins/skin-robot.png" id="6_mnavw"]
 [ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="7_fjrip"]
@@ -18,49 +17,6 @@
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_smehm"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ur7pv"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_fjrip"]
-atlas = ExtResource("5_tuyoq")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_smehm"]
-atlas = ExtResource("5_tuyoq")
-region = Rect2(32, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ur7pv"]
-atlas = ExtResource("5_tuyoq")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_y4r1p"]
-atlas = ExtResource("5_tuyoq")
-region = Rect2(96, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_d2wvv"]
-atlas = ExtResource("5_tuyoq")
-region = Rect2(128, 0, 32, 32)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_31cv2"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_fjrip")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_smehm")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ur7pv")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_y4r1p")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_d2wvv")
-}],
-"loop": true,
-"name": &"dodge_wind",
-"speed": 5.0
-}]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qhqgy"]
 radius = 6.0
@@ -82,19 +38,19 @@ weapon_pickup_scene = ExtResource("3_fjrip")
 
 [node name="Body" type="Node2D" parent="." unique_id=180073333]
 
-[node name="FeetL" type="Sprite2D" parent="Body" unique_id=421417487]
-position = Vector2(3, -4)
+[node name="Head" type="Sprite2D" parent="Body" unique_id=1272286143]
 texture = ExtResource("5_y4r1p")
 region_enabled = true
-region_rect = Rect2(17, 33, 14, 14)
+region_rect = Rect2(1, 1, 30, 30)
 
-[node name="FeetR" type="Sprite2D" parent="Body" unique_id=1775195621]
-position = Vector2(2, 4)
+[node name="HeadDown" type="Sprite2D" parent="Body" unique_id=730706233]
+visible = false
 texture = ExtResource("5_y4r1p")
 region_enabled = true
-region_rect = Rect2(17, 49, 14, 14)
+region_rect = Rect2(33, 1, 30, 30)
 
 [node name="Hands" type="Node2D" parent="Body" unique_id=141924751]
+show_behind_parent = true
 
 [node name="HandLeft" type="Sprite2D" parent="Body/Hands" unique_id=1876246524]
 position = Vector2(1, -6)
@@ -144,20 +100,19 @@ script = ExtResource("8_smehm")
 shape = SubResource("CapsuleShape2D_ur7pv")
 disabled = true
 
-[node name="Head" type="Sprite2D" parent="Body" unique_id=1272286143]
+[node name="FeetL" type="Sprite2D" parent="Body" unique_id=421417487]
+show_behind_parent = true
+position = Vector2(3, -4)
 texture = ExtResource("5_y4r1p")
 region_enabled = true
-region_rect = Rect2(1, 1, 30, 30)
+region_rect = Rect2(17, 33, 14, 14)
 
-[node name="HeadDown" type="Sprite2D" parent="Body" unique_id=730706233]
-visible = false
+[node name="FeetR" type="Sprite2D" parent="Body" unique_id=1775195621]
+show_behind_parent = true
+position = Vector2(2, 4)
 texture = ExtResource("5_y4r1p")
 region_enabled = true
-region_rect = Rect2(33, 1, 30, 30)
-
-[node name="WindTrail" type="AnimatedSprite2D" parent="Body" unique_id=1618101110]
-sprite_frames = SubResource("SpriteFrames_31cv2")
-animation = &"dodge_wind"
+region_rect = Rect2(17, 49, 14, 14)
 
 [node name="AnimationPlayerUpper" type="AnimationPlayer" parent="." unique_id=1866204126]
 libraries/ = ExtResource("8_jej6c")

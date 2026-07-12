@@ -12,11 +12,11 @@ class_name Character
 # separate from combat lock-on tracking (lock_on_follow_speed on Player, target_follow_speed on AICharacter).
 
 @export var stats: CharacterStats
+
 @export var current_weapon: WeaponData
 @export var fists: WeaponData
 @export var weapon_pickup_scene: PackedScene
 
-@export_group("Health Bar")
 @export var health_bar_scene: PackedScene
 @export var health_bar_width: float = 20.0
 @export var health_bar_height: float = 2.0

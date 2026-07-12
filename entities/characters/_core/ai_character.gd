@@ -10,6 +10,7 @@ class_name AICharacter
 
 # ── Exports ──────────────────────────────────────────────────────
 
+@export_group("Permission")
 @export var can_pick_up_weapons: bool = false
 @export var can_toss_weapons: bool = false
 @export var can_find_weapons: bool = false
@@ -51,6 +52,7 @@ class_name AICharacter
 @export var is_picky: bool = false
 @export var is_desperate: bool = false
 
+
 @export_subgroup("Dodging")
 @export var is_swift: bool = false
 @export var is_panic: bool = false
@@ -68,6 +70,12 @@ class_name AICharacter
 
 @export_subgroup("Tracking")
 @export var target_follow_speed: float = 0.15  # 0-1 per-frame lerp; 1.0 = instant snap
+
+@export_group("Preference")
+@export_enum("None", "Prefer", "Hate") var melee_preference: String = "None"
+@export_enum("None", "Prefer", "Hate") var ranged_preference: String = "None"
+@export_enum("None", "Prefer", "Hate") var projectile_preference: String = "None"
+@export_enum("None", "Prefer", "Hate") var grenade_preference: String = "None"
 
 @export_group("Attack")
 @export var main_attack_cooldown: float = 0.6
@@ -712,6 +720,20 @@ func _get_effective_perception_range() -> float:
 			return 175.0
 	return perception_range
 	
+func _get_weapon_preference(weapon_data: WeaponData) -> String:
+	if weapon_data == null:
+		return "None"
+	match weapon_data.weapon_category:
+		"melee":
+			return melee_preference
+		"ranged":
+			return ranged_preference
+		"projectile":
+			return projectile_preference
+		"grenade":
+			return grenade_preference
+	return "None"
+	
 func _push_through_crowd(delta: float) -> void:
 	_crowd_push_timer -= delta
 	if _crowd_push_timer > 0.0:
@@ -738,9 +760,8 @@ func _scan_for_weapon() -> Node:
 	var use_picky := is_picky and hp_percent > LOW_HP_THRESHOLD
 	var use_desperate := is_desperate and hp_percent <= LOW_HP_THRESHOLD
 
-	var best: Node = null
-	var best_power: int = -1
-	var best_dist: float = INF
+	var preferred_candidates: Array = []
+	var normal_candidates: Array = []
 
 	for pickup in get_tree().get_nodes_in_group("weapon_pickup"):
 		if not is_instance_valid(pickup):
@@ -752,7 +773,31 @@ func _scan_for_weapon() -> Node:
 		var dist := global_position.distance_to(pickup.global_position)
 		if dist > effective_range:
 			continue
-		if use_picky or use_desperate:
+		var preference := _get_weapon_preference(pickup.weapon_data)
+		if preference == "Hate":
+			continue
+		if preference == "Prefer":
+			preferred_candidates.append(pickup)
+		else:
+			normal_candidates.append(pickup)
+
+	# A preferred category always wins over everything else, regardless
+	# of power — picky/desperate only decide WHICH preferred one to
+	# take if there's more than one in range.
+	if not preferred_candidates.is_empty():
+		return _pick_weapon_pickup(preferred_candidates, use_picky or use_desperate)
+
+	return _pick_weapon_pickup(normal_candidates, use_picky or use_desperate)
+
+# Shared by weapon scans: nearest by default, or highest-power if
+# by_power is true (picky/desperate active).
+func _pick_weapon_pickup(candidates: Array, by_power: bool) -> Node:
+	var best: Node = null
+	var best_power: int = -1
+	var best_dist: float = INF
+	for pickup in candidates:
+		var dist := global_position.distance_to(pickup.global_position)
+		if by_power:
 			var power: int = pickup.weapon_data.power if pickup.weapon_data else 0
 			if power > best_power:
 				best_power = power
@@ -770,14 +815,16 @@ func _scan_for_better_weapon() -> Node:
 	if current_weapon == null:
 		return null
 	var hp_percent := float(health.current_hp) / float(health.max_hp)
-	# picky only works above threshold, desperate only below
 	if is_picky and not is_desperate and hp_percent <= LOW_HP_THRESHOLD:
 		return null
 	if is_desperate and not is_picky and hp_percent > LOW_HP_THRESHOLD:
 		return null
 	var effective_range := _get_effective_perception_range()
-	var best: Node = null
-	var best_power: int = current_weapon.power # only beat what we have
+	var current_is_preferred := _get_weapon_preference(current_weapon) == "Prefer"
+
+	var preferred_candidates: Array = []
+	var normal_candidates: Array = []
+
 	for pickup in get_tree().get_nodes_in_group("weapon_pickup"):
 		if not is_instance_valid(pickup):
 			continue
@@ -788,6 +835,34 @@ func _scan_for_better_weapon() -> Node:
 		var dist := global_position.distance_to(pickup.global_position)
 		if dist > effective_range:
 			continue
+		var preference := _get_weapon_preference(pickup.weapon_data)
+		if preference == "Hate":
+			continue
+		if preference == "Prefer":
+			preferred_candidates.append(pickup)
+		else:
+			normal_candidates.append(pickup)
+
+	if current_is_preferred:
+		# Already holding a preferred weapon — only a BETTER preferred
+		# one counts as an upgrade. Never swap out of the preferred
+		# category into something non-preferred, no matter its power.
+		return _pick_better_by_power(preferred_candidates, current_weapon.power)
+
+	if not preferred_candidates.is_empty():
+		# Not currently preferred — any preferred weapon on the ground
+		# is an automatic upgrade, power notwithstanding. If more than
+		# one is in range, take the strongest.
+		return _pick_better_by_power(preferred_candidates, -1)
+
+	# No preferred weapons around — ordinary highest-power-beats-
+	# current comparison among everything else non-hated.
+	return _pick_better_by_power(normal_candidates, current_weapon.power)
+
+func _pick_better_by_power(candidates: Array, minimum_power: int) -> Node:
+	var best: Node = null
+	var best_power: int = minimum_power
+	for pickup in candidates:
 		var power: int = pickup.weapon_data.power if pickup.weapon_data else 0
 		if power > best_power:
 			best_power = power
