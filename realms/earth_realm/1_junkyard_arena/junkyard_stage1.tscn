@@ -10,6 +10,9 @@
 [ext_resource type="Texture2D" uid="uid://bqudt21hedsyy" path="res://entities/characters/_core/skins/skin-red_jester.png" id="7_1xtti"]
 [ext_resource type="PackedScene" uid="uid://do2nnibgsaxhh" path="res://entities/characters/allies/ally.tscn" id="7_ah1uk"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="7_ryemf"]
+[ext_resource type="PackedScene" uid="uid://ckyh8rvblv3jx" path="res://entities/characters/chaos/chaos.tscn" id="9_1xtti"]
+[ext_resource type="Script" uid="uid://cuf0jjkwlmjfm" path="res://entities/characters/_core/character_stats.gd" id="10_3vboy"]
+[ext_resource type="Texture2D" uid="uid://cjps05vfw7a7y" path="res://entities/characters/_core/skins/skin-sea_bird1.png" id="11_r4kar"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="13_qtryu"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="15_1dd6p"]
 [ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/melee/Two-Handed/melee_2h-battle_axe.tres" id="15_us766"]
@@ -97,6 +100,18 @@ physics_layer_0/collision_layer = 1
 navigation_layer_0/layers = 1
 sources/0 = SubResource("TileSetAtlasSource_ft5by")
 
+[sub_resource type="Resource" id="Resource_ft5by"]
+script = ExtResource("10_3vboy")
+move_speed = 80.0
+max_hp = 900
+divine_aegis = 0.8
+knockback_resistance = 0.5
+flinch_resistance = 0.4
+root_resistance = 0.5
+stamina_max = 10000.0
+dodge_speed = 500.0
+metadata/_custom_type_script = "uid://cuf0jjkwlmjfm"
+
 [sub_resource type="Resource" id="Resource_2ju0k"]
 script = ExtResource("17_ipurl")
 weapon_data = ExtResource("2_2ejke")
@@ -164,7 +179,7 @@ health_bar_scene = ExtResource("5_ipurl")
 [node name="Enemy1" parent="Contestants" unique_id=390347379 node_paths=PackedStringArray("spawn_point") instance=ExtResource("3_us766")]
 position = Vector2(320, 48)
 rotation = 1.5707964
-is_main_enemy = true
+is_target = true
 can_pick_up_weapons = true
 can_toss_weapons = true
 can_find_weapons = true
@@ -230,6 +245,70 @@ is_sharp = true
 is_alert = true
 is_tactical = true
 
+[node name="Chaos1" parent="Contestants" unique_id=1840670461 node_paths=PackedStringArray("spawn_point") instance=ExtResource("9_1xtti")]
+position = Vector2(688, 128)
+can_attack = false
+observe_range_min = 50.0
+observe_range_max = 100.0
+spawn_point = NodePath("../../SpawnPoints/ChaosSpawn1")
+target_hold_time = 8.0
+is_greedy = true
+dodge_interval_max = 2.0
+evasion_chance = 1.0
+initial_facing = 6
+stats = SubResource("Resource_ft5by")
+
+[node name="Chaos2" parent="Contestants" unique_id=1678122771 node_paths=PackedStringArray("spawn_point") instance=ExtResource("9_1xtti")]
+position = Vector2(720, 128)
+can_attack = false
+observe_range_min = 50.0
+observe_range_max = 100.0
+can_dodge = true
+spawn_point = NodePath("../../SpawnPoints/ChaosSpawn2")
+target_hold_time = 6.0
+is_careful = true
+is_panic = true
+dodge_interval_max = 2.0
+evasion_chance = 1.0
+initial_facing = 6
+
+[node name="Chaos3" parent="Contestants" unique_id=943414908 node_paths=PackedStringArray("spawn_point") instance=ExtResource("9_1xtti")]
+position = Vector2(688, 160)
+can_attack = false
+observe_range_min = 50.0
+observe_range_max = 100.0
+can_dodge = true
+spawn_point = NodePath("../../SpawnPoints/ChaosSpawn3")
+target_hold_time = 3.0
+is_healthy = true
+is_swift = true
+dodge_interval_max = 2.0
+is_sharp = true
+is_alert = true
+initial_facing = 6
+
+[node name="Chaos4" parent="Contestants" unique_id=953875539 node_paths=PackedStringArray("spawn_point") instance=ExtResource("9_1xtti")]
+position = Vector2(720, 160)
+can_attack = false
+observe_range_min = 50.0
+observe_range_max = 100.0
+can_dodge = true
+spawn_point = NodePath("../../SpawnPoints/ChaosSpawn4")
+is_greedy = true
+is_swift = true
+is_panic = true
+dodge_interval_max = 2.0
+is_sharp = true
+is_alert = true
+evasion_chance = 1.0
+sprite_feet_l = ExtResource("11_r4kar")
+sprite_feet_r = ExtResource("11_r4kar")
+sprite_hand_left = ExtResource("11_r4kar")
+sprite_hand_right = ExtResource("11_r4kar")
+sprite_head = ExtResource("11_r4kar")
+sprite_head_down = ExtResource("11_r4kar")
+initial_facing = 6
+
 [node name="Props" type="Node2D" parent="Contestants" unique_id=526174102]
 y_sort_enabled = true
 
@@ -248,7 +327,16 @@ position = Vector2(320, 48)
 position = Vector2(352, 48)
 
 [node name="ChaosSpawn1" type="Marker2D" parent="SpawnPoints" unique_id=171768370]
-position = Vector2(736, 128)
+position = Vector2(688, 128)
+
+[node name="ChaosSpawn2" type="Marker2D" parent="SpawnPoints" unique_id=904761490]
+position = Vector2(720, 128)
+
+[node name="ChaosSpawn3" type="Marker2D" parent="SpawnPoints" unique_id=2133731922]
+position = Vector2(720, 160)
+
+[node name="ChaosSpawn4" type="Marker2D" parent="SpawnPoints" unique_id=737838317]
+position = Vector2(688, 160)
 
 [node name="Hud" parent="." unique_id=1799122153 groups=["hud"] instance=ExtResource("15_1dd6p")]
 script = ExtResource("16_jqoj8")
@@ -357,7 +445,6 @@ text = "Stage Selection"
 
 [node name="RoundManager" type="Node" parent="." unique_id=1923771772 node_paths=PackedStringArray("player_spawn", "win_screen", "lose_screen")]
 script = ExtResource("17_suu1f")
-player_lives = 4
 player_spawn = NodePath("../SpawnPoints/PlayerSpawn")
 win_screen = NodePath("../Hud/WinScreen")
 lose_screen = NodePath("../Hud/LoseScreen")

@@ -79,6 +79,10 @@ var _grenade_weapon: WeaponData = null
 
 var _swing_has_hit: bool = false
 
+const HASTE_MOVE_SPEED_BONUS: float = 0.3    # +30%
+const HASTE_ATTACK_SPEED_BONUS: float = 0.3  # +30%
+const HASTE_DODGE_SPEED_BONUS: float = 3.0   # +300%
+
 # ── Ready ────────────────────────────────────────────────────────
 
 func _ready() -> void:
@@ -535,7 +539,7 @@ func _play_main_attack() -> void:
 	is_alt_attacking = false
 	main_combo_timer = 0.0
 	_swing_has_hit = false
-	anim_upper.speed_scale = get_active_weapon().main_attack_speed * stats.attack_speed_multiplier
+	anim_upper.speed_scale = get_active_weapon().main_attack_speed * stats.attack_speed_multiplier * _get_haste_attack_multiplier()
 	_setup_hitboxes_main()
 	_apply_recoil(get_active_weapon().get_main_recoil_tier())
 	anim_upper.play(anims[main_combo_index])
@@ -552,7 +556,7 @@ func _play_alt_attack() -> void:
 	is_main_attacking = false
 	alt_combo_timer = 0.0
 	_swing_has_hit = false
-	anim_upper.speed_scale = get_active_weapon().alt_attack_speed * stats.attack_speed_multiplier
+	anim_upper.speed_scale = get_active_weapon().alt_attack_speed * stats.attack_speed_multiplier * _get_haste_attack_multiplier()
 	_setup_hitboxes_alt()
 	_apply_recoil(get_active_weapon().get_alt_recoil_tier())
 	anim_upper.play(anims[alt_combo_index])
@@ -645,7 +649,8 @@ func try_dodge(direction: Vector2) -> void:
 # off early if distance/speed ever drift from what the clip was
 # originally authored against.
 func _get_dodge_anim_speed_scale() -> float:
-	var physics_duration: float = stats.dodge_distance / stats.dodge_speed
+	var dodge_speed := stats.dodge_speed * _get_haste_dodge_multiplier()
+	var physics_duration: float = stats.dodge_distance / dodge_speed
 	if physics_duration <= 0.0:
 		return 1.0
 	var anim: Animation = anim_upper.get_animation("uni_dodge")
@@ -658,9 +663,10 @@ func _get_dodge_anim_speed_scale() -> float:
 
 func _tick_dodge(delta: float) -> void:
 	if is_dodging:
-		var step := dodge_direction.normalized() * stats.dodge_speed * delta
+		var dodge_speed := stats.dodge_speed * _get_haste_dodge_multiplier()
+		var step := dodge_direction.normalized() * dodge_speed * delta
 		dodge_traveled += step.length()
-		_apply_movement(dodge_direction.normalized() * stats.dodge_speed)
+		_apply_movement(dodge_direction.normalized() * dodge_speed)
 		if dodge_traveled >= stats.dodge_distance:
 			is_dodging = false
 			set_invincible(false)
@@ -685,6 +691,21 @@ func _apply_speed_floor(multiplier: float) -> float:
 func _get_slow_multiplier() -> float:
 	if status_effect_component.has_effect("slow"):
 		return 1.0 - status_effect_component.get_magnitude("slow")
+	return 1.0
+
+func _get_haste_move_multiplier() -> float:
+	if status_effect_component.has_effect("haste"):
+		return 1.0 + HASTE_MOVE_SPEED_BONUS
+	return 1.0
+
+func _get_haste_attack_multiplier() -> float:
+	if status_effect_component.has_effect("haste"):
+		return 1.0 + HASTE_ATTACK_SPEED_BONUS
+	return 1.0
+
+func _get_haste_dodge_multiplier() -> float:
+	if status_effect_component.has_effect("haste"):
+		return 1.0 + HASTE_DODGE_SPEED_BONUS
 	return 1.0
 
 func _is_petrified() -> bool:

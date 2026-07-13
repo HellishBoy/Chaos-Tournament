@@ -4,7 +4,4 @@
 
 [resource]
 script = ExtResource("1_7kogv")
-stamina_max = 15.0
-dodge_speed = 1000.0
-dodge_distance = 40.0
 metadata/_custom_type_script = "uid://cuf0jjkwlmjfm"

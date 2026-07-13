@@ -21,7 +21,7 @@ enum ItemEffect {
 # status_effect_name must match the exact string checked via has_effect()
 # elsewhere in code (e.g. "steadfast").
 @export var status_effect_name: String = ""
-@export var status_effect_duration: float = 5.0
+@export var status_effect_duration: float = 8.0
 
 @export_group("Drop")
 @export var despawn_timer: float = 10.0  # -1 = never despawn

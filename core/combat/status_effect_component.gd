@@ -17,6 +17,7 @@ enum Category {
 # key off category alone without ever listing effect names individually.
 const EFFECT_REGISTRY: Dictionary = {
 	"steadfast":  Category.BUFF,
+	"haste":      Category.BUFF,
 	"bleed":      Category.DEBUFF,
 	"poison":     Category.DEBUFF,
 	"burn":       Category.DEBUFF,

@@ -4,6 +4,9 @@
 
 [resource]
 script = ExtResource("1_kp1vh")
-move_speed = 90.0
-max_hp = 900
+move_speed = 100.0
+max_hp = 500
+divine_aegis = 0.4
+stamina_max = 10000.0
+dodge_speed = 500.0
 metadata/_custom_type_script = "uid://cuf0jjkwlmjfm"

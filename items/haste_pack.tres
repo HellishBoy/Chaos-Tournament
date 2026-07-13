@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://d1ene4oyf25x8"]
+
+[ext_resource type="Texture2D" uid="uid://bhgjrrdl62vnu" path="res://items/haste_pack.png" id="1_c34uu"]
+[ext_resource type="Script" uid="uid://dygtfyp4md0or" path="res://items/_core/item_data.gd" id="2_xsgtg"]
+
+[resource]
+script = ExtResource("2_xsgtg")
+item_name = "Haste Pack"
+effect = 1
+effect_value = 0
+status_effect_name = "haste"
+status_effect_duration = 8.0
+item_sprite = ExtResource("1_c34uu")
+metadata/_custom_type_script = "uid://dygtfyp4md0or"

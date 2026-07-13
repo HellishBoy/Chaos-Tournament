@@ -32,7 +32,7 @@ var _player_lives_remaining: int = 0
 var _enemy_lives: Dictionary = {}   # Enemy node -> lives remaining
 var _ally_lives: Dictionary = {}    # Ally node -> lives remaining
 var _chaos_lives: Dictionary = {}   # Chaos node -> lives remaining
-var _main_enemies: Array = []       # Only main enemies — tracked for win condition
+var _target_enemies: Array = []     # Only target enemies — tracked for win condition
 var _minion_enemies: Array = []     # Minions — respawn but never trigger win
 
 var _player: Player = null
@@ -54,8 +54,8 @@ func _ready() -> void:
 	for enemy in all_enemies:
 		if enemy.spawn_point == null:
 			push_warning("RoundManager: " + enemy.name + " has no spawn_point assigned.")
-		if enemy.is_main_enemy:
-			_main_enemies.append(enemy)
+		if enemy.is_target:
+			_target_enemies.append(enemy)
 		else:
 			_minion_enemies.append(enemy)
 
@@ -112,8 +112,8 @@ func _on_player_died() -> void:
 func _on_enemy_died(enemy: Node) -> void:
 	if _consume_life(_enemy_lives, enemy):
 		# Enemy is permanently out
-		if enemy.is_main_enemy:
-			_main_enemies.erase(enemy)
+		if enemy.is_target:
+			_target_enemies.erase(enemy)
 		else:
 			_minion_enemies.erase(enemy)
 		_check_win_condition()
@@ -148,7 +148,7 @@ func _check_win_condition() -> void:
 	match win_condition:
 		WinCondition.ELIMINATION:
 			# Win when all main enemies are permanently out
-			if _main_enemies.is_empty():
+			if _target_enemies.is_empty():
 				_trigger_win()
 
 # ── Respawn ───────────────────────────────────────────────────────

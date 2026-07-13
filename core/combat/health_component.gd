@@ -49,8 +49,11 @@ func take_damage(amount: int) -> void:
 		return  # already dead
 	if _invincible:
 		return  # invincible — ignore hit
-	current_hp -= amount
-	current_hp = max(current_hp, 0)
+	var reduced_amount := amount
+	var owner_node := get_parent()
+	if owner_node is Character and owner_node.stats != null:
+		reduced_amount = roundi(amount * (1.0 - owner_node.stats.divine_aegis))
+	current_hp -= reduced_amount
 	emit_signal("damaged", amount, current_hp)
 	if current_hp <= 0:
 		emit_signal("died")

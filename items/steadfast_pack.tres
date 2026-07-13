@@ -9,6 +9,5 @@ item_name = "Steadfast Pack"
 effect = 1
 effect_value = 0
 status_effect_name = "steadfast"
-status_effect_duration = 10.0
 item_sprite = ExtResource("1_kg71r")
 metadata/_custom_type_script = "uid://dygtfyp4md0or"

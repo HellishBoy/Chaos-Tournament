@@ -406,7 +406,7 @@ func _physics_process(delta: float) -> void:
 	var weight_mult := get_active_weapon().get_weight_multiplier()
 	var slow_mult := _get_slow_multiplier()
 	var attack_penalty: float = get_active_weapon().movement_penalty if _is_attacking() else 1.0
-	var combined_mult := _apply_speed_floor(weight_mult * knock_mult * slow_mult * attack_penalty)
+	var combined_mult := _apply_speed_floor(weight_mult * knock_mult * slow_mult * attack_penalty) * _get_haste_move_multiplier()
 	
 	if _is_petrified():
 		_apply_movement(Vector2.ZERO)
@@ -417,6 +417,7 @@ func _physics_process(delta: float) -> void:
 		if _target_hold_timer <= 0.0:
 			target = null  # forces _update_ai_state() to reacquire this same frame
 
+	#region Melee Combo
 	if main_combo_timer > 0:
 		main_combo_timer -= delta
 		if main_combo_timer <= 0:
@@ -440,9 +441,11 @@ func _physics_process(delta: float) -> void:
 		if _combo_switch_timer <= 0.0:
 			_reset_combo_switch_timer()
 			_use_alt_attack = not _use_alt_attack
+	#endregion
 		
 	var hp_percent := float(health.current_hp) / float(health.max_hp)
 	
+	#region Threat Evasion
 	var evasive_active := (is_sharp and hp_percent > LOW_HP_THRESHOLD) or (is_alert and hp_percent <= LOW_HP_THRESHOLD)
 	if evasive_active and can_dodge and not is_dodging and cooldown_timer <= 0 and _stamina >= stats.stamina_per_dodge:
 		var threat_direction := _check_incoming_threat()
@@ -456,17 +459,18 @@ func _physics_process(delta: float) -> void:
 		_last_threat_direction = Vector2.ZERO
 	
 	var should_dodge := (is_swift and hp_percent > LOW_HP_THRESHOLD) or (is_panic and hp_percent <= LOW_HP_THRESHOLD)
-	
-	# If scared, only allow dodging during SEEK_WEAPON or SEEK_ITEM states
-	if is_scared and hp_percent <= LOW_HP_THRESHOLD and ai_state != AIState.SEEK_WEAPON and ai_state != AIState.SEEK_ITEM:
-		should_dodge = false
-	
-	if should_dodge and can_dodge and ai_state != AIState.IDLE:
+		
+	if should_dodge and can_dodge: # and ai_state != AIState.IDLE
 		_dodge_timer -= delta
 		if _dodge_timer <= 0.0:
 			_reset_dodge_timer()
 			_pending_dodges = int(_stamina / stats.stamina_per_dodge) if can_double_dodge else 1
+	#endregion
 
+	# If scared, only allow dodging during SEEK_WEAPON or SEEK_ITEM states
+	if is_scared and hp_percent <= LOW_HP_THRESHOLD and ai_state != AIState.SEEK_WEAPON and ai_state != AIState.SEEK_ITEM:
+		should_dodge = false
+		
 	# Fire pending dodges when not already dodging
 	if _pending_dodges > 0 and not is_dodging and cooldown_timer <= 0:
 		_pending_dodges -= 1
@@ -503,7 +507,7 @@ func _physics_process(delta: float) -> void:
 	var attack_dist := _get_current_attack_range()
 
 	match ai_state:
-		#region AIState.IDLE
+		#region IDLE STATE
 		AIState.IDLE:
 			if is_careful or is_healthy:
 				var hazard := _find_hazard_to_escape()
@@ -533,7 +537,7 @@ func _physics_process(delta: float) -> void:
 				anim_lower.stop()
 		#endregion
 
-		#region AIState.SEEK_WEAPON
+		#region SEEK WEAPON STATE
 		AIState.SEEK_WEAPON:
 			if _weapon_target == null or not is_instance_valid(_weapon_target):
 				ai_state = AIState.ACTIVE
@@ -555,7 +559,7 @@ func _physics_process(delta: float) -> void:
 
 		#endregion
 		
-		#region AIState.SEEK_ITEM
+		#region SEEK ITEM STATE
 		AIState.SEEK_ITEM:
 			if _item_target == null or not is_instance_valid(_item_target):
 				ai_state = AIState.ACTIVE
@@ -578,19 +582,28 @@ func _physics_process(delta: float) -> void:
 					
 		#endregion
 
-		#region AIState.ACTIVE
+		#region ACTIVE STATE
 		AIState.ACTIVE:
 			var dist := global_position.distance_to(target.global_position)
 			var has_los := _has_line_of_sight() if weapon.requires_line_of_sight else true
-			var is_melee := weapon.weapon_category == "melee"
-
-			if is_tactical and not is_melee and target != null and is_instance_valid(target) and has_los:
-				# ── Tactical, non-melee — keep to ideal range once LOS
-				# is clear: step back if too close, approach if too far.
-				# No strafing or repositioning — just holds the
-				# straight-line distance to the target.
+			# OLD tactical
+			#var is_melee := weapon.weapon_category == "melee"
+			
+			#if is_tactical and not is_melee and target != null and is_instance_valid(target) and has_los:
+				## ── Tactical, non-melee — keep to ideal range once LOS
+				## is clear: step back if too close, approach if too far.
+				## No strafing or repositioning — just holds the
+				## straight-line distance to the target.
+				#var angle_to_target := (global_position - target.global_position).angle()
+				#var ideal_pos := target.global_position + Vector2.RIGHT.rotated(angle_to_target) * (attack_dist * 0.75)
+				
+			if _wants_to_hold_range() and target != null and is_instance_valid(target) and has_los:
+				# ── Hold ideal range once LOS is clear: step back if
+				# too close, approach if too far. (Tactical non-melee,
+				# or Chaos observing regardless of weapon.)
 				var angle_to_target := (global_position - target.global_position).angle()
-				var ideal_pos := target.global_position + Vector2.RIGHT.rotated(angle_to_target) * (attack_dist * 0.75)
+				var hold_dist := _get_hold_range_distance(attack_dist)
+				var ideal_pos := target.global_position + Vector2.RIGHT.rotated(angle_to_target) * (hold_dist * 0.75)
 				var dist_to_ideal := global_position.distance_to(ideal_pos)
 				if dist_to_ideal > 1.0:
 					nav_agent.target_position = ideal_pos
@@ -621,9 +634,13 @@ func _physics_process(delta: float) -> void:
 				_apply_movement(Vector2.ZERO)
 
 			if not _is_attacking() and not is_tossing:
-				var walk := weapon.walk_animation
-				if walk != "":
-					anim_upper.play(walk)
+				if velocity.length() > 0:
+					var walk := weapon.walk_animation
+					if walk != "":
+						anim_upper.play(walk)
+				else:
+					_snap_to_idle()
+					#anim_upper.stop()
 			if velocity.length() > 0:
 				anim_lower.play("feet_slow" if _is_attacking() else "feet_normal")
 			else:
@@ -974,6 +991,19 @@ func _handle_combat_actions(weapon: WeaponData, dist: float, has_los: bool, delt
 		if weapon.weapon_category == "grenade" and is_throwing_grenade:
 			_cancel_into_idle()
 
+# Override to control who uses "hold ideal range" positioning instead
+# of plain chase-and-stop. Defaults to is_tactical; Chaos overrides
+# this for "observe from a distance" behavior when can_attack is
+# false, independent of is_tactical entirely.
+func _wants_to_hold_range() -> bool:
+	return is_tactical
+
+# The distance to hold once hold-range positioning is active. Defaults
+# to just inside attack range; Chaos overrides with its own randomly-
+# rolled observe range.
+func _get_hold_range_distance(attack_dist: float) -> float:
+	return attack_dist * 0.95
+
 # ── Evasive Dodge ──────────────────────────────────────────────
 # Reactive, threat-based dodging — distinct from is_swift/is_panic's
 # periodic timer. Checked first every frame; if it fires, is_dodging
@@ -1062,9 +1092,9 @@ func _handle_grenade_attack(weapon: WeaponData, delta: float) -> void:
 	
 func _apply_appearance() -> void:
 	if sprite_feet_l:
-		$Body/FeetL.texture = sprite_feet_l
+		$Body/FeetLeft.texture = sprite_feet_l
 	if sprite_feet_r:
-		$Body/FeetR.texture = sprite_feet_r
+		$Body/FeetRight.texture = sprite_feet_r
 	if sprite_hand_left:
 		$Body/Hands/HandLeft.texture = sprite_hand_left
 	if sprite_hand_right:

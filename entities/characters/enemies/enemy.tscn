@@ -42,13 +42,13 @@ health_bar_scene = ExtResource("4_vk8x8")
 
 [node name="Body" type="Node2D" parent="." unique_id=180073333]
 
-[node name="FeetL" type="Sprite2D" parent="Body" unique_id=421417487]
+[node name="FeetLeft" type="Sprite2D" parent="Body" unique_id=421417487]
 position = Vector2(3, -4)
 texture = ExtResource("6_jwbx2")
 region_enabled = true
 region_rect = Rect2(17, 33, 14, 14)
 
-[node name="FeetR" type="Sprite2D" parent="Body" unique_id=1775195621]
+[node name="FeetRight" type="Sprite2D" parent="Body" unique_id=1775195621]
 position = Vector2(2, 4)
 texture = ExtResource("6_jwbx2")
 region_enabled = true

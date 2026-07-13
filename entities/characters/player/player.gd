@@ -116,8 +116,15 @@ func _input(event: InputEvent) -> void:
 
 # ── Lock-on ──────────────────────────────────────────────────────
 
+func _is_lockable(body: Node) -> bool:
+	if body is Enemy:
+		return true
+	if body is Chaos and not body.is_phantom:
+		return true
+	return false
+
 func _on_enemy_entered(body: Node2D) -> void:
-	if not (body is Enemy):
+	if not _is_lockable(body):
 		return
 	if not enemies_in_range.has(body):
 		enemies_in_range.append(body)
@@ -125,7 +132,7 @@ func _on_enemy_entered(body: Node2D) -> void:
 		lock_on_target = _get_nearest_enemy()
 
 func _on_enemy_exited(body: Node2D) -> void:
-	if not (body is Enemy):
+	if not _is_lockable(body):
 		return
 	enemies_in_range.erase(body)
 	if lock_on_target == body:
@@ -251,10 +258,10 @@ func _physics_process(delta: float) -> void:
 		var weight_mult := get_active_weapon().get_weight_multiplier()
 		var slow_mult := _get_slow_multiplier()
 		if _is_attacking():
-			var combined := _apply_speed_floor(get_active_weapon().movement_penalty * weight_mult * knock_mult * slow_mult)
+			var combined := _apply_speed_floor(get_active_weapon().movement_penalty * weight_mult * knock_mult * slow_mult) * _get_haste_move_multiplier()
 			_apply_movement(direction * stats.move_speed * combined)
 		else:
-			var combined := _apply_speed_floor(weight_mult * knock_mult * slow_mult)
+			var combined := _apply_speed_floor(weight_mult * knock_mult * slow_mult) * _get_haste_move_multiplier()
 			_apply_movement(direction * stats.move_speed * combined)
 		if direction.length() > 0:
 			last_direction = direction

@@ -6,10 +6,48 @@
 extends AICharacter
 class_name Chaos
 
+@export var is_phantom: bool = true
+@export var can_attack: bool = true
+
+@export_group("Observe")
+@export var observe_range_min: float = 80.0
+@export var observe_range_max: float = 160.0
+@export var observe_reroll_interval_min: float = 2.0
+@export var observe_reroll_interval_max: float = 5.0
+
+var _current_observe_range: float = 100.0
+var _observe_reroll_timer: float = 0.0
+
 const TARGET_CLASSES: Array[String] = ["player", "ally", "enemy"]
 const FAIRNESS_WINDOW: int = 4
 
 var _recent_target_classes: Array[String] = []
+
+func _ready() -> void:
+	super()
+	_reset_observe_range()
+
+func _physics_process(delta: float) -> void:
+	super._physics_process(delta)
+	if not can_attack:
+		_observe_reroll_timer -= delta
+		if _observe_reroll_timer <= 0.0:
+			_reset_observe_range()
+
+func _reset_observe_range() -> void:
+	_current_observe_range = randf_range(observe_range_min, observe_range_max)
+	_observe_reroll_timer = randf_range(observe_reroll_interval_min, observe_reroll_interval_max)
+
+func _wants_to_hold_range() -> bool:
+	return not can_attack
+
+func _get_hold_range_distance(_attack_dist: float) -> float:
+	return _current_observe_range
+
+func _handle_combat_actions(weapon: WeaponData, dist: float, has_los: bool, delta: float) -> void:
+	if not can_attack:
+		return
+	super._handle_combat_actions(weapon, dist, has_los, delta)
 
 # ── Target Rules ─────────────────────────────────────────────────
 # Chaos bypasses the shared nearest/priority system entirely — no

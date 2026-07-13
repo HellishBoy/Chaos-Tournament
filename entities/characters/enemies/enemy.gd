@@ -5,9 +5,11 @@ extends AICharacter
 class_name Enemy
 
 @export_group("Round")
-@export var is_main_enemy: bool = false
+@export var is_target: bool = false
 
 func _is_valid_target(body: Node) -> bool:
+	if body is Chaos and body.is_phantom:
+		return false
 	return body is Player or body is Ally or body is Chaos
 
 func _get_target_priority(body: Node) -> int:
