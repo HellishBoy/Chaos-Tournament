@@ -1,6 +1,6 @@
 # AICharacter.gd
 # Extends Character — shared AI brain for every team (Enemy, Ally, and
-# eventually Chaos). Handles decision making, target detection, dodge
+# Chaos). Handles decision making, target detection, dodge
 # behavior, weapon/item seeking, and combat — identically for all teams.
 # The only thing a subclass needs to define is WHO counts as a valid
 # target and how much it prefers each one (see _is_valid_target() /
@@ -28,6 +28,7 @@ class_name AICharacter
 @export var detection_range: float = 100.0
 @export var idle_wander_speed: float = 0.0
 @export var eye_offset: float = 5.0
+
 # -1 = hold the current target until it dies/becomes invalid (Enemy/Ally
 # default). A positive value forces a fresh _acquire_target() call after
 # that many seconds, even if the current target is still alive — used
@@ -51,7 +52,6 @@ class_name AICharacter
 @export_subgroup("Finding Weapons")
 @export var is_picky: bool = false
 @export var is_desperate: bool = false
-
 
 @export_subgroup("Dodging")
 @export var is_swift: bool = false
@@ -586,9 +586,12 @@ func _physics_process(delta: float) -> void:
 		AIState.ACTIVE:
 			var dist := global_position.distance_to(target.global_position)
 			var has_los := _has_line_of_sight() if weapon.requires_line_of_sight else true
-			# OLD tactical
-			#var is_melee := weapon.weapon_category == "melee"
 			
+			#region Old stuff. Not used anymore.
+			# OLD tactical
+			# Not used anymore
+			
+			#var is_melee := weapon.weapon_category == "melee"
 			#if is_tactical and not is_melee and target != null and is_instance_valid(target) and has_los:
 				## ── Tactical, non-melee — keep to ideal range once LOS
 				## is clear: step back if too close, approach if too far.
@@ -596,14 +599,15 @@ func _physics_process(delta: float) -> void:
 				## straight-line distance to the target.
 				#var angle_to_target := (global_position - target.global_position).angle()
 				#var ideal_pos := target.global_position + Vector2.RIGHT.rotated(angle_to_target) * (attack_dist * 0.75)
-				
+			#endregion
+			
 			if _wants_to_hold_range() and target != null and is_instance_valid(target) and has_los:
 				# ── Hold ideal range once LOS is clear: step back if
-				# too close, approach if too far. (Tactical non-melee,
+				# too close, approach if too far. ( For Tactical AI
 				# or Chaos observing regardless of weapon.)
 				var angle_to_target := (global_position - target.global_position).angle()
 				var hold_dist := _get_hold_range_distance(attack_dist)
-				var ideal_pos := target.global_position + Vector2.RIGHT.rotated(angle_to_target) * (hold_dist * 0.75)
+				var ideal_pos := target.global_position + Vector2.RIGHT.rotated(angle_to_target) * hold_dist
 				var dist_to_ideal := global_position.distance_to(ideal_pos)
 				if dist_to_ideal > 1.0:
 					nav_agent.target_position = ideal_pos
@@ -619,7 +623,7 @@ func _physics_process(delta: float) -> void:
 					_apply_movement(Vector2.ZERO)
 			elif dist > attack_dist or (weapon.requires_line_of_sight and not has_los):
 				# ── Chase — simple, direct pathfinding straight to the
-				# target. (Non-tactical, melee, or no LOS yet.)
+				# target. (Non-tactical or no LOS yet.)
 				nav_agent.target_position = target.global_position
 				var next_pos := nav_agent.get_next_path_position()
 				var dir := (next_pos - global_position).normalized()
@@ -640,7 +644,6 @@ func _physics_process(delta: float) -> void:
 						anim_upper.play(walk)
 				else:
 					_snap_to_idle()
-					#anim_upper.stop()
 			if velocity.length() > 0:
 				anim_lower.play("feet_slow" if _is_attacking() else "feet_normal")
 			else:
@@ -764,6 +767,8 @@ func _check_hated_weapon() -> void:
 	if current_weapon != null and _get_weapon_preference(current_weapon) == "Hate":
 		call_deferred("_do_toss")
 	
+# I don't even know if this crowd pushing really works or not. But it doesn't break the game yet.
+# So I'll just put this in here for now I guess.
 func _push_through_crowd(delta: float) -> void:
 	_crowd_push_timer -= delta
 	if _crowd_push_timer > 0.0:
@@ -781,6 +786,7 @@ func _push_through_crowd(delta: float) -> void:
 				push_dir = Vector2.RIGHT
 			var their_impact := node.get_node("ImpactComponent") as ImpactComponent
 			their_impact.apply_knockback("low", push_dir)
+	#pass
 
 func _scan_for_weapon() -> Node:
 	if not can_find_weapons or current_weapon != null:
@@ -1049,23 +1055,6 @@ func _check_incoming_threat() -> Vector2:
 
 func _reset_dodge_timer() -> void:
 	_dodge_timer = randf_range(dodge_interval_min, dodge_interval_max)
-
-# Casts a ray toward the target to find what's blocking line of sight,
-# then strafes toward the side AWAY from that obstruction — a decided
-# choice based on real geometry, not a coin flip. If this consistently
-# strafes INTO the blocker instead of away from it in practice, flip
-# the two return values below.
-func _decide_los_strafe_direction() -> float:
-	var space := get_world_2d().direct_space_state
-	var query := PhysicsRayQueryParameters2D.create(global_position, target.global_position, collision_mask)
-	query.exclude = [self]
-	var result := space.intersect_ray(query)
-	if result.is_empty():
-		return 1.0 if randf() > 0.5 else -1.0
-	var to_target: Vector2 = (target.global_position - global_position).normalized()
-	var to_obstruction: Vector2 = (result["position"] - global_position).normalized()
-	var cross := to_target.cross(to_obstruction)
-	return -1.0 if cross > 0.0 else 1.0
 
 func _get_current_attack_range() -> float:
 	var weapon := get_active_weapon()

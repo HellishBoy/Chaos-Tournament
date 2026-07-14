@@ -1,13 +1,13 @@
-## Hitbox.gd
-## Attach to the Hitbox Area2D on the player.
-##
-## Scene structure:
-##   Hitbox (Area2D)           ← Layer: 7 (Hitbox), Mask: 6 (Hurtbox)
-##   └── CollisionShape2D      ← disabled by default
-##
-## The animation drives everything:
-##   - Position, rotation, scale of this node
-##   - The CollisionShape2D's "disabled" property (on/off per frame)
+# Hitbox.gd
+# Attach to the Hitbox Area2D on the player.
+#
+# Scene structure:
+#   Hitbox (Area2D)           ← Layer: 8 (Hitbox), Mask: 7 (Hurtbox)
+#   └── CollisionShape2D      ← disabled by default
+#
+# The animation drives everything:
+#   - Position, rotation, scale of this node
+#   - The CollisionShape2D's "disabled" property (on/off per frame)
 
 extends Area2D
 class_name Hitbox

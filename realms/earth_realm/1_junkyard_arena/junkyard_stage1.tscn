@@ -222,7 +222,6 @@ is_picky = true
 is_desperate = true
 is_swift = true
 is_panic = true
-is_tactical = true
 can_combo = true
 
 [node name="Ally" parent="Contestants" unique_id=1428724923 node_paths=PackedStringArray("spawn_point") instance=ExtResource("7_ah1uk")]

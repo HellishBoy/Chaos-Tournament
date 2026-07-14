@@ -1,6 +1,6 @@
 # Prop.gd
 # Base class for destructible world objects — trees, crates, dummies, barrels, etc.
-# No weapons, no AI, no movement. Just takes damage and dies.
+# No weapons, no AI, no movement. Just takes damage and dies for now.
 extends CharacterBody2D
 class_name Prop
 

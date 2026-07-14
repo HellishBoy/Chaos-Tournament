@@ -1,9 +1,9 @@
-## HealthComponent.gd
-## Attach as a child Node to any entity that can take damage.
-## Works for both player and enemies.
-##
-## Node name must be "HealthComponent" so other scripts can find it with:
-##   $HealthComponent
+# HealthComponent.gd
+# Attach as a child Node to any entity that can take damage.
+# Works for both player and enemies.
+#
+# Node name must be "HealthComponent" so other scripts can find it with:
+#   $HealthComponent
 
 extends Node
 class_name HealthComponent
