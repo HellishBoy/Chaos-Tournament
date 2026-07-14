@@ -1016,7 +1016,10 @@ func _check_incoming_threat() -> Vector2:
 		if target_weapon.weapon_category == "melee" and (target.is_main_attacking or target.is_alt_attacking):
 			var melee_dist := global_position.distance_to(target.global_position)
 			if melee_dist <= target_weapon.ai_main_attack_range:
-				return Vector2.LEFT.rotated(rotation)  # straight back — always facing target
+				var away_from_attacker: Vector2 = (global_position - target.global_position).normalized()
+				if away_from_attacker == Vector2.ZERO:
+					away_from_attacker = Vector2.LEFT.rotated(rotation)  # exact overlap — fall back to facing-based
+				return away_from_attacker
 
 	# Priority 2: any live projectile on a collision course.
 	var evasion_range: float = detection_range * EVASION_RANGE_FACTOR
