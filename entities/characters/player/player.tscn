@@ -4,9 +4,8 @@
 [ext_resource type="Resource" uid="uid://cxoiv5ap1cj22" path="res://weapons/fists.tres" id="2_qlg0r"]
 [ext_resource type="Resource" uid="uid://bbb2h613c5vq3" path="res://entities/characters/player/player_stats.tres" id="2_y4r1p"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="3_fjrip"]
-[ext_resource type="Texture2D" uid="uid://22580wgpoqva" path="res://entities/characters/_core/skins/skin-ninja.png" id="5_0s3gd"]
+[ext_resource type="Texture2D" uid="uid://2t57yhwngo7m" path="res://entities/characters/_core/skins/default_skin/skin-player_default.png" id="5_0s3gd"]
 [ext_resource type="Script" uid="uid://c1aaiueu5rvpq" path="res://entities/characters/player/camera_2d.gd" id="5_qlg0r"]
-[ext_resource type="Texture2D" uid="uid://cjps05vfw7a7y" path="res://entities/characters/_core/skins/skin-sea_bird1.png" id="6_2jd2e"]
 [ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="7_fjrip"]
 [ext_resource type="AnimationLibrary" uid="uid://dj7tuc120561t" path="res://entities/characters/_core/animations/.tres" id="8_3v2ag"]
 [ext_resource type="AnimationLibrary" uid="uid://c5nbhs05ohaok" path="res://entities/characters/_core/animations/.res" id="8_jej6c"]
@@ -59,7 +58,7 @@ show_behind_parent = true
 
 [node name="HandLeft" type="Sprite2D" parent="Body/Hands" unique_id=1876246524]
 position = Vector2(1, -6)
-texture = ExtResource("6_2jd2e")
+texture = ExtResource("5_0s3gd")
 region_enabled = true
 region_rect = Rect2(1, 33, 14, 14)
 
@@ -84,7 +83,7 @@ disabled = true
 
 [node name="HandRight" type="Sprite2D" parent="Body/Hands" unique_id=1958873911]
 position = Vector2(1, 6)
-texture = ExtResource("6_2jd2e")
+texture = ExtResource("5_0s3gd")
 region_enabled = true
 region_rect = Rect2(1, 49, 14, 14)
 
