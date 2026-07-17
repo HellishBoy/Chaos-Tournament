@@ -42,3 +42,15 @@ class_name CharacterStats
 @export var dodge_speed: float = 250.0
 @export var dodge_distance: float = 48.0
 @export var dodge_cooldown: float = 0.1
+
+@export_group("Passive Skills")
+@export var passive_skills: Array[PassiveSkillData] = []
+
+const MAX_PASSIVE_SLOTS: int = 4
+
+func validate_passive_skills() -> void:
+	if passive_skills.size() > MAX_PASSIVE_SLOTS:
+		push_warning("CharacterStats: passive_skills has " + str(passive_skills.size()) + " entries — only " + str(MAX_PASSIVE_SLOTS) + " slots are intended. Extra entries will still be applied.")
+	for skill in passive_skills:
+		if skill != null:
+			skill.validate_effect_type()

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PassiveSkillData" format=3 uid="uid://bsvliu42o2ald"]
+
+[ext_resource type="Script" uid="uid://s3foax1vfnlb" path="res://entities/characters/_core/passive_skills/_core/passive_skill_data.gd" id="1_a3xo2"]
+
+[resource]
+script = ExtResource("1_a3xo2")
+skill_name = "Martial Artist"
+effect_type = "durability_save"
+chance = 0.4
+weapon_category_filter = "melee"
+reduce_recoil = false
+metadata/_custom_type_script = "uid://s3foax1vfnlb"
