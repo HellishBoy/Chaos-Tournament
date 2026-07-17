@@ -1,7 +1,43 @@
 [gd_scene format=3 uid="uid://cwhtxspy8avtu"]
 
+[ext_resource type="Script" uid="uid://bqv600bsl4lan" path="res://entities/prop/turret/turret.gd" id="1_p0w1s"]
 [ext_resource type="Texture2D" uid="uid://b22datx7ylfwp" path="res://entities/prop/turret/turret_barrel.png" id="2_608m1"]
+[ext_resource type="PackedScene" uid="uid://duxpffpsdqh4o" path="res://weapons/bullet_and_projectile/bullet_proj-projectile0.tscn" id="2_nx5bq"]
 [ext_resource type="Texture2D" uid="uid://6ynu8uy1afr2" path="res://entities/prop/turret/turret_body.png" id="2_p0w1s"]
+[ext_resource type="PackedScene" uid="uid://fjgnwhkrfpmg" path="res://weapons/grenade/sticky_bomb/grenade_impact-sticky_bomb.tscn" id="3_68080"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="3_vqxsu"]
+[ext_resource type="Texture2D" uid="uid://cxu4eumkk4e7q" path="res://weapons/ranged/ranged_1h-nail_gun.png" id="4_wv6ju"]
+[ext_resource type="Script" uid="uid://depuxq0r4sr57" path="res://core/combat/health_component.gd" id="7_wv6ju"]
+[ext_resource type="Script" uid="uid://emy3cu5poau2" path="res://core/combat/impact_component.gd" id="8_68080"]
+
+[sub_resource type="Resource" id="Resource_wv6ju"]
+script = ExtResource("3_vqxsu")
+weapon_name = "Nail Gun"
+weapon_category = "ranged"
+power = 2
+main_attack_animations = Array[String](["turret_fire"])
+peek_distance_aim = 30.0
+peek_distance_lockon = 30.0
+weight = "light"
+can_recoil = true
+main_recoil = "low"
+main_attack_speed = 4.0
+damage_main = 40
+main_flinch = "low"
+can_flinch = true
+movement_penalty = 0.7
+projectile_type = "grenade"
+bullet_scene = ExtResource("2_nx5bq")
+bullet_speed = 500.0
+bullet_range = 200.0
+bullet_pierce = 2
+grenade_scene = ExtResource("3_68080")
+can_impact_detonate = true
+amount = 10
+requires_line_of_sight = true
+weapon_sprite_right = ExtResource("4_wv6ju")
+ai_main_attack_range = 120.0
+metadata/_custom_type_script = "uid://4s4a7sc7snjl"
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_nmhnt"]
 radius = 8.0
@@ -37,6 +73,20 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector2(0, 0), Vector2(-2, 0), Vector2(0, 0)]
 }
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_on_fire_frame"
+}]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_p0w1s"]
 _data = {
@@ -44,7 +94,20 @@ _data = {
 &"turret_fire": SubResource("Animation_608m1")
 }
 
-[node name="Turret" type="CharacterBody2D" unique_id=439454883]
+[sub_resource type="CircleShape2D" id="CircleShape2D_nx5bq"]
+radius = 8.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_68080"]
+
+[node name="Turret" type="CharacterBody2D" unique_id=439454883 groups=["prop"]]
+collision_layer = 16
+collision_mask = 46
+script = ExtResource("1_p0w1s")
+weapon_data = SubResource("Resource_wv6ju")
+attack_cooldown = 0.3
+detection_range = 400.0
+initial_facing = 1
+knockback_resistance = 1.0
 
 [node name="Body" type="Sprite2D" parent="." unique_id=745456643]
 texture = ExtResource("2_p0w1s")
@@ -60,3 +123,26 @@ position = Vector2(10, 0)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=473519606]
 libraries/ = SubResource("AnimationLibrary_p0w1s")
+
+[node name="HealthComponent" type="Node2D" parent="." unique_id=1485008166]
+script = ExtResource("7_wv6ju")
+immortal = true
+
+[node name="ImpactComponent" type="Node2D" parent="." unique_id=930789111]
+script = ExtResource("8_68080")
+
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1825105305]
+visible = false
+collision_layer = 64
+collision_mask = 1536
+
+[node name="Hurtbox" type="CollisionShape2D" parent="Hurtbox" unique_id=865869032]
+shape = SubResource("CircleShape2D_nx5bq")
+
+[node name="DetectionArea" type="Area2D" parent="." unique_id=629321515]
+visible = false
+collision_layer = 0
+collision_mask = 46
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=1931440839]
+shape = SubResource("CircleShape2D_68080")

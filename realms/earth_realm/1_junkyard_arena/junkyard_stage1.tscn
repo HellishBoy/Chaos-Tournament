@@ -14,6 +14,8 @@
 [ext_resource type="Script" uid="uid://s3foax1vfnlb" path="res://entities/characters/_core/passive_skills/_core/passive_skill_data.gd" id="9_r4kar"]
 [ext_resource type="Script" uid="uid://cuf0jjkwlmjfm" path="res://entities/characters/_core/character_stats.gd" id="10_3vboy"]
 [ext_resource type="Texture2D" uid="uid://cjps05vfw7a7y" path="res://entities/characters/_core/skins/skin-sea_bird1.png" id="11_r4kar"]
+[ext_resource type="Texture2D" uid="uid://be6yx4smml1di" path="res://entities/prop/turret/turret_base.png" id="12_ft5by"]
+[ext_resource type="PackedScene" uid="uid://cwhtxspy8avtu" path="res://entities/prop/turret/turret.tscn" id="13_deyfl"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="13_qtryu"]
 [ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="15_1dd6p"]
 [ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/melee/Two-Handed/melee_2h-battle_axe.tres" id="15_us766"]
@@ -325,6 +327,13 @@ position = Vector2(720, 160)
 
 [node name="ChaosSpawn4" type="Marker2D" parent="SpawnPoints" unique_id=737838317]
 position = Vector2(688, 160)
+
+[node name="TurretBase" type="Sprite2D" parent="." unique_id=685529241]
+position = Vector2(48, 320)
+texture = ExtResource("12_ft5by")
+
+[node name="Turret" parent="." unique_id=439454883 instance=ExtResource("13_deyfl")]
+position = Vector2(48, 320)
 
 [node name="Hud" parent="." unique_id=1799122153 groups=["hud"] instance=ExtResource("15_1dd6p")]
 script = ExtResource("16_jqoj8")
