@@ -377,12 +377,12 @@ func _update_ai_state() -> void:
 					_toss_cooldown_timer = TOSS_COOLDOWN
 					call_deferred("_toss_backward_and_seek")
 
-	if _item_target != null:
+	if _item_target != null and not _is_immobile():
 		ai_state = AIState.SEEK_ITEM
 		main_attack_held = false
 		return
 
-	if _weapon_target != null and (current_weapon == null or _seeking_better_weapon):
+	if _weapon_target != null and (current_weapon == null or _seeking_better_weapon) and not _is_immobile():
 		ai_state = AIState.SEEK_WEAPON
 		return
 
@@ -511,7 +511,7 @@ func _physics_process(delta: float) -> void:
 	match ai_state:
 		#region IDLE STATE
 		AIState.IDLE:
-			if is_careful or is_healthy:
+			if not _is_immobile() and (is_careful or is_healthy):
 				var hazard := _find_hazard_to_escape()
 				if hazard != null:
 					var away_dir: Vector2 = (global_position - hazard.global_position).normalized()
@@ -603,7 +603,13 @@ func _physics_process(delta: float) -> void:
 				#var ideal_pos := target.global_position + Vector2.RIGHT.rotated(angle_to_target) * (attack_dist * 0.75)
 			#endregion
 			
-			if _wants_to_hold_range() and target != null and is_instance_valid(target) and has_los:
+			if _is_immobile():
+				# Stand fast — just turn to face whatever's closest/current target.
+				var dir := (target.global_position - global_position).normalized()
+				last_direction = dir
+				rotation = lerp_angle(rotation, dir.angle(), target_follow_speed)
+				_apply_movement(Vector2.ZERO)
+			elif _wants_to_hold_range() and target != null and is_instance_valid(target) and has_los:
 				# ── Hold ideal range once LOS is clear: step back if
 				# too close, approach if too far. ( For Tactical AI
 				# or Chaos observing regardless of weapon.)
@@ -1005,6 +1011,12 @@ func _handle_combat_actions(weapon: WeaponData, dist: float, has_los: bool, delt
 # false, independent of is_tactical entirely.
 func _wants_to_hold_range() -> bool:
 	return is_tactical
+	
+# Override to lock this character in place — no self movement at all,
+# ever, but still turns to face its target for attacking. Used by
+# Chaos's is_sentinel; default AI can move normally.
+func _is_immobile() -> bool:
+	return false
 
 # The distance to hold once hold-range positioning is active. Defaults
 # to just inside attack range; Chaos overrides with its own randomly-

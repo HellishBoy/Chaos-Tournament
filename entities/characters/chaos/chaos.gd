@@ -6,8 +6,9 @@
 extends AICharacter
 class_name Chaos
 
-@export var is_phantom: bool = true
 @export var can_attack: bool = true
+@export var is_phantom: bool = true
+@export var is_sentinel: bool = false
 
 @export_group("Observe")
 @export var observe_range_min: float = 80.0
@@ -26,6 +27,9 @@ var _recent_target_classes: Array[String] = []
 func _ready() -> void:
 	super()
 	_reset_observe_range()
+	
+func _is_immobile() -> bool:
+	return is_sentinel
 
 func _physics_process(delta: float) -> void:
 	super._physics_process(delta)
