@@ -3,7 +3,7 @@
 # Resume, Stage Select, Main Menu, Quit.
 extends Control
 
-const STAGE_SELECT = "res://realms/earth_realm/0_sandbox_arena/stage_select.tscn"
+const ARENA_SELECT = "res://level/arena_select.tscn"
 const MAIN_MENU = "res://ui/main_menu.tscn"
 
 @onready var resume_button: Button = $PanelContainer/VBoxContainer/ResumeButton
@@ -20,12 +20,13 @@ func _ready() -> void:
 	quit_button.pressed.connect(_on_quit_pressed)
 
 func _unhandled_input(event: InputEvent) -> void:
+	if GameState.game_over:
+		return
 	if event.is_action_pressed("ui_cancel"):
 		if get_tree().paused:
 			_on_resume_pressed()
 		else:
 			_pause()
-
 func _pause() -> void:
 	visible = true
 	get_tree().paused = true
@@ -36,7 +37,7 @@ func _on_resume_pressed() -> void:
 
 func _on_stage_select_pressed() -> void:
 	get_tree().paused = false
-	get_tree().change_scene_to_file(GameState.stage_select_path)
+	get_tree().change_scene_to_file(ARENA_SELECT)
 
 func _on_main_menu_pressed() -> void:
 	get_tree().paused = false

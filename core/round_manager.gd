@@ -18,6 +18,7 @@ enum WinCondition {
 @export var player_lives: int = 3
 @export var respawn_delay: float = 2.0
 @export var post_respawn_immortality: float = 0.8
+@export var round_end_delay: float = 0.1
 
 @export_group("Spawn Points")
 @export var player_spawn: Marker2D
@@ -37,10 +38,18 @@ var _minion_enemies: Array = []     # Minions — respawn but never trigger win
 
 var _player: Player = null
 
+# Round-end resolution — see _resolve_round_outcome() for why this
+# exists instead of triggering win/lose directly from the signals.
+var _round_ended: bool = false
+var _pending_lose: bool = false
+var _pending_win: bool = false
+
 # ── Ready ────────────────────────────────────────────────────────
 
 func _ready() -> void:
 	await owner.ready
+
+	GameState.game_over = false
 
 	_player = get_tree().get_first_node_in_group("player") as Player
 	var all_enemies = get_tree().get_nodes_in_group("enemy")
@@ -89,8 +98,6 @@ func _ready() -> void:
 
 # ── Lives Helper ──────────────────────────────────────────────────
 
-# Decrements a fighter's remaining lives, respecting -1 as "infinite"
-# (never runs out). Returns true if this fighter is now permanently out.
 func _consume_life(lives_dict: Dictionary, fighter: Node) -> bool:
 	if lives_dict[fighter] == -1:
 		return false
@@ -105,7 +112,8 @@ func _consume_life(lives_dict: Dictionary, fighter: Node) -> bool:
 func _on_player_died() -> void:
 	_player_lives_remaining -= 1
 	if _player_lives_remaining <= 0:
-		_trigger_lose()
+		_pending_lose = true
+		call_deferred("_resolve_round_outcome")
 	else:
 		_respawn_later(_player, player_spawn)
 
@@ -147,26 +155,41 @@ func _on_chaos_died(chaos: Node) -> void:
 func _check_win_condition() -> void:
 	match win_condition:
 		WinCondition.ELIMINATION:
-			# Win when all main enemies are permanently out
 			if _target_enemies.is_empty():
-				_trigger_win()
+				_pending_win = true
+				call_deferred("_resolve_round_outcome")
+
+# Both _on_player_died() and _on_enemy_died() can fire in the SAME
+# physics frame (e.g. one explosion hits the player and the last
+# target enemy at once). Rather than trigger win/lose directly from
+# either signal, they just raise a flag and defer the actual decision
+# here — by the time this runs, every death signal from that frame has
+# already been processed, so both flags are settled before we pick a
+# winner. A pending loss always takes priority: dying alongside the
+# last enemy is a loss, not a win, per design.
+func _resolve_round_outcome() -> void:
+	if _round_ended:
+		return
+	_round_ended = true
+	GameState.game_over = true
+	if _pending_lose:
+		_trigger_lose()
+	elif _pending_win:
+		_trigger_win()
 
 # ── Respawn ───────────────────────────────────────────────────────
 
 func _respawn_later(character: Node, spawn: Marker2D) -> void:
-	# Stay as a visible black corpse at the death spot for a moment...
 	await get_tree().create_timer(respawn_delay * 0.75).timeout
-	if not is_instance_valid(character):
+	if not is_instance_valid(character) or _round_ended:
 		return
-	# ...then vanish entirely while "traveling" to the spawn point...
 	character.visible = false
 	await get_tree().create_timer(respawn_delay * 0.20).timeout
-	if not is_instance_valid(character):
+	if not is_instance_valid(character) or _round_ended:
 		return
 	character.global_position = spawn.global_position
-	# ...then a short beat before popping back into existence, fully alive.
 	await get_tree().create_timer(respawn_delay * 0.05).timeout
-	if not is_instance_valid(character):
+	if not is_instance_valid(character) or _round_ended:
 		return
 	_respawn(character, spawn)
 
@@ -204,7 +227,6 @@ func _respawn(character: Node, spawn: Marker2D) -> void:
 		character.is_tossing = false
 		character._reset_attacks()
 
-	# Restore alive state — re-enables collision and restores color
 	character._apply_alive_state()
 	if character is Player:
 		character.set_invincible(false)
@@ -213,7 +235,7 @@ func _respawn(character: Node, spawn: Marker2D) -> void:
 
 	if character is AICharacter:
 		character._acquire_target()
-		
+
 	character.health.immortal = true
 	_end_immortality_later(character)
 
@@ -225,11 +247,13 @@ func _end_immortality_later(character: Node) -> void:
 # ── Win / Lose ────────────────────────────────────────────────────
 
 func _trigger_win() -> void:
+	await get_tree().create_timer(round_end_delay).timeout
 	if win_screen:
 		win_screen.visible = true
 	get_tree().paused = true
 
 func _trigger_lose() -> void:
+	await get_tree().create_timer(round_end_delay).timeout
 	if lose_screen:
 		lose_screen.visible = true
 	get_tree().paused = true

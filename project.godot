@@ -158,6 +158,7 @@ ability_2={
 2d_physics/layer_10="Bullet"
 2d_physics/layer_11="Grenade"
 2d_physics/layer_12="Item"
+2d_physics/layer_17="Air Wall"
 
 [physics]
 

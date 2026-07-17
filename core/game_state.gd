@@ -10,3 +10,7 @@ var stage_select_path: String = ""
 
 # Set when player selects a realm. Used by arena select to navigate back.
 var arena_select_path: String = ""
+
+# True once a round has ended (win or lose) — lets other UI (like the
+# pause menu) know not to respond to pause/unpause input.
+var game_over: bool = false

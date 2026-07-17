@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bka34tqxhl13f"]
 
-[ext_resource type="Script" uid="uid://c1hcvijp2yv8o" path="res://realms/earth_realm/arena_select.gd" id="1_8nxn1"]
+[ext_resource type="Script" uid="uid://c1hcvijp2yv8o" path="res://level/arena_select.gd" id="1_8nxn1"]
 
 [node name="Control" type="Control" unique_id=1802168461]
 layout_mode = 3

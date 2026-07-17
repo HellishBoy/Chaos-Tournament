@@ -119,7 +119,7 @@ text = "Resume"
 
 [node name="StageSelectButton" type="Button" parent="PauseMenu/PanelContainer/VBoxContainer" unique_id=718192704]
 layout_mode = 2
-text = "Stage Select"
+text = "Level Select"
 
 [node name="MainMenuButton" type="Button" parent="PauseMenu/PanelContainer/VBoxContainer" unique_id=1563585069]
 layout_mode = 2

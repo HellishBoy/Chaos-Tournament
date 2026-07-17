@@ -29,6 +29,8 @@ class_name HUD
 
 @onready var vignette: ColorRect = $Vignette
 
+const ARENA_SELECT = "res://level/arena_select.tscn"
+
 var _player: Player = null
 var _player_max_hp: int = 0
 var _health_tween: Tween = null
@@ -217,4 +219,4 @@ func _on_try_again_pressed() -> void:
 
 func _on_stage_select_pressed() -> void:
 	get_tree().paused = false
-	get_tree().change_scene_to_file(GameState.stage_select_path)
+	get_tree().change_scene_to_file(ARENA_SELECT)

@@ -6,16 +6,11 @@ extends Control
 # ── Arena Data ───────────────────────────────────────────────────
 
 const ARENAS = [
-	{ "label": "Junkyard", "scene": "res://realms/earth_realm/1_junkyard_arena/stage_select.tscn", "stage_select": "res://realms/earth_realm/1_junkyard_arena/stage_select.tscn", "unlocked": true },
-	{ "label": "City", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Military", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Forest", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Sea", "scene": "", "stage_select": "", "unlocked": false },
-	#{ "label": "Desert", "scene": "", "stage_select": "", "unlocked": false },
-	#{ "label": "Arctic", "scene": "", "stage_select": "", "unlocked": false },
-	#{ "label": "Secret Base", "scene": "", "stage_select": "", "unlocked": false },
-	#{ "label": "Cave", "scene": "", "stage_select": "", "unlocked": false },
-	#{ "label": "Volcanic", "scene": "", "stage_select": "", "unlocked": false },
+	{ "label": "Junkyard", "scene": "res://level/1_junkyard_arena.tscn", "unlocked": true },
+	{ "label": "City", "scene": "res://level/2_city_arena.tscn", "unlocked": true },
+	{ "label": "Military", "scene": "res://level/3_military_arena.tscn", "unlocked": true },
+	{ "label": "Forest", "scene": "res://level/4_forest_arena.tscn", "unlocked": true },
+	{ "label": "Sea", "scene": "res://level/5_sea_arena.tscn", "unlocked": true },
 ]
 
 # ── Node References ──────────────────────────────────────────────
@@ -38,7 +33,7 @@ func _build_arena_buttons() -> void:
 		btn.custom_minimum_size = Vector2(150, 30)
 
 		if data["unlocked"]:
-			btn.pressed.connect(_on_arena_pressed.bind(data["scene"], data["stage_select"]))
+			btn.pressed.connect(_on_arena_pressed.bind(data["scene"]))
 		else:
 			btn.disabled = true
 			btn.modulate = Color(0.4, 0.4, 0.4, 1.0)
@@ -50,8 +45,10 @@ func _build_arena_buttons() -> void:
 
 # ── Button Callbacks ─────────────────────────────────────────────
 
-func _on_arena_pressed(scene_path: String, stage_select_path: String) -> void:
-	GameState.stage_select_path = stage_select_path
+#func _on_arena_pressed(scene_path: String, stage_select_path: String) -> void:
+	#GameState.stage_select_path = stage_select_path
+
+func _on_arena_pressed(scene_path: String) -> void:
 	get_tree().change_scene_to_file(scene_path)
 
 func _on_back_pressed() -> void:

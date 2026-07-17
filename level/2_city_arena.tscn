@@ -1,0 +1,497 @@
+[gd_scene format=4 uid="uid://dnq3b31kevh6t"]
+
+[ext_resource type="Texture2D" uid="uid://dfbvmdyfsg16g" path="res://level/core_area.png" id="1_j5ogu"]
+[ext_resource type="PackedScene" uid="uid://b0ndyxegjc6xh" path="res://entities/characters/player/player.tscn" id="2_1nhv0"]
+[ext_resource type="Resource" uid="uid://sr834egl1yaw" path="res://weapons/melee/Dual/melee_dual-katana.tres" id="3_hctj3"]
+[ext_resource type="PackedScene" uid="uid://dk1e2gluyx3gg" path="res://ui/health_bar.tscn" id="4_j4bdw"]
+[ext_resource type="PackedScene" uid="uid://8hlejmutuawv" path="res://entities/characters/enemies/enemy.tscn" id="5_b4lti"]
+[ext_resource type="Texture2D" uid="uid://bqudt21hedsyy" path="res://entities/characters/_core/skins/skin-red_jester.png" id="6_2y2cb"]
+[ext_resource type="PackedScene" uid="uid://do2nnibgsaxhh" path="res://entities/characters/allies/ally.tscn" id="7_pulpo"]
+[ext_resource type="PackedScene" uid="uid://ckyh8rvblv3jx" path="res://entities/characters/chaos/chaos.tscn" id="8_4lxfh"]
+[ext_resource type="Script" uid="uid://s3foax1vfnlb" path="res://entities/characters/_core/passive_skills/_core/passive_skill_data.gd" id="9_bdq5l"]
+[ext_resource type="Script" uid="uid://cuf0jjkwlmjfm" path="res://entities/characters/_core/character_stats.gd" id="10_v7y4l"]
+[ext_resource type="Texture2D" uid="uid://cjps05vfw7a7y" path="res://entities/characters/_core/skins/skin-sea_bird1.png" id="11_7u6py"]
+[ext_resource type="Texture2D" uid="uid://be6yx4smml1di" path="res://entities/prop/turret/turret_base.png" id="12_3q77v"]
+[ext_resource type="PackedScene" uid="uid://cwhtxspy8avtu" path="res://entities/prop/turret/turret.tscn" id="13_gcde1"]
+[ext_resource type="PackedScene" uid="uid://cq74u8e6dep8k" path="res://ui/hud.tscn" id="14_rv3nb"]
+[ext_resource type="Script" uid="uid://ctrptflhtsjqv" path="res://ui/hud.gd" id="15_0d28h"]
+[ext_resource type="Script" uid="uid://bvoq4k2jkkt3v" path="res://core/round_manager.gd" id="16_1oe03"]
+[ext_resource type="Script" uid="uid://o13aqvpie2db" path="res://weapons/_core/weapon_drop_manager.gd" id="17_u1xuq"]
+[ext_resource type="Script" uid="uid://dwlwg725t31ip" path="res://weapons/_core/weapon_drop_entry.gd" id="18_2rdrc"]
+[ext_resource type="Resource" uid="uid://cm8ewcb3xswx5" path="res://weapons/ranged/ranged_1h-nail_gun.tres" id="19_ij8tb"]
+[ext_resource type="Resource" uid="uid://yynomacn34w0" path="res://weapons/ranged/ranged_1h-mac_10.tres" id="20_ayq6l"]
+[ext_resource type="Resource" uid="uid://buqfils5e7ehu" path="res://weapons/grenade/frag/grenade_timer-frag.tres" id="21_oqvt5"]
+[ext_resource type="Resource" uid="uid://blc3h72syephy" path="res://weapons/melee/Two-Handed/melee_2h-battle_axe.tres" id="22_l5h1x"]
+[ext_resource type="Script" uid="uid://co24hvnc6y0dt" path="res://weapons/_core/weapon_drop_config.gd" id="23_73dr3"]
+[ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="24_8y405"]
+[ext_resource type="Script" uid="uid://clhccd8w6ac47" path="res://items/_core/item_drop_manager.gd" id="25_oh0dt"]
+[ext_resource type="Resource" uid="uid://cfwgiyx6n4l2u" path="res://items/_core/new_resource.tres" id="26_fny1m"]
+[ext_resource type="PackedScene" uid="uid://dolrqfgx3sw2y" path="res://items/_core/ItemPickup.tscn" id="27_8mvle"]
+[ext_resource type="Script" uid="uid://byj40y30kigbn" path="res://weapons/_core/drop_zone.gd" id="28_ssawi"]
+[ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="29_1t4nt"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_5wqxo"]
+vertices = PackedVector2Array(636, 308, 580, 308, 172, 300, 172, 212, 220, 204, 644, 164, 636, 60, 644, 124, 220, 116, 580, 60, 156, 60, 156, 28, 244, 28, 244, 60, 300, 60, 300, 28, 372, 28, 372, 60, 428, 60, 428, 28, 580, 28, 636, 28, 644, 28, 756, 124, 756, 164, 68, 60, 132, 116, 76, 100, 44, 84, 644, 340, 636, 340, 132, 204, 84, 212, 580, 340, 548, 340, 548, 356, 476, 356, 476, 340, 428, 340, 428, 308, 372, 308, 372, 340, 300, 340, 300, 308, 244, 308, 244, 340, 204, 340, 204, 324, 132, 324, 132, 340, 28, 340, 84, 300, 28, 172, 44, 172, 44, 140, 76, 140, 44, 100, 28, 84, 28, 28, 68, 28)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5), PackedInt32Array(6, 7, 5, 4, 8, 9), PackedInt32Array(10, 11, 12, 13, 8), PackedInt32Array(14, 15, 16, 17), PackedInt32Array(18, 19, 20, 9), PackedInt32Array(6, 21, 22, 7), PackedInt32Array(7, 23, 24, 5), PackedInt32Array(18, 9, 8), PackedInt32Array(17, 18, 8), PackedInt32Array(14, 17, 8), PackedInt32Array(13, 14, 8), PackedInt32Array(25, 10, 8, 26, 27, 28), PackedInt32Array(5, 29, 30, 0), PackedInt32Array(31, 4, 3, 32), PackedInt32Array(1, 33, 34), PackedInt32Array(34, 35, 36, 37), PackedInt32Array(37, 38, 39, 1), PackedInt32Array(40, 41, 42, 43), PackedInt32Array(44, 45, 46, 47), PackedInt32Array(48, 49, 50, 51), PackedInt32Array(50, 52, 53, 32, 51), PackedInt32Array(32, 53, 54, 55, 31), PackedInt32Array(27, 56, 28), PackedInt32Array(28, 57, 58, 59, 25), PackedInt32Array(55, 27, 26, 31), PackedInt32Array(47, 48, 51, 2, 44), PackedInt32Array(1, 34, 37), PackedInt32Array(2, 1, 39), PackedInt32Array(2, 39, 40), PackedInt32Array(2, 40, 43), PackedInt32Array(44, 2, 43)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(672, 368, 0, 368, 0, 0, 672, 0)])
+source_geometry_mode = 1
+source_geometry_group_name = &"navregion"
+agent_radius = 12.0
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_2ejke"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_1xtti"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_3vboy"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_r4kar"]
+vertices = PackedVector2Array(8, 8, -8, 8, -8, -8, 8, -8)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)])
+agent_radius = 0.0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ft5by"]
+texture = ExtResource("1_j5ogu")
+0:0/0 = 0
+0:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2ejke")
+1:0/0 = 0
+1:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2ejke")
+2:0/0 = 0
+2:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2ejke")
+3:0/0 = 0
+3:0/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_2ejke")
+0:1/0 = 0
+0:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_1xtti")
+1:1/0 = 0
+1:1/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_1xtti")
+2:1/0 = 0
+2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+3:1/0 = 0
+3:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+0:2/0 = 0
+0:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_3vboy")
+1:2/0 = 0
+1:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_3vboy")
+2:2/0 = 0
+2:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_3vboy")
+3:2/0 = 0
+3:2/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_3vboy")
+0:3/0 = 0
+0:3/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_r4kar")
+1:3/0 = 0
+1:3/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_r4kar")
+2:3/0 = 0
+2:3/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_r4kar")
+3:3/0 = 0
+3:3/0/navigation_layer_0/polygon = SubResource("NavigationPolygon_r4kar")
+
+[sub_resource type="TileSet" id="TileSet_deyfl"]
+physics_layer_0/collision_layer = 1
+navigation_layer_0/layers = 1
+sources/0 = SubResource("TileSetAtlasSource_ft5by")
+
+[sub_resource type="Resource" id="Resource_ft5by"]
+script = ExtResource("10_v7y4l")
+move_speed = 80.0
+max_hp = 900
+divine_aegis = 0.8
+knockback_resistance = 0.5
+flinch_resistance = 0.4
+root_resistance = 0.5
+stamina_max = 10000.0
+dodge_speed = 500.0
+metadata/_custom_type_script = "uid://cuf0jjkwlmjfm"
+
+[sub_resource type="Resource" id="Resource_2ju0k"]
+script = ExtResource("18_2rdrc")
+weapon_data = ExtResource("19_ij8tb")
+drop_weight = 8.0
+allowed_groups = Array[String](["Area"])
+max_concurrent = 4
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_2ejke"]
+script = ExtResource("18_2rdrc")
+weapon_data = ExtResource("20_ayq6l")
+drop_weight = 4.0
+allowed_groups = Array[String](["Area", "Altar"])
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_1xtti"]
+script = ExtResource("18_2rdrc")
+weapon_data = ExtResource("21_oqvt5")
+drop_weight = 2.0
+allowed_groups = Array[String](["Altar"])
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_3vboy"]
+script = ExtResource("18_2rdrc")
+weapon_data = ExtResource("22_l5h1x")
+drop_weight = 4.0
+allowed_groups = Array[String](["Altar"])
+metadata/_custom_type_script = "uid://dwlwg725t31ip"
+
+[sub_resource type="Resource" id="Resource_jqoj8"]
+script = ExtResource("23_73dr3")
+drop_interval = 4.0
+min_drops_per_interval = 3
+max_drops_per_interval = 6
+entries = Array[ExtResource("18_2rdrc")]([SubResource("Resource_2ju0k"), SubResource("Resource_2ejke"), SubResource("Resource_1xtti"), SubResource("Resource_3vboy")])
+metadata/_custom_type_script = "uid://co24hvnc6y0dt"
+
+[node name="JunkyardStage1" type="Node2D" unique_id=646780844]
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=863411140]
+navigation_polygon = SubResource("NavigationPolygon_5wqxo")
+
+[node name="CoreArena" type="TileMapLayer" parent="." unique_id=430009399 groups=["navregion"]]
+z_index = -100
+tile_map_data = PackedByteArray("AAAAABYAAAACAAEAAAARABYAAAACAAEAAAABABYAAAACAAEAAAACABYAAAACAAEAAAADABYAAAACAAEAAAAEABYAAAACAAEAAAAFABYAAAACAAEAAAAGABYAAAACAAEAAAAHABYAAAACAAEAAAAIABYAAAACAAEAAAAJABYAAAACAAEAAAAKABYAAAACAAEAAAALABYAAAACAAEAAAAMABYAAAACAAEAAAANABYAAAACAAEAAAAOABYAAAACAAEAAAAPABYAAAACAAEAAAAQABYAAAACAAEAAAAAAAAAAAACAAEAAAAAAAEAAAACAAEAAFAAAAIAAAACAAEAAFAAAAMAAAACAAEAAFAAAAQAAAACAAEAAFAAAAUAAAACAAEAAFAAAAYAAAACAAEAAFAAAAcAAAACAAEAAFAAAAgAAAACAAEAAFAAAAkAAAACAAEAAFAAAAoAAAACAAEAAFAAAAwAAAACAAEAAFAAAA0AAAACAAEAAFAAAA4AAAACAAEAAFAAAA8AAAACAAEAAFAAABAAAAACAAEAAFAAABEAAAACAAEAAFAAABIAAAACAAEAAFAAABMAAAACAAEAAFAAABQAAAACAAEAAFAAABUAAAACAAEAAFABAAAAAAACAAEAAAACAAAAAAACAAEAAAADAAAAAAACAAEAAAAEAAAAAAACAAEAAAAFAAAAAAACAAEAAAAGAAAAAAACAAEAAAAHAAAAAAACAAEAAAAIAAAAAAACAAEAAAAJAAAAAAACAAEAAAAKAAAAAAACAAEAAAALAAAAAAACAAEAAAAMAAAAAAACAAEAAAANAAAAAAACAAEAAAAOAAAAAAACAAEAAAAPAAAAAAACAAEAAAAQAAAAAAACAAEAAAARAAAAAAACAAEAAAAYAAAAAAACAAEAAAAZAAAAAAACAAEAAAAaAAAAAAACAAEAAAAbAAAAAAACAAEAAAAcAAAAAAACAAEAAAAdAAAAAAACAAEAAAAeAAAAAAACAAEAAAAfAAAAAAACAAEAAAAgAAAAAAACAAEAAAAhAAAAAAACAAEAAAAiAAAAAAACAAEAAAAjAAAAAAACAAEAAAAkAAAAAAACAAEAAAAlAAAAAAACAAEAAAAmAAAAAAACAAEAAAAnAAAAAAACAAEAAAAoAAAAAAACAAEAAAApAAAAAAACAAEAAAApAAEAAAACAAEAAGApAAIAAAACAAEAAGApAAMAAAACAAEAAGApAAQAAAACAAEAAGApAAUAAAACAAEAAGApAAYAAAACAAEAAGApAAcAAAADAAIAAAApAAgAAAADAAIAAAApAAkAAAADAAIAAAApAAoAAAADAAIAAAApAAsAAAACAAEAAGApAAwAAAACAAEAAGApAA0AAAACAAEAAGApAA4AAAACAAEAAGApAA8AAAACAAEAAGApABAAAAACAAEAAGApABEAAAACAAEAAGApABIAAAACAAEAAGApABMAAAACAAEAAGApABQAAAACAAEAAGApABUAAAACAAEAAGApABYAAAACAAEAAAAoABYAAAACAAEAAAAnABYAAAACAAEAAAAmABYAAAACAAEAAAAlABYAAAACAAEAAAAkABYAAAACAAEAAAAjABYAAAACAAEAAAAcABYAAAACAAEAAAAbABYAAAACAAEAAAAaABYAAAACAAEAAAAZABYAAAACAAEAAAAYABYAAAACAAEAAAAOABAAAAADAAAAAAAOABEAAAADAAAAAAAPABAAAAADAAAAAAAPABEAAAADAAAAAAAQABUAAAADAAEAAAARABQAAAADAAEAAAARABUAAAADAAEAAAAJABUAAAADAAEAAAAKABUAAAADAAEAAAALABUAAAADAAEAAAAJAA8AAAADAAEAAAAJABAAAAADAAEAAAAJABEAAAADAAEAAAAGAA8AAAADAAEAAAAHAA8AAAADAAEAAAAIAA8AAAADAAEAAAAJAAgAAAADAAEAAAAJAAkAAAADAAEAAAAJAAoAAAADAAEAAAAJAAsAAAADAAEAAAAKAAgAAAADAAEAAAAKAAkAAAADAAEAAAAKAAoAAAADAAEAAAAKAAsAAAADAAEAAAALAAoAAAADAAEAAAALAAsAAAADAAEAAAAMAAoAAAADAAEAAAAMAAsAAAADAAEAAAANAAoAAAADAAAAAAANAAsAAAADAAAAAAATAA0AAAADAAAAAAAUAA0AAAADAAAAAAAVAA0AAAADAAAAAAAWAA0AAAADAAAAAAATAAgAAAADAAAAAAAUAAgAAAADAAAAAAAVAAgAAAADAAAAAAAWAAgAAAADAAAAAAAaAA0AAAADAAAAAAAbAA0AAAADAAAAAAAYABQAAAADAAEAAAAYABUAAAADAAEAAAAZABQAAAADAAEAAAAZABUAAAADAAEAAAAaABAAAAADAAAAAAAaABEAAAADAAAAAAAbABAAAAADAAAAAAAbABEAAAADAAAAAAAlABIAAAADAAAAAAAlABMAAAADAAAAAAAlABQAAAADAAEAAAAlABUAAAADAAEAAAAmABIAAAADAAAAAAAmABMAAAADAAAAAAAmABQAAAADAAEAAAAmABUAAAADAAEAAAAjAA4AAAADAAAAAAAjAA8AAAADAAAAAAAkAA4AAAADAAAAAAAkAA8AAAADAAAAAAAaAAkAAAADAAAAAAAaAAoAAAADAAAAAAAbAAkAAAADAAAAAAAbAAoAAAADAAAAAAAcAAkAAAADAAAAAAAcAAoAAAADAAAAAAAdAAkAAAADAAAAAAAdAAoAAAADAAAAAAAeAAkAAAADAAAAAAAeAAoAAAADAAAAAAAfAAkAAAADAAAAAAAfAAoAAAADAAAAAAAfAAgAAAADAAAAAAAeAAgAAAADAAAAAAAiAAgAAAADAAAAAAAiAAkAAAADAAAAAAAiAAoAAAADAAAAAAAjAAgAAAADAAAAAAAjAAkAAAADAAAAAAAjAAoAAAADAAAAAAAlAAEAAAADAAEAAAAlAAIAAAADAAEAAAAlAAMAAAADAAAAAAAlAAQAAAADAAAAAAAmAAEAAAADAAEAAAAmAAIAAAADAAEAAAAmAAMAAAADAAAAAAAmAAQAAAADAAAAAAAYAAEAAAADAAEAAAAYAAIAAAADAAEAAAAYAAMAAAADAAAAAAAYAAQAAAADAAAAAAAYAAUAAAADAAAAAAAZAAEAAAADAAEAAAAZAAIAAAADAAEAAAAZAAMAAAADAAAAAAAZAAQAAAADAAAAAAAZAAUAAAADAAAAAAAaAAQAAAADAAAAAAAaAAUAAAADAAAAAAAbAAUAAAADAAAAAAAbAAQAAAADAAAAAAAQAAEAAAADAAEAAAAQAAIAAAADAAEAAAAQAAMAAAADAAAAAAAQAAQAAAADAAAAAAAQAAUAAAADAAAAAAARAAEAAAADAAEAAAARAAIAAAADAAEAAAARAAMAAAADAAAAAAARAAQAAAADAAAAAAARAAUAAAADAAAAAAAFAAEAAAADAAEAAAAFAAIAAAADAAEAAAAGAAEAAAADAAEAAAAGAAIAAAADAAEAAAAHAAEAAAADAAEAAAAHAAIAAAADAAEAAAAIAAEAAAADAAEAAAAIAAIAAAADAAEAAAABAAYAAAADAAEAAAABAAcAAAADAAEAAAABAAgAAAADAAEAAAABAAkAAAADAAEAAAACAAcAAAADAAEAAAADAAcAAAADAAEAAAAUAA8AAAADAAAAAAAUAA4AAAADAAAAAAATAA4AAAADAAAAAAASAA4AAAADAAAAAAASAA0AAAADAAAAAAASAAwAAAADAAAAAAASAAsAAAADAAAAAAASAAoAAAADAAAAAAASAAkAAAADAAAAAAASAAgAAAADAAAAAAASAAcAAAADAAAAAAASAAYAAAADAAMAAAASAAUAAAADAAMAAAASAAQAAAADAAMAAAASAAMAAAADAAMAAAASAAIAAAADAAMAAAASAAEAAAADAAMAAAASAAAAAAACAAEAAAATAAAAAAACAAEAAAATAAEAAAADAAMAAAATAAIAAAADAAMAAAATAAMAAAADAAMAAAATAAQAAAADAAMAAAATAAUAAAADAAMAAAATAAYAAAADAAMAAAATAAcAAAADAAAAAAAUAAcAAAADAAAAAAAUAAYAAAADAAMAAAAUAAUAAAADAAMAAAAUAAQAAAADAAMAAAAUAAMAAAADAAMAAAAUAAIAAAADAAMAAAAUAAEAAAADAAMAAAAUAAAAAAACAAEAAAAVAAAAAAACAAEAAAAVAAEAAAADAAMAAAAVAAIAAAADAAMAAAAVAAMAAAADAAMAAAAVAAQAAAADAAMAAAAVAAUAAAADAAMAAAAVAAYAAAADAAMAAAAVAAcAAAADAAAAAAAWAAcAAAADAAAAAAAWAAYAAAADAAMAAAAWAAUAAAADAAMAAAAWAAQAAAADAAMAAAAWAAMAAAADAAMAAAAWAAIAAAADAAMAAAAWAAEAAAADAAMAAAAWAAAAAAACAAEAAAAXAAAAAAACAAEAAAAXAAEAAAADAAMAAAAXAAIAAAADAAMAAAAXAAMAAAADAAMAAAAXAAQAAAADAAMAAAAXAAUAAAADAAMAAAAXAAYAAAADAAMAAAAXAAcAAAADAAAAAAAXAAgAAAADAAAAAAAXAAkAAAADAAAAAAAWAAkAAAADAAAAAAAVAAkAAAADAAAAAAAUAAkAAAADAAAAAAATAAkAAAADAAAAAAATAAoAAAADAAAAAAATAAsAAAADAAAAAAATAAwAAAADAAAAAAAUAAwAAAADAAAAAAAUAAsAAAADAAAAAAAUAAoAAAADAAAAAAAVAAoAAAADAAAAAAAVAAsAAAADAAAAAAAVAAwAAAADAAAAAAAWAAwAAAADAAAAAAAWAAsAAAADAAAAAAAWAAoAAAADAAAAAAAXAAoAAAADAAAAAAAXAAsAAAADAAAAAAAXAAwAAAADAAAAAAAXAA0AAAADAAAAAAAXAA4AAAADAAAAAAAWAA4AAAADAAAAAAAVAA4AAAADAAAAAAAVAA8AAAADAAAAAAATAA8AAAADAAAAAAASAA8AAAADAAAAAAARAA8AAAADAAAAAAARAA4AAAADAAAAAAARAA0AAAADAAAAAAARAAwAAAADAAAAAAARAAsAAAADAAAAAAARAAoAAAADAAAAAAARAAkAAAADAAAAAAARAAgAAAADAAAAAAARAAcAAAADAAAAAAARAAYAAAADAAAAAAAQAAYAAAADAAAAAAAPAAYAAAADAAAAAAAOAAYAAAADAAAAAAANAAYAAAADAAAAAAANAAMAAAADAAAAAAANAAIAAAADAAAAAAANAAEAAAADAAAAAAAMAAEAAAADAAAAAAALAAEAAAADAAAAAAAKAAEAAAADAAAAAAAJAAEAAAADAAAAAAAJAAIAAAADAAAAAAAJAAMAAAADAAAAAAAIAAMAAAADAAAAAAAHAAMAAAADAAAAAAAGAAMAAAADAAAAAAAFAAMAAAADAAAAAAAEAAMAAAADAAAAAAAEAAIAAAADAAAAAAAEAAEAAAADAAAAAAADAAEAAAADAAAAAAACAAEAAAADAAAAAAABAAEAAAADAAAAAAABAAIAAAADAAAAAAABAAMAAAADAAAAAAABAAQAAAADAAAAAAABAAUAAAADAAAAAAACAAUAAAADAAAAAAACAAQAAAADAAAAAAACAAMAAAADAAAAAAACAAIAAAADAAAAAAADAAIAAAADAAAAAAADAAMAAAADAAAAAAADAAQAAAADAAAAAAADAAUAAAADAAAAAAADAAYAAAADAAAAAAACAAYAAAADAAAAAAAEAAYAAAADAAAAAAAEAAUAAAADAAAAAAAEAAQAAAADAAAAAAAFAAQAAAADAAAAAAAFAAUAAAADAAAAAAAFAAYAAAADAAAAAAAFAAcAAAADAAAAAAAEAAcAAAADAAAAAAAEAAgAAAADAAAAAAADAAgAAAADAAAAAAACAAgAAAADAAAAAAACAAkAAAADAAAAAAACAAoAAAADAAAAAAABAAoAAAADAAAAAAABAAsAAAADAAAAAAABAAwAAAADAAAAAAABAA0AAAADAAAAAAABAA4AAAADAAAAAAABAA8AAAADAAAAAAABABAAAAADAAAAAAABABEAAAADAAAAAAABABIAAAADAAAAAAABABMAAAADAAAAAAABABQAAAADAAAAAAABABUAAAADAAAAAAACABUAAAADAAAAAAACABQAAAADAAAAAAACABMAAAADAAAAAAACABIAAAADAAAAAAACABEAAAADAAAAAAACABAAAAADAAAAAAACAA8AAAADAAAAAAACAA4AAAADAAAAAAACAA0AAAADAAAAAAACAAwAAAADAAAAAAACAAsAAAADAAAAAAADAAsAAAADAAAAAAADAAoAAAADAAAAAAADAAkAAAADAAAAAAAEAAkAAAADAAAAAAAEAAoAAAADAAAAAAAEAAsAAAADAAAAAAAEAAwAAAADAAAAAAADAAwAAAADAAAAAAADAA0AAAADAAAAAAADAA4AAAADAAAAAAADAA8AAAADAAAAAAADABAAAAADAAAAAAADABEAAAADAAAAAAADABIAAAADAAAAAAADABMAAAADAAAAAAADABQAAAADAAAAAAADABUAAAADAAAAAAAEABUAAAADAAAAAAAEABQAAAADAAAAAAAEABMAAAADAAAAAAAEABIAAAADAAAAAAAEABEAAAADAAAAAAAEABAAAAADAAAAAAAEAA8AAAADAAAAAAAEAA4AAAADAAAAAAAEAA0AAAADAAAAAAAFAA0AAAADAAAAAAAFAAwAAAADAAAAAAAFAAsAAAADAAAAAAAFAAoAAAADAAAAAAAFAAkAAAADAAAAAAAFAAgAAAADAAAAAAAGAAgAAAADAAAAAAAGAAcAAAADAAAAAAAGAAYAAAADAAAAAAAGAAUAAAADAAAAAAAGAAQAAAADAAAAAAAHAAQAAAADAAAAAAAHAAUAAAADAAAAAAAHAAYAAAADAAAAAAAHAAcAAAADAAAAAAAHAAgAAAADAAAAAAAHAAkAAAADAAAAAAAGAAkAAAADAAAAAAAGAAoAAAADAAAAAAAGAAsAAAADAAAAAAAGAAwAAAADAAAAAAAGAA0AAAADAAAAAAAGAA4AAAADAAEAAAAFAA4AAAADAAAAAAAFAA8AAAADAAAAAAAFABAAAAADAAAAAAAFABEAAAADAAAAAAAFABIAAAADAAAAAAAFABMAAAADAAAAAAAFABQAAAADAAAAAAAFABUAAAADAAAAAAAGABUAAAADAAAAAAAGABQAAAADAAAAAAAGABMAAAADAAAAAAAGABIAAAADAAAAAAAGABEAAAADAAEAAAAGABAAAAADAAEAAAAHABAAAAADAAEAAAAHABEAAAADAAEAAAAHABIAAAADAAAAAAAHABMAAAADAAAAAAAHABQAAAADAAAAAAAHABUAAAADAAAAAAAIABUAAAADAAAAAAAIABQAAAADAAAAAAAIABMAAAADAAAAAAAIABIAAAADAAAAAAAIABEAAAADAAEAAAAIABAAAAADAAEAAAAJABIAAAADAAAAAAAJABMAAAADAAAAAAAJABQAAAADAAAAAAAKABQAAAADAAAAAAAKABMAAAADAAAAAAAKABIAAAADAAAAAAAKABEAAAADAAAAAAAKABAAAAADAAAAAAAKAA8AAAADAAAAAAAKAA4AAAADAAAAAAAKAA0AAAADAAAAAAAKAAwAAAADAAAAAAAJAAwAAAADAAAAAAAIAAwAAAADAAAAAAAIAAsAAAADAAAAAAAIAAoAAAADAAAAAAAIAAkAAAADAAAAAAAIAAgAAAADAAAAAAAIAAcAAAADAAAAAAAIAAYAAAADAAAAAAAIAAUAAAADAAAAAAAIAAQAAAADAAAAAAAJAAQAAAADAAAAAAAJAAUAAAADAAAAAAAJAAYAAAADAAAAAAAJAAcAAAADAAAAAAAKAAcAAAADAAAAAAAKAAYAAAADAAAAAAAKAAUAAAADAAAAAAAKAAQAAAADAAAAAAAKAAMAAAADAAAAAAAKAAIAAAADAAAAAAALAAIAAAADAAAAAAALAAMAAAADAAAAAAALAAQAAAADAAAAAAALAAUAAAADAAAAAAALAAYAAAADAAAAAAALAAcAAAADAAAAAAALAAgAAAADAAEAAAALAAkAAAADAAEAAAAMAAkAAAADAAEAAAAMAAgAAAADAAEAAAAMAAcAAAADAAAAAAAMAAYAAAADAAAAAAAMAAUAAAADAAAAAAAMAAQAAAADAAAAAAAMAAMAAAADAAAAAAAMAAIAAAADAAAAAAANAAcAAAADAAAAAAANAAgAAAADAAAAAAANAAkAAAADAAAAAAAOAAkAAAADAAAAAAAOAAgAAAADAAAAAAAOAAcAAAADAAAAAAAPAAcAAAADAAAAAAAPAAgAAAADAAAAAAAPAAkAAAADAAAAAAAPAAoAAAADAAAAAAAOAAoAAAADAAAAAAAOAAsAAAADAAAAAAAOAAwAAAADAAAAAAANAAwAAAADAAAAAAAMAAwAAAADAAAAAAALAAwAAAADAAAAAAALAA0AAAADAAAAAAALAA4AAAADAAAAAAALAA8AAAADAAAAAAALABAAAAADAAAAAAALABEAAAADAAAAAAALABIAAAADAAAAAAALABMAAAADAAAAAAALABQAAAADAAAAAAAMABQAAAADAAAAAAAMABMAAAADAAAAAAAMABIAAAADAAAAAAAMABEAAAADAAAAAAAMABAAAAADAAAAAAAMAA8AAAADAAAAAAAMAA4AAAADAAAAAAAMAA0AAAADAAAAAAANAA0AAAADAAAAAAANAA4AAAADAAAAAAANAA8AAAADAAAAAAANABAAAAADAAAAAAANABEAAAADAAAAAAANABIAAAADAAAAAAANABMAAAADAAAAAAANABQAAAADAAAAAAANABUAAAADAAAAAAAMABUAAAADAAAAAAAOABUAAAADAAAAAAAOABQAAAADAAAAAAAOABMAAAADAAAAAAAOABIAAAADAAAAAAAPABIAAAADAAAAAAAPABMAAAADAAAAAAAPABQAAAADAAAAAAAPABUAAAADAAAAAAAOAA8AAAADAAAAAAAOAA4AAAADAAAAAAAOAA0AAAADAAAAAAAPAA0AAAADAAAAAAAPAAwAAAADAAAAAAAPAAsAAAADAAAAAAAQAAsAAAADAAAAAAAQAAoAAAADAAAAAAAQAAkAAAADAAAAAAAQAAgAAAADAAAAAAAQAAcAAAADAAAAAAAQAAwAAAADAAAAAAAQAA0AAAADAAAAAAAQAA4AAAADAAAAAAAPAA4AAAADAAAAAAAPAA8AAAADAAAAAAAQAA8AAAADAAAAAAAHAAoAAAADAAAAAAAHAAsAAAADAAAAAAAHAAwAAAADAAAAAAAHAA0AAAADAAAAAAAHAA4AAAADAAEAAAAIAA4AAAADAAEAAAAIAA0AAAADAAAAAAAJAA0AAAADAAAAAAAJAA4AAAADAAEAAAAOAAEAAAADAAAAAAAOAAIAAAADAAAAAAAOAAMAAAADAAAAAAAPAAMAAAADAAAAAAAPAAIAAAADAAAAAAAPAAEAAAADAAAAAAASABIAAAACAAMAAAASABMAAAACAAMAAAASABQAAAACAAMAAAASABUAAAACAAMAAAASABYAAAACAAEAAAATABYAAAACAAEAAAATABUAAAACAAMAAAATABQAAAACAAMAAAATABMAAAACAAMAAAATABIAAAACAAMAAAAUABIAAAACAAMAAAAUABMAAAACAAMAAAAUABQAAAACAAMAAAAUABUAAAACAAMAAAAUABYAAAACAAEAAAAVABYAAAACAAEAAAAVABUAAAACAAMAAAAVABQAAAACAAMAAAAVABMAAAACAAMAAAAVABIAAAACAAMAAAAWABIAAAACAAMAAAAWAA8AAAADAAAAAAAXAA8AAAADAAAAAAAXABIAAAACAAMAAAAXABMAAAACAAMAAAAWABMAAAACAAMAAAAWABQAAAACAAMAAAAWABUAAAACAAMAAAAWABYAAAACAAEAAAAXABYAAAACAAEAAAAXABUAAAACAAMAAAAXABQAAAACAAMAAAAYAA8AAAADAAAAAAAYAA4AAAADAAAAAAAYAA0AAAADAAAAAAAYAAwAAAADAAAAAAAYAAsAAAADAAAAAAAYAAoAAAADAAAAAAAYAAkAAAADAAAAAAAYAAgAAAADAAAAAAAYAAcAAAADAAAAAAAYAAYAAAADAAAAAAAZAAYAAAADAAAAAAAZAAcAAAADAAAAAAAZAAgAAAADAAAAAAAZAAkAAAADAAAAAAAZAAoAAAADAAAAAAAZAAsAAAADAAAAAAAZAAwAAAADAAAAAAAZAA0AAAADAAAAAAAZAA4AAAADAAAAAAAZAA8AAAADAAAAAAAaAA8AAAADAAAAAAAaAA4AAAADAAAAAAAbAA4AAAADAAAAAAAbAA8AAAADAAAAAAAcAA8AAAADAAAAAAAcAA4AAAADAAAAAAAcAA0AAAADAAAAAAAcAAwAAAADAAAAAAAcAAsAAAADAAAAAAAbAAsAAAADAAAAAAAaAAsAAAADAAAAAAAaAAwAAAADAAAAAAAbAAwAAAADAAAAAAAdAAsAAAADAAAAAAAdAAwAAAADAAAAAAAdAA0AAAADAAAAAAAdAA4AAAADAAAAAAAdAA8AAAADAAAAAAAdABAAAAADAAAAAAAcABAAAAADAAAAAAAcABEAAAADAAAAAAAcABIAAAADAAAAAAAbABIAAAADAAAAAAAaABIAAAADAAAAAAAaABMAAAADAAAAAAAaABQAAAADAAAAAAAaABUAAAADAAAAAAAbABUAAAADAAAAAAAbABQAAAADAAAAAAAbABMAAAADAAAAAAAcABMAAAADAAAAAAAcABQAAAADAAAAAAAcABUAAAADAAAAAAAdABQAAAADAAAAAAAdABMAAAADAAAAAAAdABIAAAADAAAAAAAdABEAAAADAAAAAAAeABEAAAADAAAAAAAeABAAAAADAAAAAAAeAA8AAAADAAAAAAAeAA4AAAACAAIAAAAeAA0AAAADAAAAAAAeAAwAAAADAAAAAAAeAAsAAAADAAAAAAAfAAsAAAADAAAAAAAfAAwAAAADAAAAAAAfAA0AAAADAAAAAAAfAA4AAAADAAAAAAAfAA8AAAADAAAAAAAfABAAAAADAAAAAAAfABEAAAADAAAAAAAfABIAAAADAAAAAAAeABIAAAADAAAAAAAeABMAAAADAAAAAAAeABQAAAADAAAAAAAfABQAAAADAAAAAAAfABMAAAADAAAAAAAgABMAAAADAAAAAAAgABIAAAADAAAAAAAgABEAAAADAAAAAAAgABAAAAADAAAAAAAgAA8AAAADAAAAAAAgAA4AAAADAAAAAAAgAA0AAAADAAAAAAAgAAwAAAADAAAAAAAgAAsAAAACAAIAAAAgAAoAAAADAAAAAAAgAAkAAAADAAAAAAAgAAgAAAADAAAAAAAgAAcAAAADAAAAAAAgAAYAAAADAAAAAAAgAAUAAAADAAAAAAAgAAQAAAADAAAAAAAgAAMAAAADAAAAAAAgAAIAAAADAAAAAAAgAAEAAAADAAAAAAAfAAEAAAADAAAAAAAeAAEAAAADAAAAAAAdAAEAAAADAAAAAAAcAAEAAAADAAAAAAAbAAEAAAABAAAAAAAaAAEAAAAAAAAAAAAaAAIAAAAAAAEAAAAaAAMAAAADAAAAAAAbAAMAAAADAAAAAAAbAAIAAAABAAEAAAAcAAIAAAADAAAAAAAcAAMAAAADAAAAAAAcAAQAAAADAAAAAAAcAAUAAAADAAAAAAAcAAYAAAADAAAAAAAbAAYAAAADAAAAAAAaAAYAAAADAAAAAAAaAAcAAAADAAAAAAAaAAgAAAADAAAAAAAbAAgAAAADAAAAAAAbAAcAAAADAAAAAAAcAAcAAAADAAAAAAAcAAgAAAADAAAAAAAdAAgAAAADAAAAAAAdAAcAAAADAAAAAAAdAAYAAAADAAAAAAAdAAUAAAADAAAAAAAdAAQAAAADAAAAAAAdAAMAAAADAAAAAAAdAAIAAAADAAAAAAAeAAIAAAADAAAAAAAeAAMAAAADAAAAAAAeAAQAAAADAAAAAAAeAAUAAAADAAAAAAAeAAYAAAADAAAAAAAeAAcAAAADAAAAAAAfAAcAAAADAAAAAAAfAAYAAAADAAAAAAAfAAUAAAADAAAAAAAfAAQAAAADAAAAAAAfAAMAAAADAAAAAAAfAAIAAAADAAAAAAAhAAEAAAADAAAAAAAhAAIAAAADAAAAAAAhAAMAAAADAAAAAAAhAAQAAAADAAAAAAAhAAUAAAADAAAAAAAhAAYAAAADAAAAAAAhAAcAAAADAAAAAAAhAAgAAAADAAAAAAAhAAkAAAADAAAAAAAhAAoAAAADAAAAAAAhAAsAAAADAAAAAAAhAAwAAAADAAAAAAAhAA0AAAADAAAAAAAhAA4AAAADAAAAAAAhAA8AAAADAAAAAAAhABAAAAADAAAAAAAhABEAAAADAAAAAAAhABIAAAADAAAAAAAhABMAAAADAAAAAAAhABQAAAADAAAAAAAgABQAAAADAAAAAAAiABQAAAADAAAAAAAiABMAAAADAAAAAAAiABIAAAADAAAAAAAiABEAAAADAAAAAAAiABAAAAADAAAAAAAiAA8AAAADAAAAAAAiAA4AAAACAAIAAAAiAA0AAAADAAAAAAAiAAwAAAADAAAAAAAiAAsAAAADAAAAAAAjAAsAAAADAAAAAAAjAAwAAAADAAAAAAAjAA0AAAADAAAAAAAkAA0AAAADAAAAAAAkAAwAAAADAAAAAAAkAAsAAAADAAAAAAAkAAoAAAADAAAAAAAkAAkAAAADAAAAAAAkAAgAAAADAAAAAAAkAAcAAAADAAAAAAAkAAYAAAADAAAAAAAkAAUAAAADAAAAAAAkAAQAAAADAAAAAAAkAAMAAAADAAAAAAAkAAIAAAADAAAAAAAkAAEAAAADAAAAAAAjAAEAAAADAAAAAAAiAAEAAAADAAAAAAAiAAIAAAADAAAAAAAiAAMAAAADAAAAAAAiAAQAAAADAAAAAAAiAAUAAAADAAAAAAAiAAYAAAADAAAAAAAiAAcAAAADAAAAAAAjAAcAAAADAAAAAAAjAAYAAAADAAAAAAAjAAUAAAADAAAAAAAjAAQAAAADAAAAAAAjAAMAAAADAAAAAAAjAAIAAAADAAAAAAAlAAUAAAADAAAAAAAlAAYAAAADAAAAAAAlAAcAAAADAAAAAAAlAAgAAAADAAAAAAAlAAkAAAADAAAAAAAlAAoAAAADAAAAAAAlAAsAAAADAAAAAAAlAAwAAAADAAAAAAAlAA0AAAADAAAAAAAlAA4AAAADAAAAAAAlAA8AAAADAAAAAAAlABAAAAADAAAAAAAkABAAAAADAAAAAAAjABAAAAADAAAAAAAjABEAAAADAAAAAAAjABIAAAADAAAAAAAjABMAAAADAAAAAAAjABQAAAAAAAAAAAAjABUAAAAAAAEAAAAkABUAAAABAAEAAAAkABQAAAABAAAAAAAkABMAAAADAAAAAAAkABIAAAADAAAAAAAkABEAAAADAAAAAAAlABEAAAADAAAAAAAmABEAAAADAAAAAAAmABAAAAADAAAAAAAmAA8AAAADAAAAAAAmAA4AAAADAAAAAAAmAA0AAAADAAAAAAAmAAwAAAADAAAAAAAmAAsAAAADAAAAAAAmAAoAAAADAAAAAAAmAAkAAAADAAAAAAAmAAgAAAADAAAAAAAmAAcAAAADAAAAAAAmAAYAAAADAAAAAAAmAAUAAAADAAAAAAAnAAUAAAADAAAAAAAnAAQAAAADAAAAAAAnAAMAAAADAAAAAAAnAAIAAAAAAAEAAAAnAAEAAAAAAAAAAAAoAAEAAAABAAAAAAAoAAIAAAABAAEAAAAoAAMAAAADAAAAAAAoAAQAAAADAAAAAAAoAAUAAAADAAAAAAAoAAYAAAADAAAAAAAnAAYAAAADAAAAAAAnAAcAAAADAAAAAAAnAAgAAAADAAAAAAAnAAkAAAADAAAAAAAnAAoAAAADAAAAAAAnAAsAAAADAAAAAAAnAAwAAAADAAAAAAAnAA0AAAADAAAAAAAnAA4AAAADAAAAAAAnAA8AAAADAAAAAAAnABAAAAADAAAAAAAnABEAAAADAAAAAAAnABIAAAADAAAAAAAnABMAAAADAAAAAAAnABQAAAAAAAAAAAAnABUAAAAAAAEAAAAoABUAAAABAAEAAAAoABQAAAABAAAAAAAoABMAAAADAAAAAAAoABIAAAADAAAAAAAoABEAAAADAAAAAAAoABAAAAADAAAAAAAoAA8AAAADAAAAAAAoAA4AAAADAAAAAAAoAA0AAAADAAAAAAAoAAwAAAADAAAAAAAoAAsAAAADAAAAAAAoAAoAAAADAAAAAAAoAAkAAAADAAAAAAAoAAgAAAADAAAAAAAoAAcAAAADAAAAAAAqAAYAAAACAAEAAAArAAYAAAACAAEAAAAsAAYAAAACAAEAAAAtAAYAAAACAAEAAAAuAAYAAAACAAEAAAAvAAYAAAACAAEAAAAwAAYAAAACAAEAAAAwAAcAAAACAAEAAAAwAAgAAAACAAEAAAAwAAkAAAACAAEAAAAwAAoAAAACAAEAAAAwAAsAAAACAAEAAAAqAAsAAAACAAEAAAArAAsAAAACAAEAAAAsAAsAAAACAAEAAAAtAAsAAAACAAEAAAAuAAsAAAACAAEAAAAvAAsAAAACAAEAAAAuAAgAAAADAAIAAAAuAAcAAAADAAIAAAAtAAcAAAADAAIAAAAsAAcAAAADAAIAAAArAAcAAAADAAIAAAAqAAcAAAADAAIAAAAqAAgAAAADAAIAAAAqAAkAAAADAAIAAAAqAAoAAAADAAIAAAArAAoAAAADAAIAAAArAAkAAAADAAIAAAArAAgAAAADAAIAAAAsAAgAAAADAAIAAAAsAAkAAAADAAIAAAAsAAoAAAADAAIAAAAtAAoAAAADAAIAAAAtAAkAAAADAAIAAAAtAAgAAAADAAIAAAAuAAkAAAADAAIAAAAuAAoAAAADAAIAAAAvAAoAAAADAAIAAAAvAAkAAAADAAIAAAAvAAgAAAADAAIAAAAvAAcAAAADAAIAAAANAAQAAAADAAAAAAANAAUAAAADAAAAAAAOAAQAAAADAAAAAAAOAAUAAAADAAAAAAAPAAQAAAADAAAAAAAPAAUAAAADAAAAAAAAAAsAAAACAAEAAAAQABMAAAADAAAAAAAQABIAAAADAAAAAAAQABEAAAADAAAAAAAQABAAAAADAAAAAAARABAAAAADAAAAAAASABAAAAACAAMAAAATABAAAAACAAMAAAAUABAAAAACAAMAAAAVABAAAAACAAMAAAAWABAAAAACAAMAAAAXABAAAAACAAMAAAAYABAAAAADAAAAAAAZABAAAAADAAAAAAAZABEAAAADAAAAAAAZABIAAAADAAAAAAAZABMAAAADAAAAAAAQABQAAAADAAEAAAAYABIAAAADAAAAAAAYABMAAAADAAAAAAASABEAAAACAAMAAAATABEAAAACAAMAAAAUABEAAAACAAMAAAAVABEAAAACAAMAAAAWABEAAAACAAMAAAAXABEAAAACAAMAAAAYABEAAAADAAAAAAARABEAAAADAAAAAAARABIAAAADAAAAAAARABMAAAADAAAAAAA=")
+tile_set = SubResource("TileSet_deyfl")
+
+[node name="Contestants" type="Node2D" parent="." unique_id=1275869653]
+y_sort_enabled = true
+
+[node name="Player" parent="Contestants" unique_id=1325574362 instance=ExtResource("2_1nhv0")]
+position = Vector2(320, 320)
+rotation = -1.5707964
+lock_on_toggle_mode = true
+current_weapon = ExtResource("3_hctj3")
+health_bar_scene = ExtResource("4_j4bdw")
+
+[node name="Enemy1" parent="Contestants" unique_id=390347379 node_paths=PackedStringArray("spawn_point") instance=ExtResource("5_b4lti")]
+position = Vector2(320, 48)
+rotation = 1.5707964
+is_target = true
+can_pick_up_weapons = true
+can_toss_weapons = true
+can_find_weapons = true
+can_dodge = true
+lives = 5
+spawn_point = NodePath("../../SpawnPoints/EnemySpawn1")
+is_careful = true
+is_healthy = true
+is_greedy = true
+is_scared = true
+is_picky = true
+is_desperate = true
+is_sharp = true
+is_alert = true
+evasion_chance = 1.0
+is_tactical = true
+can_combo = true
+sprite_feet_l = ExtResource("6_2y2cb")
+sprite_feet_r = ExtResource("6_2y2cb")
+sprite_hand_left = ExtResource("6_2y2cb")
+sprite_hand_right = ExtResource("6_2y2cb")
+sprite_head = ExtResource("6_2y2cb")
+sprite_head_down = ExtResource("6_2y2cb")
+turn_follow_speed = 0.9
+
+[node name="Enemy2" parent="Contestants" unique_id=613635139 node_paths=PackedStringArray("spawn_point") instance=ExtResource("5_b4lti")]
+position = Vector2(352, 48)
+rotation = 1.5707964
+can_pick_up_weapons = true
+can_toss_weapons = true
+can_find_weapons = true
+can_dodge = true
+lives = 3
+spawn_point = NodePath("../../SpawnPoints/EnemySpawn2")
+is_careful = true
+is_healthy = true
+is_scared = true
+is_picky = true
+is_desperate = true
+is_swift = true
+is_panic = true
+can_combo = true
+
+[node name="Ally" parent="Contestants" unique_id=1428724923 node_paths=PackedStringArray("spawn_point") instance=ExtResource("7_pulpo")]
+position = Vector2(352, 320)
+rotation = -1.5707964
+can_pick_up_weapons = true
+can_toss_weapons = true
+can_find_weapons = true
+can_dodge = true
+lives = 4
+spawn_point = NodePath("../../SpawnPoints/AllySpawn1")
+is_careful = true
+is_healthy = true
+is_scared = true
+is_picky = true
+is_desperate = true
+is_swift = true
+is_panic = true
+is_sharp = true
+is_alert = true
+is_tactical = true
+
+[node name="Chaos1" parent="Contestants" unique_id=1840670461 node_paths=PackedStringArray("spawn_point") instance=ExtResource("8_4lxfh")]
+position = Vector2(688, 128)
+observe_range_min = 50.0
+observe_range_max = 100.0
+spawn_point = NodePath("../../SpawnPoints/ChaosSpawn1")
+target_hold_time = 8.0
+is_greedy = true
+dodge_interval_max = 2.0
+evasion_chance = 1.0
+initial_facing = 6
+stats = SubResource("Resource_ft5by")
+
+[node name="Chaos2" parent="Contestants" unique_id=1678122771 node_paths=PackedStringArray("spawn_point") instance=ExtResource("8_4lxfh")]
+position = Vector2(720, 128)
+observe_range_min = 50.0
+observe_range_max = 100.0
+can_dodge = true
+spawn_point = NodePath("../../SpawnPoints/ChaosSpawn2")
+target_hold_time = 6.0
+is_careful = true
+is_panic = true
+dodge_interval_max = 2.0
+evasion_chance = 1.0
+initial_facing = 6
+
+[node name="Chaos3" parent="Contestants" unique_id=943414908 node_paths=PackedStringArray("spawn_point") instance=ExtResource("8_4lxfh")]
+position = Vector2(688, 160)
+observe_range_min = 50.0
+observe_range_max = 100.0
+can_dodge = true
+spawn_point = NodePath("../../SpawnPoints/ChaosSpawn3")
+target_hold_time = 3.0
+is_healthy = true
+is_swift = true
+dodge_interval_max = 2.0
+is_sharp = true
+is_alert = true
+initial_facing = 6
+
+[node name="Chaos4" parent="Contestants" unique_id=953875539 node_paths=PackedStringArray("spawn_point") instance=ExtResource("8_4lxfh")]
+position = Vector2(720, 160)
+observe_range_min = 50.0
+observe_range_max = 100.0
+can_dodge = true
+spawn_point = NodePath("../../SpawnPoints/ChaosSpawn4")
+target_hold_time = -1.0
+is_greedy = true
+is_swift = true
+is_panic = true
+dodge_interval_max = 2.0
+is_sharp = true
+is_alert = true
+evasion_chance = 1.0
+sprite_feet_l = ExtResource("11_7u6py")
+sprite_feet_r = ExtResource("11_7u6py")
+sprite_hand_left = ExtResource("11_7u6py")
+sprite_hand_right = ExtResource("11_7u6py")
+sprite_head = ExtResource("11_7u6py")
+sprite_head_down = ExtResource("11_7u6py")
+initial_facing = 6
+
+[node name="Props" type="Node2D" parent="Contestants" unique_id=526174102]
+y_sort_enabled = true
+
+[node name="SpawnPoints" type="Node2D" parent="." unique_id=2034989603]
+
+[node name="PlayerSpawn" type="Marker2D" parent="SpawnPoints" unique_id=1940162517]
+position = Vector2(320, 320)
+
+[node name="AllySpawn1" type="Marker2D" parent="SpawnPoints" unique_id=1892911097]
+position = Vector2(352, 320)
+
+[node name="EnemySpawn1" type="Marker2D" parent="SpawnPoints" unique_id=1808211518]
+position = Vector2(320, 48)
+
+[node name="EnemySpawn2" type="Marker2D" parent="SpawnPoints" unique_id=697539913]
+position = Vector2(352, 48)
+
+[node name="ChaosSpawn1" type="Marker2D" parent="SpawnPoints" unique_id=171768370]
+position = Vector2(688, 128)
+
+[node name="ChaosSpawn2" type="Marker2D" parent="SpawnPoints" unique_id=904761490]
+position = Vector2(720, 128)
+
+[node name="ChaosSpawn3" type="Marker2D" parent="SpawnPoints" unique_id=2133731922]
+position = Vector2(720, 160)
+
+[node name="ChaosSpawn4" type="Marker2D" parent="SpawnPoints" unique_id=737838317]
+position = Vector2(688, 160)
+
+[node name="TurretBase" type="Sprite2D" parent="." unique_id=685529241]
+position = Vector2(48, 320)
+texture = ExtResource("12_3q77v")
+
+[node name="Turret" parent="." unique_id=439454883 instance=ExtResource("13_gcde1")]
+position = Vector2(48, 320)
+
+[node name="Hud" parent="." unique_id=1799122153 groups=["hud"] instance=ExtResource("14_rv3nb")]
+script = ExtResource("15_0d28h")
+player_bar_border_thickness = 2.0
+vignette_threshold = 0.3
+
+[node name="WinScreen" type="Control" parent="Hud" unique_id=1169915569]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Hud/WinScreen" unique_id=2011075172]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = -47.0
+offset_right = 60.00006
+offset_bottom = -22.999954
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Hud/WinScreen" unique_id=1711698538]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -63.0
+offset_top = -46.5
+offset_right = 63.0
+offset_bottom = 46.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="YouWin" type="Label" parent="Hud/WinScreen/VBoxContainer" unique_id=2073734420]
+layout_mode = 2
+text = "You Win!"
+horizontal_alignment = 1
+
+[node name="PlayAgainButton" type="Button" parent="Hud/WinScreen/VBoxContainer" unique_id=1954124306]
+layout_mode = 2
+text = "Play Again"
+
+[node name="StageSelectButton" type="Button" parent="Hud/WinScreen/VBoxContainer" unique_id=1216659774]
+layout_mode = 2
+text = "Level Selection"
+
+[node name="LoseScreen" type="Control" parent="Hud" unique_id=1517410585]
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Hud/LoseScreen" unique_id=190452892]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = -47.0
+offset_right = 60.0
+offset_bottom = -23.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Hud/LoseScreen" unique_id=553287925]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -63.0
+offset_top = -46.5
+offset_right = 63.0
+offset_bottom = 46.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="YouLose" type="Label" parent="Hud/LoseScreen/VBoxContainer" unique_id=351229348]
+layout_mode = 2
+text = "You Lose.."
+horizontal_alignment = 1
+
+[node name="TryAgainButton" type="Button" parent="Hud/LoseScreen/VBoxContainer" unique_id=1302802323]
+layout_mode = 2
+text = "Try Again"
+
+[node name="StageSelectButton" type="Button" parent="Hud/LoseScreen/VBoxContainer" unique_id=136812953]
+layout_mode = 2
+text = "Level Selection"
+
+[node name="RoundManager" type="Node" parent="." unique_id=1923771772 node_paths=PackedStringArray("player_spawn", "win_screen", "lose_screen")]
+script = ExtResource("16_1oe03")
+player_spawn = NodePath("../SpawnPoints/PlayerSpawn")
+win_screen = NodePath("../Hud/WinScreen")
+lose_screen = NodePath("../Hud/LoseScreen")
+
+[node name="WeaponDropManager" type="Node" parent="." unique_id=1053714752]
+script = ExtResource("17_u1xuq")
+config = SubResource("Resource_jqoj8")
+weapon_pickup_scene = ExtResource("24_8y405")
+
+[node name="ItemDropManager" type="Node" parent="." unique_id=678214938]
+script = ExtResource("25_oh0dt")
+config = ExtResource("26_fny1m")
+item_pickup_scene = ExtResource("27_8mvle")
+
+[node name="DropZone - Area" type="Polygon2D" parent="." unique_id=1896668465]
+polygon = PackedVector2Array(32, 32, 32, 64, 48, 64, 48, 96, 80, 96, 80, 144, 48, 144, 48, 176, 32, 176, 32, 256, 32, 336, 128, 336, 128, 320, 208, 320, 208, 336, 240, 336, 240, 208, 176, 208, 176, 304, 128, 304, 80, 304, 80, 208, 128, 208, 128, 112, 224, 112, 224, 192, 256, 192, 256, 240, 432, 240, 432, 304, 576, 304, 576, 272, 448, 272, 448, 160, 592, 160, 592, 272, 640, 272, 640, 96, 576, 96, 576, 32, 464, 32, 464, 80, 432, 80, 432, 128, 240, 128, 240, 32, 160, 32, 160, 64, 64, 64, 64, 32)
+script = ExtResource("28_ssawi")
+zone_group = "Area"
+
+[node name="DropZone - Corners" type="Polygon2D" parent="." unique_id=136789262]
+script = ExtResource("28_ssawi")
+zone_group = "Corner"
+zone_type = 1
+
+[node name="Marker2D" type="Marker2D" parent="DropZone - Corners" unique_id=1179947166]
+position = Vector2(576, 336)
+
+[node name="Marker2D2" type="Marker2D" parent="DropZone - Corners" unique_id=1554072429]
+position = Vector2(640, 336)
+
+[node name="Marker2D3" type="Marker2D" parent="DropZone - Corners" unique_id=2115942287]
+position = Vector2(640, 32)
+
+[node name="Marker2D4" type="Marker2D" parent="DropZone - Corners" unique_id=1617265652]
+position = Vector2(432, 32)
+
+[node name="Marker2D5" type="Marker2D" parent="DropZone - Corners" unique_id=1684402268]
+position = Vector2(432, 336)
+
+[node name="DropZone - Altar" type="Polygon2D" parent="." unique_id=385875780]
+script = ExtResource("28_ssawi")
+zone_group = "Altar"
+zone_type = 2
+altar_weapons = Array[ExtResource("29_1t4nt")]([ExtResource("20_ayq6l"), ExtResource("19_ij8tb"), ExtResource("22_l5h1x")])
+
+[node name="Marker2D" type="Marker2D" parent="DropZone - Altar" unique_id=169334448]
+position = Vector2(520, 184)
+
+[node name="Marker2D2" type="Marker2D" parent="DropZone - Altar" unique_id=1675281668]
+position = Vector2(488, 232)
+
+[node name="Marker2D3" type="Marker2D" parent="DropZone - Altar" unique_id=2067094182]
+position = Vector2(552, 232)

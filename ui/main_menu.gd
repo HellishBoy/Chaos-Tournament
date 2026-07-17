@@ -19,9 +19,7 @@ func _ready() -> void:
 # ── Button Callbacks ─────────────────────────────────────────────
 
 func _on_new_game_pressed() -> void:
-	# get_tree().change_scene_to_file("res://realms/realm_select.tscn")
-	get_tree().change_scene_to_file("res://realms/earth_realm/arena_select.tscn")
-
+	get_tree().change_scene_to_file("res://level/arena_select.tscn")
 
 func _on_load_game_pressed() -> void:
 	# Placeholder — save system not implemented yet
