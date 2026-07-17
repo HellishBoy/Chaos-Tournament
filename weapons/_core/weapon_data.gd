@@ -162,6 +162,21 @@ func get_weight_multiplier() -> float:
 @export_enum("TAP", "HOLD") var ai_alt_attack_mode: String = "TAP"
 @export var ai_alt_attack_range: float = 24.0
 
+const WEIGHT_TIER_ORDER: Array[String] = ["none", "light", "medium", "heavy"]
+const IMPACT_TIER_ORDER: Array[String] = ["none", "low", "medium", "high"]
+
+static func step_down_weight_tier(tier: String) -> String:
+	var idx := WEIGHT_TIER_ORDER.find(tier)
+	if idx <= 0:
+		return tier
+	return WEIGHT_TIER_ORDER[idx - 1]
+
+static func step_down_impact_tier(tier: String) -> String:
+	var idx := IMPACT_TIER_ORDER.find(tier)
+	if idx <= 0:
+		return tier
+	return IMPACT_TIER_ORDER[idx - 1]
+
 # ── Impact Tier Getters ──────────────────────────────────────────
 # Gate the raw tier behind the safety flag, so a weapon can't
 # accidentally apply an effect nobody toggled on.

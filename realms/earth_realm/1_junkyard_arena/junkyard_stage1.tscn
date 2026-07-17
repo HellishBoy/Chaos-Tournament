@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://do2nnibgsaxhh" path="res://entities/characters/allies/ally.tscn" id="7_ah1uk"]
 [ext_resource type="PackedScene" uid="uid://crqyjx8kd8a3f" path="res://weapons/_core/weapon_pickup.tscn" id="7_ryemf"]
 [ext_resource type="PackedScene" uid="uid://ckyh8rvblv3jx" path="res://entities/characters/chaos/chaos.tscn" id="9_1xtti"]
+[ext_resource type="Script" uid="uid://s3foax1vfnlb" path="res://entities/characters/_core/passive_skills/_core/passive_skill_data.gd" id="9_r4kar"]
 [ext_resource type="Script" uid="uid://cuf0jjkwlmjfm" path="res://entities/characters/_core/character_stats.gd" id="10_3vboy"]
 [ext_resource type="Texture2D" uid="uid://cjps05vfw7a7y" path="res://entities/characters/_core/skins/skin-sea_bird1.png" id="11_r4kar"]
 [ext_resource type="Script" uid="uid://4s4a7sc7snjl" path="res://weapons/_core/weapon_data.gd" id="13_qtryu"]
@@ -237,7 +238,6 @@ is_tactical = true
 
 [node name="Chaos1" parent="Contestants" unique_id=1840670461 node_paths=PackedStringArray("spawn_point") instance=ExtResource("9_1xtti")]
 position = Vector2(688, 128)
-can_attack = false
 observe_range_min = 50.0
 observe_range_max = 100.0
 spawn_point = NodePath("../../SpawnPoints/ChaosSpawn1")
@@ -250,7 +250,6 @@ stats = SubResource("Resource_ft5by")
 
 [node name="Chaos2" parent="Contestants" unique_id=1678122771 node_paths=PackedStringArray("spawn_point") instance=ExtResource("9_1xtti")]
 position = Vector2(720, 128)
-can_attack = false
 observe_range_min = 50.0
 observe_range_max = 100.0
 can_dodge = true
@@ -264,7 +263,6 @@ initial_facing = 6
 
 [node name="Chaos3" parent="Contestants" unique_id=943414908 node_paths=PackedStringArray("spawn_point") instance=ExtResource("9_1xtti")]
 position = Vector2(688, 160)
-can_attack = false
 observe_range_min = 50.0
 observe_range_max = 100.0
 can_dodge = true
@@ -279,11 +277,11 @@ initial_facing = 6
 
 [node name="Chaos4" parent="Contestants" unique_id=953875539 node_paths=PackedStringArray("spawn_point") instance=ExtResource("9_1xtti")]
 position = Vector2(720, 160)
-can_attack = false
 observe_range_min = 50.0
 observe_range_max = 100.0
 can_dodge = true
 spawn_point = NodePath("../../SpawnPoints/ChaosSpawn4")
+target_hold_time = -1.0
 is_greedy = true
 is_swift = true
 is_panic = true

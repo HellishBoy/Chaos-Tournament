@@ -1,7 +1,10 @@
 [gd_resource type="Resource" script_class="CharacterStats" format=3 uid="uid://bbb2h613c5vq3"]
 
 [ext_resource type="Script" uid="uid://cuf0jjkwlmjfm" path="res://entities/characters/_core/character_stats.gd" id="1_7kogv"]
+[ext_resource type="Script" uid="uid://s3foax1vfnlb" path="res://entities/characters/_core/passive_skills/_core/passive_skill_data.gd" id="1_ast7x"]
+[ext_resource type="Resource" uid="uid://eaikywkjfcgw" path="res://entities/characters/_core/passive_skills/lucky_shot.tres" id="2_ast7x"]
 
 [resource]
 script = ExtResource("1_7kogv")
+passive_skills = Array[ExtResource("1_ast7x")]([ExtResource("2_ast7x")])
 metadata/_custom_type_script = "uid://cuf0jjkwlmjfm"

@@ -1,8 +1,11 @@
 [gd_resource type="Resource" script_class="CharacterStats" format=3 uid="uid://b4i311rbgiym7"]
 
 [ext_resource type="Script" uid="uid://cuf0jjkwlmjfm" path="res://entities/characters/_core/character_stats.gd" id="1_42y7p"]
+[ext_resource type="Script" uid="uid://s3foax1vfnlb" path="res://entities/characters/_core/passive_skills/_core/passive_skill_data.gd" id="1_v3cui"]
+[ext_resource type="Resource" uid="uid://cn0orpmd13qum" path="res://entities/characters/_core/passive_skills/thick_skin.tres" id="2_xuj0j"]
 
 [resource]
 script = ExtResource("1_42y7p")
 move_speed = 90.0
+passive_skills = Array[ExtResource("1_v3cui")]([ExtResource("2_xuj0j")])
 metadata/_custom_type_script = "uid://cuf0jjkwlmjfm"

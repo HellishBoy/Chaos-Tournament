@@ -4,7 +4,7 @@
 extends CharacterBody2D
 class_name Character
 
-# ── Exports ──────────────────────────────────────────────────────
+#region ── Exports ───────────────────────────────────────────────
 
 @export var collision_layer_index: int = 0
 @export var turn_follow_speed: float = 0.2
@@ -25,7 +25,9 @@ class_name Character
 @export_group("Combat")
 @export var combo_window: float = 0.4
 
-# ── Node References ──────────────────────────────────────────────
+#endregion
+
+#region ── Node References ───────────────────────────────────────
 
 @onready var anim_upper: AnimationPlayer = $AnimationPlayerUpper
 @onready var anim_lower: AnimationPlayer = $AnimationPlayerLower
@@ -44,7 +46,9 @@ class_name Character
 @onready var impact_component: ImpactComponent = $ImpactComponent
 @onready var status_effect_component: StatusEffectComponent = $StatusEffectComponent
 
-# ── State ────────────────────────────────────────────────────────
+#endregion
+
+#region ── Variables ─────────────────────────────────────────────
 
 var last_direction: Vector2 = Vector2.UP
 
@@ -83,7 +87,11 @@ const HASTE_MOVE_SPEED_BONUS: float = 0.3    # +30%
 const HASTE_ATTACK_SPEED_BONUS: float = 0.3  # +30%
 const HASTE_DODGE_SPEED_BONUS: float = 3.0   # +300%
 
-# ── Ready ────────────────────────────────────────────────────────
+#endregion
+
+# ────────────────────────────────────────────────────────────────
+
+#region ── Ready ─────────────────────────────────────────────────
 
 func _ready() -> void:
 	assert(fists != null, str(name) + ": fists WeaponData must be assigned in the Inspector.")
@@ -92,6 +100,7 @@ func _ready() -> void:
 	add_to_group("contestant")
 
 	stats = stats.duplicate()
+	stats.validate_passive_skills()
 	fists = fists.duplicate()
 	if current_weapon:
 		current_weapon = current_weapon.duplicate()
@@ -123,8 +132,14 @@ func _ready() -> void:
 	_update_weapon_visuals()
 	call_deferred("_setup_health_bar")
 	
-func _on_status_effect_ticked(_effect_name: String, damage_percent: float) -> void:
-	var tick_damage: int = int(round(health.max_hp * damage_percent))
+#endregion
+
+#region ── Health Related ────────────────────────────────────────
+
+func _on_status_effect_ticked(effect_name: String, damage_percent: float) -> void:
+	var reduction := _get_dot_reduction(effect_name)
+	var effective_percent: float = damage_percent * (1.0 - reduction)
+	var tick_damage: int = int(round(health.max_hp * effective_percent))
 	health.take_damage(tick_damage)
 
 func _setup_health_bar() -> void:
@@ -158,230 +173,7 @@ func _apply_alive_state() -> void:
 		set_collision_layer_value(collision_layer_index, true)
 	$Body.modulate = Color.WHITE
 
-# ── Active Weapon ────────────────────────────────────────────────
-
-func get_active_weapon() -> WeaponData:
-	return current_weapon if current_weapon else fists
-
-# ── Durability ───────────────────────────────────────────────────
-# Converts a durability tier into an actual usage count, but only if
-# it hasn't been initialized yet (durability_current == -1 is the
-# "uninitialized" sentinel). Called both when a weapon is picked up
-# AND at spawn time, so pre-assigned weapons (set directly in the
-# Inspector, never passing through try_pickup) don't end up stuck
-# at -1 — which hitbox.gd reads as "never breaks."
-func _initialize_durability(weapon: WeaponData) -> void:
-	if weapon.durability_current == -1:
-		match weapon.durability:
-			"low":    weapon.durability_current = 3
-			"medium": weapon.durability_current = 5
-			"high":   weapon.durability_current = 8
-
-# ── Pickup ───────────────────────────────────────────────────────
-
-func try_pickup(pickup_node: Node) -> void:
-	if current_weapon != null:
-		return
-	if is_dead:
-		return
-	var data: WeaponData = pickup_node.weapon_data.duplicate()
-	pickup_node.queue_free()
-	current_weapon = data
-	current_weapon.validate_impact_flags()
-	current_weapon.validate_dot_tag()
-	current_weapon.validate_linger()
-	_initialize_durability(data)
-	_update_weapon_visuals()
-	var hud := get_tree().get_first_node_in_group("hud") as HUD
-	if hud:
-		hud.refresh()
-
-# ── Toss ─────────────────────────────────────────────────────────
-
-func _do_toss() -> void:
-	if current_weapon == null or not current_weapon.can_toss:
-		return
-	var data := current_weapon
-	current_weapon = null
-	_cancel_grenade_throw()
-	_update_weapon_visuals()
-	if weapon_pickup_scene == null:
-		push_warning(name + ": weapon_pickup_scene not assigned in Inspector.")
-		return
-	var toss_dir := Vector2.RIGHT.rotated(rotation)
-	var pickup = weapon_pickup_scene.instantiate()
-	pickup.weapon_data = data
-	pickup._was_tossed = true
-	pickup.position = global_position + toss_dir * 10.0
-	get_parent().add_child(pickup)
-	pickup.setup_toss(global_position, toss_dir)
-	
-	# Notify drop manager about the tossed weapon
-	var manager := get_tree().get_first_node_in_group("weapon_drop_manager") as WeaponDropManager
-	if manager:
-		manager.register_tossed_weapon(pickup)
-		
-	# Refresh HUD after toss
-	var hud := get_tree().get_first_node_in_group("hud") as HUD
-	if hud:
-		hud.refresh()
-
-func _toss_weapon_data(data: WeaponData) -> void:
-	if data == null or not data.can_toss:
-		return
-	if weapon_pickup_scene == null:
-		push_warning(name + ": weapon_pickup_scene not assigned in Inspector.")
-		return
-	var toss_dir := Vector2.RIGHT.rotated(rotation)
-	var pickup = weapon_pickup_scene.instantiate()
-	pickup.weapon_data = data
-	pickup._was_tossed = true
-	pickup.position = global_position + toss_dir * 10.0
-	get_parent().add_child(pickup)
-	pickup.setup_toss(global_position, toss_dir)
-	var manager := get_tree().get_first_node_in_group("weapon_drop_manager") as WeaponDropManager
-	if manager:
-		manager.register_tossed_weapon(pickup)
-	var hud := get_tree().get_first_node_in_group("hud") as HUD
-	if hud:
-		hud.refresh()
-		
-# ── Grenade Throw ──────────────────────────────────────────────
-
-func _start_grenade_throw() -> void:
-	if get_active_weapon().weapon_category != "grenade":
-		return
-	if status_effect_component.has_effect("disarm"):
-		return
-	_cancel_into_idle()
-	is_throwing_grenade = true
-	_grenade_stance_reached = false
-	_grenade_thrown = false
-	grenade_charge_time = 0.0
-	grenade_charge_held = true
-	anim_upper.play("attack_grenade_throw")
-
-# Called via a Call Method track in the throw animation, at the frame
-# representing the "throwing stance" pose (frame 4 in your 24-frame anim).
-func _on_grenade_stance_reached() -> void:
-	_grenade_stance_reached = true
-	var weapon := get_active_weapon()
-	if not weapon.main_attack_charge:
-		# No meter on this weapon — always releases immediately at the
-		# stance pose, regardless of hold duration.
-		_release_grenade_throw()
-		return
-	if grenade_charge_held:
-		anim_upper.speed_scale = 0.0  # freeze here while charging
-	else:
-		_release_grenade_throw()  # quick tap — throw at minimum charge
-
-func _tick_grenade_charge(delta: float) -> void:
-	if not is_throwing_grenade or not _grenade_stance_reached or _grenade_thrown:
-		return
-	var weapon := get_active_weapon()
-	if not weapon.main_attack_charge:
-		return
-	if grenade_charge_held:
-		grenade_charge_time = min(grenade_charge_time + delta, weapon.main_charge_time)
-
-func _release_grenade_throw() -> void:
-	if not is_throwing_grenade or _grenade_thrown:
-		return
-	_grenade_thrown = true
-	var weapon := get_active_weapon()
-	var charge_percent := 0.0
-	if weapon.main_attack_charge and weapon.main_charge_time > 0.0:
-		charge_percent = clamp(grenade_charge_time / weapon.main_charge_time, 0.0, 1.0)
-	_grenade_throw_speed = lerp(weapon.grenade_throw_speed_min, weapon.grenade_throw_speed_max, charge_percent) if weapon.main_attack_charge else weapon.grenade_throw_speed_max
-	_grenade_weapon = weapon
-	anim_upper.speed_scale = 1.0
-	grenade_charge_held = false
-
-# Called via a SECOND Call Method track in the throw animation, at
-# frame 12 — the point where the hand actually releases the grenade.
-# Kept separate from _release_grenade_throw() so the charge DECISION
-# and the visual spawn moment can land at different points in time.
-func _on_grenade_release_frame() -> void:
-	if _grenade_weapon == null:
-		return
-	_spawn_grenade(_grenade_weapon, _grenade_throw_speed)
-	_grenade_weapon = null
-
-func _spawn_grenade(weapon: WeaponData, throw_speed: float) -> void:
-	if weapon == fists:
-		return
-	if weapon.grenade_scene == null:
-		push_warning(name + ": grenade_scene not assigned on weapon " + weapon.weapon_name)
-		return
-	var grenade := weapon.grenade_scene.instantiate()
-	var direction := Vector2.RIGHT.rotated(rotation)
-	grenade.global_position = global_position + direction * 18.0
-	get_parent().add_child(grenade)
-	grenade.setup(weapon, self, direction, throw_speed)
-
-	if weapon.amount > 0:
-		weapon.amount -= 1
-		var hud := get_tree().get_first_node_in_group("hud") as HUD
-		if hud:
-			hud.refresh()
-		if weapon.amount == 0:
-			break_weapon(weapon)
-
-# ── Weapon Visuals ───────────────────────────────────────────────
-
-func _update_weapon_visuals() -> void:
-	if current_weapon == null:
-		weapon_right.texture = null
-		weapon_left.texture  = null
-		weapon_right.visible = false
-		weapon_left.visible  = false
-	else:
-		weapon_right.texture = current_weapon.weapon_sprite_right
-		weapon_left.texture  = current_weapon.weapon_sprite_left
-		weapon_right.visible = current_weapon.weapon_sprite_right != null
-		weapon_left.visible  = current_weapon.weapon_sprite_left  != null
-
-# ── Animation Helpers ────────────────────────────────────────────
-
-func _snap_to_idle() -> void:
-	anim_upper.speed_scale = 1.0
-	var idle := get_active_weapon().idle_animation
-	if idle != "":
-		anim_upper.play(idle)
-	else:
-		anim_upper.stop()
-
-func _reset_attacks() -> void:
-	is_main_attacking = false
-	is_alt_attacking = false
-	main_combo_index = 0
-	main_combo_timer = 0.0
-	alt_combo_index = 0
-	alt_combo_timer = 0.0
-	_buffered_attack = ""
-
-func _cancel_into_idle() -> void:
-	_reset_attacks()
-	_cancel_grenade_throw()
-	anim_upper.speed_scale = 1.0
-	anim_upper.stop()
-	anim_upper.play("RESET")
-	anim_upper.advance(0.0)
-	anim_upper.stop()
-	var idle := get_active_weapon().idle_animation
-	if idle != "":
-		anim_upper.play(idle)
-
-func _cancel_grenade_throw() -> void:
-	is_throwing_grenade = false
-	_grenade_stance_reached = false
-	_grenade_thrown = false
-	grenade_charge_held = false
-	grenade_charge_time = 0.0
-	_grenade_weapon = null
-
-# ── Hurtbox — receives incoming damage ───────────────────────────
+# ── Hurtbox — receives incoming damage ──────────────────────────
 
 # Fixed version: applies damage and knockback to SELF, not the attacker
 func _on_hurtbox_area_entered(area: Area2D) -> void:
@@ -407,184 +199,9 @@ func _on_damaged(_amount: int, _remaining: int) -> void:
 func _on_died() -> void:
 	pass
 
-# ── Animation Finished ───────────────────────────────────────────
+#endregion
 
-func _on_animation_finished(anim_name: StringName) -> void:
-	if anim_name == "uni_toss":
-		is_tossing = false
-		if main_attack_held:
-			_play_main_attack()
-		elif alt_attack_held:
-			_play_alt_attack()
-		else:
-			_snap_to_idle()
-		return
-
-	if anim_name == "attack_grenade_throw":
-		_cancel_grenade_throw()
-		_snap_to_idle()
-		return
-
-	if is_main_attacking:
-		is_main_attacking = false
-		if _buffered_attack == "alt" and get_active_weapon().alt_attack_animations.size() > 0:
-			_buffered_attack = ""
-			_play_alt_attack()
-		elif main_attack_held and get_active_weapon().main_attack_animations.size() > 0:
-			_play_main_attack()
-		else:
-			main_combo_timer = combo_window
-			_snap_to_idle()
-		return
-
-	if is_alt_attacking:
-		is_alt_attacking = false
-		if _buffered_attack == "main" and get_active_weapon().main_attack_animations.size() > 0:
-			_buffered_attack = ""
-			_play_main_attack()
-		elif alt_attack_held and get_active_weapon().alt_attack_animations.size() > 0:
-			_play_alt_attack()
-		else:
-			alt_combo_timer = combo_window
-			_snap_to_idle()
-
-# ── Attack Helpers ───────────────────────────────────────────────
-
-func _setup_hitboxes_main() -> void:
-	var weapon := get_active_weapon()
-	hitbox_right.damage           = weapon.damage_main
-	hitbox_left.damage            = weapon.damage_main
-	hitbox_right.knockback_tier   = weapon.get_main_knockback_tier()
-	hitbox_left.knockback_tier    = weapon.get_main_knockback_tier()
-	hitbox_right.flinch_tier      = weapon.get_main_flinch_tier()
-	hitbox_left.flinch_tier       = weapon.get_main_flinch_tier()
-	hitbox_right.knockback_facing = weapon.knockback_main_facing
-	hitbox_left.knockback_facing  = weapon.knockback_main_facing
-	_apply_dot_config(weapon)
-	_apply_root_config(weapon)
-	_apply_disarm_config(weapon)
-	_apply_slow_config(weapon)
-	hitbox_right.attacker         = self
-	hitbox_left.attacker          = self
-
-func _setup_hitboxes_alt() -> void:
-	var weapon := get_active_weapon()
-	hitbox_right.damage           = weapon.damage_alt
-	hitbox_left.damage            = weapon.damage_alt
-	hitbox_right.knockback_tier   = weapon.get_alt_knockback_tier()
-	hitbox_left.knockback_tier    = weapon.get_alt_knockback_tier()
-	hitbox_right.flinch_tier      = weapon.get_alt_flinch_tier()
-	hitbox_left.flinch_tier       = weapon.get_alt_flinch_tier()
-	hitbox_right.knockback_facing = weapon.knockback_alt_facing
-	hitbox_left.knockback_facing  = weapon.knockback_alt_facing
-	_apply_dot_config(weapon)
-	_apply_root_config(weapon)
-	_apply_disarm_config(weapon)
-	_apply_slow_config(weapon)
-	hitbox_right.attacker         = self
-	hitbox_left.attacker          = self
-	
-func _apply_dot_config(weapon: WeaponData) -> void:
-	var dot_config := weapon.get_dot_config()
-	hitbox_right.dot_tag             = dot_config["tag"]
-	hitbox_right.dot_duration        = dot_config["duration"]
-	hitbox_right.dot_tick_interval   = dot_config["tick_interval"]
-	hitbox_right.dot_damage_percent  = dot_config["damage_percent"]
-	hitbox_right.dot_chance          = dot_config["chance"]
-	hitbox_left.dot_tag              = dot_config["tag"]
-	hitbox_left.dot_duration         = dot_config["duration"]
-	hitbox_left.dot_tick_interval    = dot_config["tick_interval"]
-	hitbox_left.dot_damage_percent   = dot_config["damage_percent"]
-	hitbox_left.dot_chance           = dot_config["chance"]
-
-func _apply_root_config(weapon: WeaponData) -> void:
-	var root_config := weapon.get_root_config()
-	hitbox_right.root_type     = root_config["type"]
-	hitbox_right.root_tag      = root_config["tag"]
-	hitbox_right.root_duration = root_config["duration"]
-	hitbox_right.root_chance   = root_config["chance"]
-	hitbox_left.root_type       = root_config["type"]
-	hitbox_left.root_tag        = root_config["tag"]
-	hitbox_left.root_duration   = root_config["duration"]
-	hitbox_left.root_chance     = root_config["chance"]
-
-func _apply_disarm_config(weapon: WeaponData) -> void:
-	var disarm_config := weapon.get_disarm_config()
-	hitbox_right.disarm_tag      = disarm_config["tag"]
-	hitbox_right.disarm_duration = disarm_config["duration"]
-	hitbox_right.disarm_chance   = disarm_config["chance"]
-	hitbox_left.disarm_tag       = disarm_config["tag"]
-	hitbox_left.disarm_duration  = disarm_config["duration"]
-	hitbox_left.disarm_chance    = disarm_config["chance"]
-
-func _apply_slow_config(weapon: WeaponData) -> void:
-	var slow_config := weapon.get_slow_config()
-	hitbox_right.slow_tag      = slow_config["tag"]
-	hitbox_right.slow_duration = slow_config["duration"]
-	hitbox_right.slow_percent  = slow_config["percent"]
-	hitbox_right.slow_chance   = slow_config["chance"]
-	hitbox_left.slow_tag       = slow_config["tag"]
-	hitbox_left.slow_duration  = slow_config["duration"]
-	hitbox_left.slow_percent   = slow_config["percent"]
-	hitbox_left.slow_chance    = slow_config["chance"]
-
-func _play_main_attack() -> void:
-	var anims := get_active_weapon().main_attack_animations
-	if anims.is_empty():
-		return
-	if status_effect_component.has_effect("disarm"):
-		return
-	main_combo_index = main_combo_index % anims.size()
-	is_main_attacking = true
-	is_alt_attacking = false
-	main_combo_timer = 0.0
-	_swing_has_hit = false
-	anim_upper.speed_scale = get_active_weapon().main_attack_speed * stats.attack_speed_multiplier * _get_haste_attack_multiplier()
-	_setup_hitboxes_main()
-	_apply_recoil(get_active_weapon().get_main_recoil_tier())
-	anim_upper.play(anims[main_combo_index])
-	main_combo_index += 1
-
-func _play_alt_attack() -> void:
-	var anims := get_active_weapon().alt_attack_animations
-	if anims.is_empty():
-		return
-	if status_effect_component.has_effect("disarm"):
-		return
-	alt_combo_index = alt_combo_index % anims.size()
-	is_alt_attacking = true
-	is_main_attacking = false
-	alt_combo_timer = 0.0
-	_swing_has_hit = false
-	anim_upper.speed_scale = get_active_weapon().alt_attack_speed * stats.attack_speed_multiplier * _get_haste_attack_multiplier()
-	_setup_hitboxes_alt()
-	_apply_recoil(get_active_weapon().get_alt_recoil_tier())
-	anim_upper.play(anims[alt_combo_index])
-	alt_combo_index += 1
-	
-func _apply_recoil(tier: String) -> void:
-	if tier == "none":
-		return
-	if status_effect_component.has_effect("steadfast"):
-		return
-	var direction := Vector2.LEFT.rotated(rotation)  # opposite of facing
-	impact_component.apply_knockback(tier, direction)
-
-# ── State Helpers ────────────────────────────────────────────────
-
-func _is_attacking() -> bool:
-	return is_main_attacking or is_alt_attacking or is_throwing_grenade
-	
-# Clears this character as any AI's current target — called on death so
-# nobody keeps chasing a corpse. Works for Player, Enemy, or Ally alike,
-# since any of them can be a valid target for some other team.
-func _clear_as_target_for_others() -> void:
-	for ai in get_tree().get_nodes_in_group("contestant"):
-		if ai is AICharacter and ai.target == self:
-			ai.target = null
-			ai.ai_state = AICharacter.AIState.IDLE
-
-# ── Movement (shared base) ───────────────────────────────────────
+#region ── Movement (shared base) ────────────────────────────────
 
 func _apply_movement(desired_velocity: Vector2) -> void:
 	if status_effect_component.has_effect("anchored"):
@@ -607,6 +224,55 @@ func _apply_movement(desired_velocity: Vector2) -> void:
 	else:
 		velocity = desired_velocity
 	move_and_slide()
+
+#endregion
+
+#region ── Movement Multipliers ──────────────────────────────────
+
+# Clamps a combined speed multiplier so it never drops below this
+# character's floor, no matter how many slowing effects are stacked.
+func _apply_speed_floor(multiplier: float) -> float:
+	return max(multiplier, stats.min_speed_multiplier)
+	
+func _get_slow_multiplier() -> float:
+	if status_effect_component.has_effect("slow"):
+		return 1.0 - status_effect_component.get_magnitude("slow")
+	return 1.0
+
+func _get_haste_move_multiplier() -> float:
+	if status_effect_component.has_effect("haste"):
+		return 1.0 + HASTE_MOVE_SPEED_BONUS
+	return 1.0
+
+func _get_haste_attack_multiplier() -> float:
+	if status_effect_component.has_effect("haste"):
+		return 1.0 + HASTE_ATTACK_SPEED_BONUS
+	return 1.0
+
+func _get_haste_dodge_multiplier() -> float:
+	if status_effect_component.has_effect("haste"):
+		return 1.0 + HASTE_DODGE_SPEED_BONUS
+	return 1.0
+
+func _is_petrified() -> bool:
+	return status_effect_component.has_effect("petrified")
+
+func _on_status_effect_applied(effect_name: String, _duration: float) -> void:
+	if effect_name != "petrified":
+		return
+	call_deferred("_snap_to_idle_for_petrify")
+	
+func _snap_to_idle_for_petrify() -> void:
+	if is_dodging:
+		is_dodging = false
+		set_invincible(false)
+	is_tossing = false
+	_cancel_into_idle()
+	anim_lower.stop()
+	
+#endregion
+
+#region ── Dodge ─────────────────────────────────────────────────
 
 func set_invincible(state: bool) -> void:
 	set_collision_mask_value(2, not state)   # Player
@@ -683,48 +349,221 @@ func _tick_stamina(delta: float) -> void:
 	if _stamina < stats.stamina_max:
 		_stamina = min(_stamina + stats.stamina_regen * delta, stats.stamina_max)
 		
-# Clamps a combined speed multiplier so it never drops below this
-# character's floor, no matter how many slowing effects are stacked.
-func _apply_speed_floor(multiplier: float) -> float:
-	return max(multiplier, stats.min_speed_multiplier)
-	
-func _get_slow_multiplier() -> float:
-	if status_effect_component.has_effect("slow"):
-		return 1.0 - status_effect_component.get_magnitude("slow")
-	return 1.0
+#endregion
 
-func _get_haste_move_multiplier() -> float:
-	if status_effect_component.has_effect("haste"):
-		return 1.0 + HASTE_MOVE_SPEED_BONUS
-	return 1.0
+#region ── Weapon Related ────────────────────────────────────────
 
-func _get_haste_attack_multiplier() -> float:
-	if status_effect_component.has_effect("haste"):
-		return 1.0 + HASTE_ATTACK_SPEED_BONUS
-	return 1.0
+# ── Active Weapon ────────────────────────────────────────────────
 
-func _get_haste_dodge_multiplier() -> float:
-	if status_effect_component.has_effect("haste"):
-		return 1.0 + HASTE_DODGE_SPEED_BONUS
-	return 1.0
+func get_active_weapon() -> WeaponData:
+	return current_weapon if current_weapon else fists
 
-func _is_petrified() -> bool:
-	return status_effect_component.has_effect("petrified")
+# ── Durability ───────────────────────────────────────────────────
+# Converts a durability tier into an actual usage count, but only if
+# it hasn't been initialized yet (durability_current == -1 is the
+# "uninitialized" sentinel). Called both when a weapon is picked up
+# AND at spawn time, so pre-assigned weapons (set directly in the
+# Inspector, never passing through try_pickup) don't end up stuck
+# at -1 — which hitbox.gd reads as "never breaks."
+func _initialize_durability(weapon: WeaponData) -> void:
+	if weapon.durability_current == -1:
+		match weapon.durability:
+			"low":    weapon.durability_current = 3
+			"medium": weapon.durability_current = 5
+			"high":   weapon.durability_current = 8
 
-func _on_status_effect_applied(effect_name: String, _duration: float) -> void:
-	if effect_name != "petrified":
+# ── Pickup ───────────────────────────────────────────────────────
+
+func try_pickup(pickup_node: Node) -> void:
+	if current_weapon != null:
 		return
-	call_deferred("_snap_to_idle_for_petrify")
-	
-func _snap_to_idle_for_petrify() -> void:
-	if is_dodging:
-		is_dodging = false
-		set_invincible(false)
-	is_tossing = false
-	_cancel_into_idle()
-	anim_lower.stop()
+	if is_dead:
+		return
+	var data: WeaponData = pickup_node.weapon_data.duplicate()
+	pickup_node.queue_free()
+	current_weapon = data
+	current_weapon.validate_impact_flags()
+	current_weapon.validate_dot_tag()
+	current_weapon.validate_linger()
+	_initialize_durability(data)
+	_update_weapon_visuals()
+	var hud := get_tree().get_first_node_in_group("hud") as HUD
+	if hud:
+		hud.refresh()
 
-# ── Bullets ──────────────────────────────────────────────────────
+# ── Toss ───────────────────────────────────────────────────
+
+func _do_toss() -> void:
+	if current_weapon == null or not current_weapon.can_toss:
+		return
+	var data := current_weapon
+	current_weapon = null
+	_cancel_grenade_throw()
+	_update_weapon_visuals()
+	if weapon_pickup_scene == null:
+		push_warning(name + ": weapon_pickup_scene not assigned in Inspector.")
+		return
+	var toss_dir := Vector2.RIGHT.rotated(rotation)
+	var pickup = weapon_pickup_scene.instantiate()
+	pickup.weapon_data = data
+	pickup._was_tossed = true
+	pickup.position = global_position + toss_dir * 10.0
+	get_parent().add_child(pickup)
+	pickup.setup_toss(global_position, toss_dir)
+	
+	# Notify drop manager about the tossed weapon
+	var manager := get_tree().get_first_node_in_group("weapon_drop_manager") as WeaponDropManager
+	if manager:
+		manager.register_tossed_weapon(pickup)
+		
+	# Refresh HUD after toss
+	var hud := get_tree().get_first_node_in_group("hud") as HUD
+	if hud:
+		hud.refresh()
+
+func _toss_weapon_data(data: WeaponData) -> void:
+	if data == null or not data.can_toss:
+		return
+	if weapon_pickup_scene == null:
+		push_warning(name + ": weapon_pickup_scene not assigned in Inspector.")
+		return
+	var toss_dir := Vector2.RIGHT.rotated(rotation)
+	var pickup = weapon_pickup_scene.instantiate()
+	pickup.weapon_data = data
+	pickup._was_tossed = true
+	pickup.position = global_position + toss_dir * 10.0
+	get_parent().add_child(pickup)
+	pickup.setup_toss(global_position, toss_dir)
+	var manager := get_tree().get_first_node_in_group("weapon_drop_manager") as WeaponDropManager
+	if manager:
+		manager.register_tossed_weapon(pickup)
+	var hud := get_tree().get_first_node_in_group("hud") as HUD
+	if hud:
+		hud.refresh()
+
+# ── Weapon Hitbox Setup ───────────────────────────────────────────────
+
+func _setup_hitboxes_main() -> void:
+	var weapon := get_active_weapon()
+	hitbox_right.damage           = weapon.damage_main
+	hitbox_left.damage            = weapon.damage_main
+	hitbox_right.knockback_tier   = weapon.get_main_knockback_tier()
+	hitbox_left.knockback_tier    = weapon.get_main_knockback_tier()
+	hitbox_right.flinch_tier      = weapon.get_main_flinch_tier()
+	hitbox_left.flinch_tier       = weapon.get_main_flinch_tier()
+	hitbox_right.knockback_facing = weapon.knockback_main_facing
+	hitbox_left.knockback_facing  = weapon.knockback_main_facing
+	_apply_dot_config(weapon)
+	_apply_root_config(weapon)
+	_apply_disarm_config(weapon)
+	_apply_slow_config(weapon)
+	hitbox_right.attacker         = self
+	hitbox_left.attacker          = self
+
+func _setup_hitboxes_alt() -> void:
+	var weapon := get_active_weapon()
+	hitbox_right.damage           = weapon.damage_alt
+	hitbox_left.damage            = weapon.damage_alt
+	hitbox_right.knockback_tier   = weapon.get_alt_knockback_tier()
+	hitbox_left.knockback_tier    = weapon.get_alt_knockback_tier()
+	hitbox_right.flinch_tier      = weapon.get_alt_flinch_tier()
+	hitbox_left.flinch_tier       = weapon.get_alt_flinch_tier()
+	hitbox_right.knockback_facing = weapon.knockback_alt_facing
+	hitbox_left.knockback_facing  = weapon.knockback_alt_facing
+	_apply_dot_config(weapon)
+	_apply_root_config(weapon)
+	_apply_disarm_config(weapon)
+	_apply_slow_config(weapon)
+	hitbox_right.attacker         = self
+	hitbox_left.attacker          = self
+
+func _apply_recoil(tier: String) -> void:
+	if tier == "none":
+		return
+	if status_effect_component.has_effect("steadfast"):
+		return
+	var direction := Vector2.LEFT.rotated(rotation)  # opposite of facing
+	impact_component.apply_knockback(tier, direction)
+
+# ── Play Attack Inputs
+
+func _play_main_attack() -> void:
+	var anims := get_active_weapon().main_attack_animations
+	if anims.is_empty():
+		return
+	if status_effect_component.has_effect("disarm"):
+		return
+	main_combo_index = main_combo_index % anims.size()
+	is_main_attacking = true
+	is_alt_attacking = false
+	main_combo_timer = 0.0
+	_swing_has_hit = false
+	anim_upper.speed_scale = get_active_weapon().main_attack_speed * stats.attack_speed_multiplier * _get_haste_attack_multiplier()
+	_setup_hitboxes_main()
+	_apply_recoil(_get_effective_recoil_tier(get_active_weapon().get_main_recoil_tier()))
+	anim_upper.play(anims[main_combo_index])
+	main_combo_index += 1
+
+func _play_alt_attack() -> void:
+	var anims := get_active_weapon().alt_attack_animations
+	if anims.is_empty():
+		return
+	if status_effect_component.has_effect("disarm"):
+		return
+	alt_combo_index = alt_combo_index % anims.size()
+	is_alt_attacking = true
+	is_main_attacking = false
+	alt_combo_timer = 0.0
+	_swing_has_hit = false
+	anim_upper.speed_scale = get_active_weapon().alt_attack_speed * stats.attack_speed_multiplier * _get_haste_attack_multiplier()
+	_setup_hitboxes_alt()
+	_apply_recoil(_get_effective_recoil_tier(get_active_weapon().get_alt_recoil_tier()))
+	anim_upper.play(anims[alt_combo_index])
+	alt_combo_index += 1
+
+# ── Weapon Visuals ────────────------─────────────────────────────
+
+func _update_weapon_visuals() -> void:
+	if current_weapon == null:
+		weapon_right.texture = null
+		weapon_left.texture  = null
+		weapon_right.visible = false
+		weapon_left.visible  = false
+	else:
+		weapon_right.texture = current_weapon.weapon_sprite_right
+		weapon_left.texture  = current_weapon.weapon_sprite_left
+		weapon_right.visible = current_weapon.weapon_sprite_right != null
+		weapon_left.visible  = current_weapon.weapon_sprite_left  != null
+
+# ── Weapon break ──────────────────────────────────────────────────────
+
+func break_weapon(weapon: WeaponData = null) -> void:
+	if weapon == null:
+		weapon = current_weapon
+	if weapon == null or weapon != current_weapon:
+		return  # already swapped/dropped this weapon — nothing to break
+	var broken_data := current_weapon
+	current_weapon = null
+	_update_weapon_visuals()
+	_cancel_into_idle()
+	
+	# Resume attacking with fists if the key/AI intent is still active —
+	# otherwise the swing silently drops until the button is released and re-pressed.
+	if main_attack_held and get_active_weapon().main_attack_animations.size() > 0:
+		_play_main_attack()
+	elif alt_attack_held and get_active_weapon().alt_attack_animations.size() > 0:
+		_play_alt_attack()
+		
+	var hud := get_tree().get_first_node_in_group("hud") as HUD
+	if hud:
+		hud.refresh()
+	var manager := get_tree().get_first_node_in_group("weapon_drop_manager") as WeaponDropManager
+	if manager:
+		manager.register_weapon_broken(broken_data)
+
+#endregion
+
+#region ── Bullets ───────────────────────────────────────────────
 
 func spawn_bullet_right() -> void:
 	spawn_bullet(muzzle_right)
@@ -743,7 +582,7 @@ func spawn_bullet(muzzle: Marker2D) -> void:
 		_fire_bullet_from_muzzle(weapon, muzzle)
 
 # Decrement ammo — shared between bullet and grenade-firing ranged weapons
-	if weapon.amount > 0:
+	if weapon.amount > 0 and _should_consume_ammo():
 		weapon.amount -= 1
 		var hud := get_tree().get_first_node_in_group("hud") as HUD
 		if hud:
@@ -784,28 +623,283 @@ func _fire_grenade_from_muzzle(weapon: WeaponData, muzzle: Marker2D) -> void:
 	var direction := Vector2.RIGHT.rotated(rotation)  # no spread — straight shot
 	grenade.setup(weapon, self, direction, weapon.grenade_throw_speed_max)
 
-# ── Weapon break ──────────────────────────────────────────────────────
+#endregion
 
-func break_weapon(weapon: WeaponData = null) -> void:
-	if weapon == null:
-		weapon = current_weapon
-	if weapon == null or weapon != current_weapon:
-		return  # already swapped/dropped this weapon — nothing to break
-	var broken_data := current_weapon
-	current_weapon = null
-	_update_weapon_visuals()
+#region ── Grenade ───────────────────────────────────────────────
+
+func _start_grenade_throw() -> void:
+	if get_active_weapon().weapon_category != "grenade":
+		return
+	if status_effect_component.has_effect("disarm"):
+		return
 	_cancel_into_idle()
+	is_throwing_grenade = true
+	_grenade_stance_reached = false
+	_grenade_thrown = false
+	grenade_charge_time = 0.0
+	grenade_charge_held = true
+	anim_upper.play("attack_grenade_throw")
+
+# Called via a Call Method track in the throw animation, at the frame
+# representing the "throwing stance" pose (frame 4 in your 24-frame anim).
+func _on_grenade_stance_reached() -> void:
+	_grenade_stance_reached = true
+	var weapon := get_active_weapon()
+	if not weapon.main_attack_charge:
+		# No meter on this weapon — always releases immediately at the
+		# stance pose, regardless of hold duration.
+		_release_grenade_throw()
+		return
+	if grenade_charge_held:
+		anim_upper.speed_scale = 0.0  # freeze here while charging
+	else:
+		_release_grenade_throw()  # quick tap — throw at minimum charge
+
+func _tick_grenade_charge(delta: float) -> void:
+	if not is_throwing_grenade or not _grenade_stance_reached or _grenade_thrown:
+		return
+	var weapon := get_active_weapon()
+	if not weapon.main_attack_charge:
+		return
+	if grenade_charge_held:
+		grenade_charge_time = min(grenade_charge_time + delta, weapon.main_charge_time)
+
+func _release_grenade_throw() -> void:
+	if not is_throwing_grenade or _grenade_thrown:
+		return
+	_grenade_thrown = true
+	var weapon := get_active_weapon()
+	var charge_percent := 0.0
+	if weapon.main_attack_charge and weapon.main_charge_time > 0.0:
+		charge_percent = clamp(grenade_charge_time / weapon.main_charge_time, 0.0, 1.0)
+	_grenade_throw_speed = lerp(weapon.grenade_throw_speed_min, weapon.grenade_throw_speed_max, charge_percent) if weapon.main_attack_charge else weapon.grenade_throw_speed_max
+	_grenade_weapon = weapon
+	anim_upper.speed_scale = 1.0
+	grenade_charge_held = false
+
+# Called via a SECOND Call Method track in the throw animation, at
+# frame 12 — the point where the hand actually releases the grenade.
+# Kept separate from _release_grenade_throw() so the charge DECISION
+# and the visual spawn moment can land at different points in time.
+func _on_grenade_release_frame() -> void:
+	if _grenade_weapon == null:
+		return
+	_spawn_grenade(_grenade_weapon, _grenade_throw_speed)
+	_grenade_weapon = null
+
+func _spawn_grenade(weapon: WeaponData, throw_speed: float) -> void:
+	if weapon == fists:
+		return
+	if weapon.grenade_scene == null:
+		push_warning(name + ": grenade_scene not assigned on weapon " + weapon.weapon_name)
+		return
+	var grenade := weapon.grenade_scene.instantiate()
+	var direction := Vector2.RIGHT.rotated(rotation)
+	grenade.global_position = global_position + direction * 18.0
+	get_parent().add_child(grenade)
+	grenade.setup(weapon, self, direction, throw_speed)
+
+	if weapon.amount > 0 and _should_consume_ammo():
+		weapon.amount -= 1
+		var hud := get_tree().get_first_node_in_group("hud") as HUD
+		if hud:
+			hud.refresh()
+		if weapon.amount == 0:
+			break_weapon(weapon)
+
+#endregion
+
+#region ── Special Effects ───────────────────────────────────────
 	
-	# Resume attacking with fists if the key/AI intent is still active —
-	# otherwise the swing silently drops until the button is released and re-pressed.
-	if main_attack_held and get_active_weapon().main_attack_animations.size() > 0:
-		_play_main_attack()
-	elif alt_attack_held and get_active_weapon().alt_attack_animations.size() > 0:
-		_play_alt_attack()
-		
-	var hud := get_tree().get_first_node_in_group("hud") as HUD
-	if hud:
-		hud.refresh()
-	var manager := get_tree().get_first_node_in_group("weapon_drop_manager") as WeaponDropManager
-	if manager:
-		manager.register_weapon_broken(broken_data)
+func _apply_dot_config(weapon: WeaponData) -> void:
+	var dot_config := weapon.get_dot_config()
+	hitbox_right.dot_tag             = dot_config["tag"]
+	hitbox_right.dot_duration        = dot_config["duration"]
+	hitbox_right.dot_tick_interval   = dot_config["tick_interval"]
+	hitbox_right.dot_damage_percent  = dot_config["damage_percent"]
+	hitbox_right.dot_chance          = dot_config["chance"]
+	hitbox_left.dot_tag              = dot_config["tag"]
+	hitbox_left.dot_duration         = dot_config["duration"]
+	hitbox_left.dot_tick_interval    = dot_config["tick_interval"]
+	hitbox_left.dot_damage_percent   = dot_config["damage_percent"]
+	hitbox_left.dot_chance           = dot_config["chance"]
+
+func _apply_root_config(weapon: WeaponData) -> void:
+	var root_config := weapon.get_root_config()
+	hitbox_right.root_type     = root_config["type"]
+	hitbox_right.root_tag      = root_config["tag"]
+	hitbox_right.root_duration = root_config["duration"]
+	hitbox_right.root_chance   = root_config["chance"]
+	hitbox_left.root_type       = root_config["type"]
+	hitbox_left.root_tag        = root_config["tag"]
+	hitbox_left.root_duration   = root_config["duration"]
+	hitbox_left.root_chance     = root_config["chance"]
+
+func _apply_disarm_config(weapon: WeaponData) -> void:
+	var disarm_config := weapon.get_disarm_config()
+	hitbox_right.disarm_tag      = disarm_config["tag"]
+	hitbox_right.disarm_duration = disarm_config["duration"]
+	hitbox_right.disarm_chance   = disarm_config["chance"]
+	hitbox_left.disarm_tag       = disarm_config["tag"]
+	hitbox_left.disarm_duration  = disarm_config["duration"]
+	hitbox_left.disarm_chance    = disarm_config["chance"]
+
+func _apply_slow_config(weapon: WeaponData) -> void:
+	var slow_config := weapon.get_slow_config()
+	hitbox_right.slow_tag      = slow_config["tag"]
+	hitbox_right.slow_duration = slow_config["duration"]
+	hitbox_right.slow_percent  = slow_config["percent"]
+	hitbox_right.slow_chance   = slow_config["chance"]
+	hitbox_left.slow_tag       = slow_config["tag"]
+	hitbox_left.slow_duration  = slow_config["duration"]
+	hitbox_left.slow_percent   = slow_config["percent"]
+	hitbox_left.slow_chance    = slow_config["chance"]
+
+#endregion
+
+#region ── Passive Skills ────────────────────────────────────────
+
+func get_passive(effect_type: String) -> PassiveSkillData:
+	for skill in stats.passive_skills:
+		if skill != null and skill.effect_type == effect_type:
+			return skill
+	return null
+
+func _should_consume_durability() -> bool:
+	var skill := get_passive("durability_save")
+	if skill == null:
+		return true
+	return randf() >= skill.chance
+
+func _should_consume_ammo() -> bool:
+	var skill := get_passive("ammo_save")
+	if skill == null:
+		return true
+	return randf() >= skill.chance
+
+func _get_effective_movement_penalty(weapon: WeaponData) -> float:
+	var skill := get_passive("no_movement_penalty")
+	if skill != null and (skill.weapon_category_filter == "any" or skill.weapon_category_filter == weapon.weapon_category):
+		return 1.0
+	return weapon.movement_penalty
+
+func _get_effective_weight_multiplier(weapon: WeaponData) -> float:
+	var skill := get_passive("tier_reduction")
+	if skill == null or not skill.reduce_weight:
+		return weapon.get_weight_multiplier()
+	var reduced_tier := WeaponData.step_down_weight_tier(weapon.weight)
+	var penalty: float = WeaponData.WEIGHT_TIERS.get(reduced_tier, 0.0)
+	return 1.0 - penalty
+
+func _get_effective_recoil_tier(tier: String) -> String:
+	var skill := get_passive("tier_reduction")
+	if skill != null and skill.reduce_recoil:
+		return WeaponData.step_down_impact_tier(tier)
+	return tier
+	
+func _get_dot_reduction(dot_tag: String) -> float:
+	var total: float = 0.0
+	for skill in stats.passive_skills:
+		if skill != null and skill.effect_type == "dot_reduction" and skill.dot_tag_filter == dot_tag:
+			total += skill.dot_reduction_percent
+	return clamp(total, 0.0, 1.0)
+
+#endregion
+
+#region ── Animation Helpers ─────────────────────────────────────
+
+func _snap_to_idle() -> void:
+	anim_upper.speed_scale = 1.0
+	var idle := get_active_weapon().idle_animation
+	if idle != "":
+		anim_upper.play(idle)
+	else:
+		anim_upper.stop()
+
+func _on_animation_finished(anim_name: StringName) -> void:
+	if anim_name == "uni_toss":
+		is_tossing = false
+		if main_attack_held:
+			_play_main_attack()
+		elif alt_attack_held:
+			_play_alt_attack()
+		else:
+			_snap_to_idle()
+		return
+
+	if anim_name == "attack_grenade_throw":
+		_cancel_grenade_throw()
+		_snap_to_idle()
+		return
+
+	if is_main_attacking:
+		is_main_attacking = false
+		if _buffered_attack == "alt" and get_active_weapon().alt_attack_animations.size() > 0:
+			_buffered_attack = ""
+			_play_alt_attack()
+		elif main_attack_held and get_active_weapon().main_attack_animations.size() > 0:
+			_play_main_attack()
+		else:
+			main_combo_timer = combo_window
+			_snap_to_idle()
+		return
+
+	if is_alt_attacking:
+		is_alt_attacking = false
+		if _buffered_attack == "main" and get_active_weapon().main_attack_animations.size() > 0:
+			_buffered_attack = ""
+			_play_main_attack()
+		elif alt_attack_held and get_active_weapon().alt_attack_animations.size() > 0:
+			_play_alt_attack()
+		else:
+			alt_combo_timer = combo_window
+			_snap_to_idle()
+
+func _reset_attacks() -> void:
+	is_main_attacking = false
+	is_alt_attacking = false
+	main_combo_index = 0
+	main_combo_timer = 0.0
+	alt_combo_index = 0
+	alt_combo_timer = 0.0
+	_buffered_attack = ""
+
+func _cancel_into_idle() -> void:
+	_reset_attacks()
+	_cancel_grenade_throw()
+	anim_upper.speed_scale = 1.0
+	anim_upper.stop()
+	anim_upper.play("RESET")
+	anim_upper.advance(0.0)
+	anim_upper.stop()
+	var idle := get_active_weapon().idle_animation
+	if idle != "":
+		anim_upper.play(idle)
+
+func _cancel_grenade_throw() -> void:
+	is_throwing_grenade = false
+	_grenade_stance_reached = false
+	_grenade_thrown = false
+	grenade_charge_held = false
+	grenade_charge_time = 0.0
+	_grenade_weapon = null
+	
+#endregion
+
+#region ── Miscellaneous ─────────────────────────────────────────
+
+# ── State Helpers ───────────────────────────────────────────────
+
+func _is_attacking() -> bool:
+	return is_main_attacking or is_alt_attacking or is_throwing_grenade
+	
+# Clears this character as any AI's current target — called on death so
+# nobody keeps chasing a corpse. Works for Player, Enemy, or Ally alike,
+# since any of them can be a valid target for some other team.
+func _clear_as_target_for_others() -> void:
+	for ai in get_tree().get_nodes_in_group("contestant"):
+		if ai is AICharacter and ai.target == self:
+			ai.target = null
+			ai.ai_state = AICharacter.AIState.IDLE
+			
+#endregion

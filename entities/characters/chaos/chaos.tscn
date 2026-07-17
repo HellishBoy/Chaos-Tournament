@@ -33,6 +33,7 @@ collision_mask = 63
 motion_mode = 1
 wall_min_slide_angle = 0.0
 script = ExtResource("1_qs3lv")
+can_attack = false
 lives = -1
 target_hold_time = 5.0
 collision_layer_index = 6

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="PassiveSkillData" format=3 uid="uid://eaikywkjfcgw"]
+
+[ext_resource type="Script" uid="uid://s3foax1vfnlb" path="res://entities/characters/_core/passive_skills/_core/passive_skill_data.gd" id="1_0mjw7"]
+
+[resource]
+script = ExtResource("1_0mjw7")
+skill_name = "Lucky Shot"
+description = "Chance to not consume ammo"
+effect_type = "ammo_save"
+chance = 0.4
+reduce_recoil = false
+reduce_weight = false
+metadata/_custom_type_script = "uid://s3foax1vfnlb"

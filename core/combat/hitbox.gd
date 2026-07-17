@@ -69,7 +69,7 @@ func _on_area_entered(area: Area2D) -> void:
 	if attacker != null and attacker is Character and not attacker._swing_has_hit:
 		attacker._swing_has_hit = true
 		var weapon: WeaponData = attacker.get_active_weapon()
-		if weapon.durability_current > 0:
+		if weapon.durability_current > 0 and attacker._should_consume_durability():
 			weapon.durability_current -= 1
 			var hud := get_tree().get_first_node_in_group("hud") as HUD
 			if hud:

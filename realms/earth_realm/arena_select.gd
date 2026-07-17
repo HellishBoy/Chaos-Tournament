@@ -11,11 +11,11 @@ const ARENAS = [
 	{ "label": "Military", "scene": "", "stage_select": "", "unlocked": false },
 	{ "label": "Forest", "scene": "", "stage_select": "", "unlocked": false },
 	{ "label": "Sea", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Desert", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Arctic", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Secret Base", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Cave", "scene": "", "stage_select": "", "unlocked": false },
-	{ "label": "Volcanic", "scene": "", "stage_select": "", "unlocked": false },
+	#{ "label": "Desert", "scene": "", "stage_select": "", "unlocked": false },
+	#{ "label": "Arctic", "scene": "", "stage_select": "", "unlocked": false },
+	#{ "label": "Secret Base", "scene": "", "stage_select": "", "unlocked": false },
+	#{ "label": "Cave", "scene": "", "stage_select": "", "unlocked": false },
+	#{ "label": "Volcanic", "scene": "", "stage_select": "", "unlocked": false },
 ]
 
 # ── Node References ──────────────────────────────────────────────
@@ -55,4 +55,5 @@ func _on_arena_pressed(scene_path: String, stage_select_path: String) -> void:
 	get_tree().change_scene_to_file(scene_path)
 
 func _on_back_pressed() -> void:
-	get_tree().change_scene_to_file("res://realms/realm_select.tscn")
+	# get_tree().change_scene_to_file("res://realms/realm_select.tscn")
+	get_tree().change_scene_to_file("res://ui/main_menu.tscn")

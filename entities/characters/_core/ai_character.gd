@@ -8,6 +8,8 @@
 extends Character
 class_name AICharacter
 
+# ────────────────────────────────────────────────────────────────
+
 # ── Exports ──────────────────────────────────────────────────────
 
 @export_group("Permission")
@@ -403,11 +405,11 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	var knock_mult := impact_component.get_control_speed_multiplier(stats.knockback_resistance)
-	var weight_mult := get_active_weapon().get_weight_multiplier()
+	var weight_mult := _get_effective_weight_multiplier(get_active_weapon())
 	var slow_mult := _get_slow_multiplier()
-	var attack_penalty: float = get_active_weapon().movement_penalty if _is_attacking() else 1.0
+	var attack_penalty: float = _get_effective_movement_penalty(get_active_weapon()) if _is_attacking() else 1.0
 	var combined_mult := _apply_speed_floor(weight_mult * knock_mult * slow_mult * attack_penalty) * _get_haste_move_multiplier()
-	
+		
 	if _is_petrified():
 		_apply_movement(Vector2.ZERO)
 		return

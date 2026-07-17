@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="PassiveSkillData" format=3 uid="uid://cn0orpmd13qum"]
+
+[ext_resource type="Script" uid="uid://s3foax1vfnlb" path="res://entities/characters/_core/passive_skills/_core/passive_skill_data.gd" id="1_qyto8"]
+
+[resource]
+script = ExtResource("1_qyto8")
+skill_name = "Thick Skin"
+description = "Reduced bleed damage"
+effect_type = "dot_reduction"
+chance = 0.4
+reduce_recoil = false
+reduce_weight = false
+dot_tag_filter = "bleed"
+dot_reduction_percent = 0.6
+metadata/_custom_type_script = "uid://s3foax1vfnlb"
